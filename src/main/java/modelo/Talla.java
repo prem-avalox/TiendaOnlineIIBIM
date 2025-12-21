@@ -10,7 +10,7 @@ public class Talla implements Serializable {
 	
 	private int idTalla;
 	private int idPrenda;
-	private String talla; // "XS", "S", "M", "L", "XL", "XXL"
+	private String talla; // Camisas: "XS", "S", "M", "L", "XL", "XXL" | Pantalones: "28/32", "30/32", etc. | Calzado: "38", "40", etc. | Accesorios: "Única"
 	private int stock;
 	
 	// Constructores

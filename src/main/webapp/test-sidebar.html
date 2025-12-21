@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Sidebar</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: Arial, sans-serif;
+        }
+        
+        .header {
+            background: #333;
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+        
+        .content {
+            margin-top: 80px;
+            padding: 20px;
+        }
+        
+        .filter-bar {
+            background: #f5f5f5;
+            padding: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 20px;
+        }
+        
+        .filter-bar button {
+            padding: 10px 20px;
+            border: 1px solid #ccc;
+            background: white;
+            cursor: pointer;
+        }
+        
+        /* Cart Sidebar */
+        .cart-sidebar {
+            position: fixed;
+            top: 0;
+            right: -450px;
+            width: 450px;
+            height: 100vh;
+            background-color: white;
+            box-shadow: -2px 0 10px rgba(0,0,0,0.1);
+            transition: right 0.3s ease;
+            z-index: 2001;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .cart-sidebar.active {
+            right: 0;
+        }
+        
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid #e0e0e0;
+            background: white;
+        }
+        
+        .close-btn {
+            cursor: pointer;
+            font-size: 24px;
+            background: none;
+            border: none;
+        }
+        
+        .cart-empty {
+            text-align: center;
+            padding: 40px 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: white;
+        }
+        
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease;
+            z-index: 2000;
+        }
+        
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            background: #124a7e;
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div>☰</div>
+        <h1>CLOTHING STORE</h1>
+        <button onclick="toggleCart()" style="background: none; border: none; color: white; font-size: 24px; cursor: pointer;">
+            <i class="far fa-shopping-bag"></i>
+        </button>
+    </div>
+    
+    <div class="content">
+        <div class="filter-bar">
+            <button>TAMAÑO ▼</button>
+            <button>COLOR ▼</button>
+            <button>CORTE ▼</button>
+            <button>LIMPIAR FILTROS</button>
+        </div>
+        
+        <h2>Catálogo</h2>
+        <p>No hay prendas disponibles</p>
+        <a href="#" class="btn">Ver todas las prendas</a>
+    </div>
+    
+    <!-- Cart Sidebar -->
+    <div class="cart-sidebar" id="cartSidebar">
+        <div class="sidebar-header">
+            <h2>MI BOLSA</h2>
+            <button class="close-btn" onclick="toggleCart()">
+                <i class="far fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="cart-empty">
+            <p>Aún no ha agregado prendas a la bolsa</p>
+            <a href="#" class="btn">Ver Catálogo</a>
+        </div>
+    </div>
+    
+    <!-- Overlay -->
+    <div id="cartOverlay" class="overlay" onclick="toggleCart()"></div>
+    
+    <script>
+        function toggleCart() {
+            const cartSidebar = document.getElementById('cartSidebar');
+            const cartOverlay = document.getElementById('cartOverlay');
+            
+            cartSidebar.classList.toggle('active');
+            cartOverlay.classList.toggle('active');
+        }
+    </script>
+</body>
+</html>

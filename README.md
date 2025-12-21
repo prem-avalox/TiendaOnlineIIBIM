@@ -1,398 +1,181 @@
-# 👔 CLOTHING STORE - Tienda Online de Ropa Masculina
+# 👔 Tienda Online - Clothing Store
 
-[![Java](https://img.shields.io/badge/Java-17-orange.svg)](https://adoptium.net/)
-[![Maven](https://img.shields.io/badge/Maven-3.8+-red.svg)](https://maven.apache.org/)
-[![Tomcat](https://img.shields.io/badge/Tomcat-10.1-yellow.svg)](https://tomcat.apache.org/)
-[![MySQL](https://img.shields.io/badge/MySQL-8.0-blue.svg)](https://www.mysql.com/)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)]()
+Sistema de comercio electrónico de ropa masculina desarrollado con **Java EE**, **JSP**, **Servlets** y **MySQL**.
 
-> Sistema de comercio electrónico desarrollado con **Java EE**, **JSP**, **Servlets**, **MySQL** y arquitectura **MVC**.  
-> Proyecto migrado desde PHP con diseño profesional tipo Clothing Store.
+## 🚀 Características
 
----
-
-## 🚀 Inicio Rápido
-
-### Para tu Equipo (Windows, macOS, Linux):
-
-```bash
-# 1. Clonar proyecto
-git clone <url-del-repo>
-cd tiendaOnline
-
-# 2. Instalar dependencias (automático con Maven)
-mvn clean install
-
-# 3. Importar en Eclipse
-File → Import → Maven → Existing Maven Projects
-
-# 4. Ejecutar
-Run As → Run on Server
-```
-
-**📖 Ver guía completa:** [`INICIO_RAPIDO.md`](INICIO_RAPIDO.md)
-
----
-
-## 📋 Características
-
-### ✨ Funcionalidades Principales
-
-- **🛍️ Catálogo de Productos** - Grid responsive de 4 columnas con animaciones
-- **🔍 Búsqueda y Filtros** - Por categoría, color y tipo de ajuste
-- **👕 Detalle de Producto** - Vista ampliada con selector de tallas interactivo
-- **🛒 Carrito de Compras** - Sidebar deslizante con gestión de cantidades
-- **👤 Autenticación** - Login/Registro con roles (Cliente/Admin)
-- **⚙️ Panel Admin** - CRUD completo de productos
-- **📱 Diseño Responsive** - Adaptable a móviles, tablets y desktop
-- **🎨 Diseño Elegante** - Inspirado en marcas premium (H&M, Zara)
-
-### 🏗️ Arquitectura
-
-- **Patrón MVC** (Modelo-Vista-Controlador)
-- **DAO Pattern** para acceso a datos
-- **Session Management** para autenticación
-- **Prepared Statements** para seguridad SQL
-- **Maven** para gestión de dependencias
-
----
+- 🛍️ **Catálogo de productos** con búsqueda y filtros
+- 👕 **Detalle de productos** con selector de tallas
+- 🛒 **Carrito de compras** con gestión de cantidades
+- 👤 **Autenticación** de usuarios (Login/Registro)
+- ⚙️ **Panel de administración** con CRUD de productos
+- 📱 **Diseño responsive** y moderno
+- 🎨 **Interfaz elegante** inspirada en tiendas premium
 
 ## 🛠️ Tecnologías
 
-| Tecnología | Versión | Uso |
-|------------|---------|-----|
-| Java | 17+ | Backend y lógica de negocio |
-| Jakarta EE | 6.0 | Servlets y JSP |
-| MySQL | 8.0+ | Base de datos |
-| Maven | 3.8+ | Gestión de dependencias |
-| Apache Tomcat | 10.1 | Servidor de aplicaciones |
-| JSTL | 3.0 | Tag libraries |
-| HTML5/CSS3 | - | Frontend |
-| JavaScript | ES6 | Interactividad |
-| Font Awesome | 6.5.1 | Iconografía |
-| Google Fonts | - | Tipografía (Playfair Display) |
+- **Backend**: Java 17, Jakarta EE (Servlets, JSP)
+- **Frontend**: HTML5, CSS3, JavaScript
+- **Base de datos**: MySQL 8.0
+- **Servidor**: Apache Tomcat 10.1
+- **Build**: Maven 3.8+
 
----
+## 📋 Requisitos Previos
 
-## 📁 Estructura del Proyecto
+- Java JDK 17 o superior
+- Apache Tomcat 10.1
+- MySQL 8.0 o superior
+- Maven 3.8+
+- Eclipse IDE for Enterprise Java and Web Developers (recomendado)
 
-```
-tiendaOnline/
-├── 📄 pom.xml                      # Configuración Maven
-├── 📂 src/main/
-│   ├── 📂 java/
-│   │   ├── 📂 dao/                 # Data Access Objects
-│   │   │   ├── UsuarioDAO.java
-│   │   │   ├── PrendaDAO.java
-│   │   │   └── TallaDAO.java
-│   │   ├── 📂 modelo/              # Entidades
-│   │   │   ├── Usuario.java
-│   │   │   ├── Prenda.java
-│   │   │   ├── Talla.java
-│   │   │   └── ItemBolsa.java
-│   │   ├── 📂 servlets/            # Controladores
-│   │   │   ├── LoginServlet.java
-│   │   │   ├── RegistroServlet.java
-│   │   │   ├── CatalogoServlet.java
-│   │   │   ├── DetallePrendaServlet.java
-│   │   │   ├── BolsaServlet.java
-│   │   │   └── AdminPrendasServlet.java
-│   │   └── 📂 util/
-│   │       └── ConexionBD.java     # Conexión MySQL
-│   └── 📂 webapp/
-│       ├── 📂 css/
-│       │   └── estilos.css         # Estilos Clothing Store
-│       ├── 📂 img/                 # 14 imágenes de productos
-│       ├── 📂 jsp/
-│       │   ├── catalogo.jsp
-│       │   ├── detalle-prenda.jsp
-│       │   ├── login.jsp
-│       │   ├── registro.jsp
-│       │   └── 📂 includes/
-│       │       ├── header.jsp
-│       │       ├── footer.jsp
-│       │       ├── sidebar.jsp
-│       │       └── sidebar-bolsa.jsp
-│       ├── 📂 WEB-INF/
-│       │   └── web.xml
-│       └── index.jsp
-├── 📂 database/
-│   ├── INSTALL_DB.sql              # Script de instalación principal
-│   ├── verificar_bd.sql            # Verificación de BD
-│   └── script_tienda_online.sql
-└── 📚 Documentación/
-    ├── INICIO_RAPIDO.md
-    ├── README_SETUP_UNIVERSAL.md
-    ├── GUIA_MYSQL_INSTALACION.md
-    └── CHECKLIST.md
-```
+## ⚙️ Instalación
 
----
-
-## 💾 Base de Datos
-
-### Tablas:
-
-- **`usuarios`** - Gestión de usuarios (clientes y administradores)
-- **`prendas`** - Catálogo de productos (13 prendas reales de Ecuador)
-- **`tallas`** - Inventario de tallas y stock por prenda
-
-### Datos de Prueba:
-
-- **2 usuarios**: 1 admin + 1 cliente
-- **13 productos**: 4 camisas, 4 pantalones, 2 calzados, 3 accesorios
-- **Stock configurado** para todas las tallas
-
-### Credenciales:
-
-```
-Administrador:
-  Email: admin@tienda.com
-  Pass:  admin123
-
-Cliente:
-  Email: cliente@example.com
-  Pass:  cliente123
-```
-
----
-
-## 📦 Instalación Detallada
-
-### 1. Requisitos Previos
-
-- **Java JDK 17+** - [Descargar](https://adoptium.net/)
-- **Maven 3.8+** - [Descargar](https://maven.apache.org/download.cgi)
-- **MySQL 8.0+** - [Descargar](https://dev.mysql.com/downloads/mysql/)
-- **Apache Tomcat 10.1** - [Descargar](https://tomcat.apache.org/download-10.cgi)
-- **Eclipse IDE** - [Descargar](https://www.eclipse.org/downloads/packages/)
-
-### 2. Clonar Repositorio
+### 1. Clonar el repositorio
 
 ```bash
-git clone <url-del-repositorio>
+git clone https://github.com/tu-usuario/tiendaOnline.git
 cd tiendaOnline
 ```
 
-### 3. Instalar Dependencias (Maven)
-
-**Windows:**
-```cmd
-install.bat
-```
-
-**macOS/Linux:**
-```bash
-chmod +x install.sh
-./install.sh
-```
-
-**Manual:**
-```bash
-mvn clean install
-```
-
-### 4. Configurar MySQL
+### 2. Configurar la base de datos
 
 ```bash
 # Iniciar MySQL
-# Windows: net start MySQL80
-# macOS:   brew services start mysql
-# Linux:   sudo systemctl start mysql
+mysql -u root -p
 
-# Crear base de datos
-mysql -u root -p < database/INSTALL_DB.sql
+# Ejecutar el script de instalación
+source database/INSTALAR_BD_COMPLETA.sql
 ```
 
-### 5. Configurar Conexión
+### 3. Configurar la conexión a la base de datos
 
-Editar `src/main/java/util/ConexionBD.java`:
+Edita el archivo `src/main/java/util/ConexionBD.java` y ajusta las credenciales:
 
 ```java
 private static final String USUARIO = "root";
 private static final String CONTRASENA = "tu_contraseña";
 ```
 
-### 6. Importar en Eclipse
+### 4. Compilar el proyecto
 
-1. File → Import
-2. Maven → Existing Maven Projects
-3. Browse → Seleccionar carpeta `tiendaOnline`
-4. Finish
+```bash
+mvn clean package
+```
 
-### 7. Configurar Tomcat
+### 5. Importar en Eclipse
+
+1. **File → Import → Maven → Existing Maven Projects**
+2. Selecciona la carpeta del proyecto
+3. Click en **Finish**
+
+### 6. Configurar Tomcat en Eclipse
 
 1. Window → Preferences → Server → Runtime Environments
 2. Add → Apache Tomcat v10.1
-3. En Servers: New → Server → Add `tiendaOnline`
+3. Selecciona la ruta de instalación de Tomcat
 
-### 8. Ejecutar
+### 7. Ejecutar el proyecto
 
-1. Run As → Run on Server
-2. Abrir: http://localhost:8080/tiendaOnline/Catalogo
+1. Click derecho en el proyecto → **Run As → Run on Server**
+2. Selecciona Tomcat 10.1
+3. Abre el navegador en: `http://localhost:8080/tiendaOnline`
 
----
+## 📁 Estructura del Proyecto
 
-## 🎨 Diseño UI/UX
-
-### Paleta de Colores
-
-```css
---color-primario: #124a7e;    /* Azul oscuro premium */
---color-acento: #e0e0e0;      /* Gris claro */
---color-precio: #575757;      /* Gris medio */
---color-fondo: #ffffff;       /* Blanco */
+```
+tiendaOnline/
+├── src/main/java/
+│   ├── dao/              # Capa de acceso a datos
+│   ├── modelo/           # Modelos de dominio
+│   ├── servlets/         # Controladores (Servlets)
+│   └── util/             # Utilidades (Conexión BD)
+├── src/main/webapp/
+│   ├── WEB-INF/          # Configuración y librerías
+│   ├── css/              # Estilos CSS
+│   ├── js/               # Scripts JavaScript
+│   ├── images/           # Imágenes de productos
+│   └── *.jsp             # Vistas JSP
+├── database/             # Scripts SQL
+├── pom.xml               # Configuración Maven
+└── README.md             # Este archivo
 ```
 
-### Tipografía
+## 🔧 Solución de Problemas
 
-- **Títulos**: Playfair Display (elegante, serif)
-- **Precios**: Roboto Condensed (moderna, sans-serif)
+### Error: Driver MySQL no encontrado
 
-### Grid Responsivo
-
-- **Desktop**: 4 columnas
-- **Tablet**: 3 columnas
-- **Tablet pequeña**: 2 columnas
-- **Móvil**: 1 columna
-
----
-
-## 🧪 Testing
-
-### Probar Conexión a BD
+Si obtienes `ClassNotFoundException: com.mysql.cj.jdbc.Driver`:
 
 ```bash
-# En Eclipse
-Run: src/main/java/util/ConexionBD.java
+mvn clean package
 ```
 
-### Verificar Base de Datos
+Luego reinicia el servidor Tomcat en Eclipse.
 
-```bash
-mysql -u root -p < database/verificar_bd.sql
-```
+### Error de conexión a MySQL
 
-### Endpoints Disponibles
+Verifica que:
+- MySQL esté corriendo
+- La base de datos `tienda_online` exista
+- Las credenciales en `ConexionBD.java` sean correctas
 
-```
-GET  /Catalogo                    # Listar productos
-GET  /Catalogo?accion=buscar&termino=camisa
-GET  /Catalogo?accion=categoria&cat=CAMISAS
-GET  /DetallePrenda?id=1          # Ver producto
-POST /Bolsa?accion=agregar        # Agregar a carrito
-POST /Login                       # Iniciar sesión
-POST /Registro                    # Registrar usuario
-GET  /AdminPrendas                # Panel admin
-```
+### El servidor no inicia
+
+1. Limpia el proyecto: **Project → Clean**
+2. Limpia el servidor: Click derecho en Tomcat → **Clean...**
+3. Republica: Click derecho en Tomcat → **Clean Tomcat Work Directory**
+
+## 👥 Usuarios de Prueba
+
+### Administrador
+- **Usuario**: `admin`
+- **Contraseña**: `admin123`
+
+### Cliente
+- **Usuario**: `cliente`
+- **Contraseña**: `cliente123`
+
+## 📝 Funcionalidades Implementadas
+
+### Para Clientes
+- ✅ Ver catálogo de productos
+- ✅ Buscar y filtrar productos
+- ✅ Ver detalle de producto con selector de tallas
+- ✅ Agregar productos al carrito
+- ✅ Modificar cantidades en el carrito
+- ✅ Eliminar productos del carrito
+- ✅ Registro de nuevos usuarios
+- ✅ Login de usuarios existentes
+
+### Para Administradores
+- ✅ Ver lista de todos los productos
+- ✅ Agregar nuevos productos
+- ✅ Editar productos existentes
+- ✅ Eliminar productos
+- ✅ Gestión de imágenes
+
+## 🤝 Contribuir
+
+Las contribuciones son bienvenidas. Para cambios importantes:
+
+1. Haz un Fork del proyecto
+2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
+3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
+4. Push a la rama (`git push origin feature/AmazingFeature`)
+5. Abre un Pull Request
+
+## 📄 Licencia
+
+Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más detalles.
+
+## 👨‍💻 Autor
+
+Desarrollado como proyecto académico de Java EE.
+
+## 📞 Contacto
+
+Para preguntas o sugerencias, abre un issue en el repositorio.
 
 ---
 
-## 🤝 Trabajo en Equipo
-
-### Configuración Git
-
-```bash
-# Inicializar repositorio
-git init
-git add .
-git commit -m "Proyecto inicial con Maven"
-git branch -M main
-git remote add origin <url>
-git push -u origin main
-```
-
-### Para tus compañeros
-
-```bash
-# Clonar
-git clone <url>
-cd tiendaOnline
-
-# Instalar dependencias
-mvn clean install
-
-# Importar en Eclipse
-# File → Import → Maven → Existing Maven Projects
-
-# Configurar su propia conexión MySQL
-# Editar: src/main/java/util/ConexionBD.java
-
-# Ejecutar
-# Run As → Run on Server
-```
-
-### Ventajas de Maven
-
-✅ **Sin JAR manual** - Descarga automática  
-✅ **Multiplataforma** - Funciona en Windows, Mac, Linux  
-✅ **Versionado consistente** - Todos usan las mismas librerías  
-✅ **Fácil compartir** - Solo código fuente, sin binarios  
-✅ **Build reproducible** - Mismo resultado en todos los equipos  
-
----
-
-## 📚 Documentación
-
-- **[INICIO_RAPIDO.md](INICIO_RAPIDO.md)** - Guía rápida de 5 minutos
-- **[README_SETUP_UNIVERSAL.md](README_SETUP_UNIVERSAL.md)** - Instalación completa
-- **[GUIA_MYSQL_INSTALACION.md](GUIA_MYSQL_INSTALACION.md)** - Configuración MySQL
-- **[CHECKLIST.md](CHECKLIST.md)** - Lista de funcionalidades
-
----
-
-## 🐛 Solución de Problemas
-
-### Maven no reconocido (Windows)
-
-```cmd
-# Agregar a PATH:
-# MAVEN_HOME=C:\apache-maven-3.x.x
-# PATH=%PATH%;%MAVEN_HOME%\bin
-```
-
-### Driver not found
-
-```bash
-mvn clean install -U
-# En Eclipse: Maven → Update Project
-```
-
-### Access denied MySQL
-
-```sql
-ALTER USER 'root'@'localhost' IDENTIFIED BY 'nueva_contraseña';
-```
-
-### Port 8080 in use
-
-```bash
-# Windows: netstat -ano | findstr :8080
-# macOS/Linux: lsof -ti:8080 | xargs kill -9
-```
-
----
-
-## 📝 Licencia
-
-MIT License - Proyecto educativo
-
----
-
-## 👥 Equipo de Desarrollo
-
-Proyecto desarrollado para el curso de Programación Web.
-
----
-
-## 📞 Soporte
-
-Para problemas:
-1. Revisar logs en Eclipse Console
-2. Ejecutar `ConexionBD.main()` para probar BD
-3. Ejecutar `database/verificar_bd.sql`
-4. Consultar documentación en carpeta raíz
-
----
-
-**✨ ¡Gracias por usar Clothing Store! ✨**
+⭐ Si te gustó este proyecto, considera darle una estrella en GitHub!

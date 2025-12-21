@@ -328,6 +328,9 @@ body {
 
 .category-nav-bar {
     padding: 15px 0;
+    position: relative;
+    z-index: 1;
+    background-color: white;
 }
 
 .cajas-filtro-lista {
@@ -359,6 +362,9 @@ body {
     padding: 0 45px 30px 45px;
     width: 100%;
     box-sizing: border-box;
+    position: relative;
+    z-index: 1;
+    background-color: white;
 }
 
 .tarjeta-producto {
@@ -844,6 +850,7 @@ body {
     z-index: 2001;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
 }
 
 .cart-sidebar.active {
@@ -854,6 +861,7 @@ body {
     flex: 1;
     overflow-y: auto;
     padding: 20px;
+    background-color: white;
 }
 
 .cart-empty {
@@ -862,6 +870,12 @@ body {
     font-family: var(--fuente-texto);
     font-size: var(--fuente-mediana);
     color: var(--texto-inactivo);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: white;
 }
 
 .cart-item {

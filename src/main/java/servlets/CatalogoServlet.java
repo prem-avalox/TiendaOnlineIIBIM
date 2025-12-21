@@ -54,10 +54,26 @@ public class CatalogoServlet extends HttpServlet {
 	private void listarPrendas(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
 		
+		System.out.println("🔍 CatalogoServlet.listarPrendas() - Iniciando...");
+		
 		List<Prenda> prendas = prendaDAO.listarPrendas();
+		
+		System.out.println("🔍 PrendaDAO retornó: " + (prendas != null ? prendas.size() + " prendas" : "NULL"));
+		
+		if (prendas != null && !prendas.isEmpty()) {
+			System.out.println("🔍 Ejemplos de prendas:");
+			for (int i = 0; i < Math.min(3, prendas.size()); i++) {
+				Prenda p = prendas.get(i);
+				System.out.println("   - " + p.getIdPrenda() + ": " + p.getNombre() + " ($" + p.getPrecio() + ")");
+			}
+		} else {
+			System.out.println("⚠️ Lista de prendas está vacía o es null!");
+		}
 		
 		request.setAttribute("prendas", prendas);
 		request.setAttribute("titulo", "Catálogo Completo");
+		
+		System.out.println("🔍 Forwarding a catalogo.jsp...");
 		request.getRequestDispatcher("/jsp/catalogo.jsp").forward(request, response);
 	}
 	

@@ -27,23 +27,37 @@ public class PrendaDAO {
 		ResultSet rs = null;
 		
 		try {
+			System.out.println("🔍 PrendaDAO.listarPrendas() - Iniciando...");
 			conn = ConexionBD.getConexion();
+			System.out.println("🔍 Conexión obtenida: " + (conn != null ? "OK" : "NULL"));
+			System.out.println("🔍 Conexión cerrada: " + (conn != null ? conn.isClosed() : "N/A"));
+			
 			String sql = "SELECT * FROM prendas ORDER BY id_prenda DESC";
+			System.out.println("🔍 Ejecutando SQL: " + sql);
+			
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(sql);
 			
+			System.out.println("🔍 ResultSet obtenido, procesando filas...");
+			int count = 0;
 			while (rs.next()) {
 				Prenda prenda = mapearPrenda(rs);
 				prendas.add(prenda);
+				count++;
 			}
 			
+			System.out.println("🔍 Total de prendas encontradas: " + count);
+			
 		} catch (SQLException e) {
-			System.err.println("Error al listar prendas: " + e.getMessage());
+			System.err.println("❌ Error al listar prendas: " + e.getMessage());
 			e.printStackTrace();
 		} finally {
+			System.out.println("🔍 Cerrando recursos...");
 			cerrarRecursos(conn, stmt, rs);
+			System.out.println("🔍 Recursos cerrados");
 		}
 		
+		System.out.println("🔍 Retornando lista con " + prendas.size() + " prendas");
 		return prendas;
 	}
 	
