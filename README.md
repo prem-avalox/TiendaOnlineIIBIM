@@ -128,11 +128,11 @@ Verifica que:
 ## 👥 Usuarios de Prueba
 
 ### Administrador
-- **Usuario**: `admin`
+- **Usuario**: `admin@tienda.com`
 - **Contraseña**: `admin123`
 
 ### Cliente
-- **Usuario**: `cliente`
+- **Usuario**: `cliente@test.com`
 - **Contraseña**: `cliente123`
 
 ## 📝 Funcionalidades Implementadas

@@ -47,7 +47,7 @@
                     </div>
                 </div>
             <% } else { %>
-                <a href="${pageContext.request.contextPath}/Login"><i class="far fa-user"></i></a>
+                <a href="${pageContext.request.contextPath}/Registro"><i class="far fa-user"></i></a>
             <% } %>
         </div>
         
