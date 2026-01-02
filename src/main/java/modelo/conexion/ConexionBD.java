@@ -25,7 +25,7 @@ public class ConexionBD {
     private ConexionBD() {
         // Puedes dejar estos valores aquí o moverlos a un método configurar(...)
         String host = "localhost";
-        String port = "3306";
+        String port = "3307";
         String database = "tienda_online";
 
         this.usuario = "root";

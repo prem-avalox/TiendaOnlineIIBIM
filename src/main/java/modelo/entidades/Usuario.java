@@ -2,17 +2,34 @@ package modelo.entidades;
 
 import java.io.Serializable;
 
+import jakarta.persistence.*;
+
 /**
  * Clase que representa un Usuario del sistema
  */
+@Entity
+@Table(name = "Usuario")
 public class Usuario implements Serializable {
-	private static final long serialVersionUID = 1L;
-	
-	private int idUsuario;
-	private String nombreUsuario;
-	private String email;
-	private String contrasena;
-	private Bolsa bolsa;
+
+    private static final long serialVersionUID = 1L;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int idUsuario;
+
+    @Column(name = "nombreUsuario", nullable = false, length = 50)
+    private String nombreUsuario;
+
+    @Column(name = "email", nullable = false, unique = true, length = 100)
+    private String email;
+
+    @Column(name = "contrasena", nullable = false, length = 255)
+    private String contrasena;
+
+    // Un usuario tiene una única bolsa
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "idBolsa", nullable = false)
+    private Bolsa bolsa;
 	
 	// Constructores
 	public Usuario() {
