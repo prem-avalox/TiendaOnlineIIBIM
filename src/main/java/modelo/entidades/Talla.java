@@ -7,35 +7,30 @@ import java.io.Serializable;
  */
 public enum Talla implements Serializable {
 
-    XS(1, "XS"),
-    S(2, "S"),
-    M(3, "M"),
-    L(4, "L"),
-    XL(5, "XL"),
-    XXL(6, "XXL"),
+    XS("XS"),
+    S("S"),
+    M("M"),
+    L("L"),
+    XL("XL"),
+    XXL("XXL"),
 
     // Calzado
-    T38(7, "38"),
-    T40(8, "40"),
-    T42(9, "42"),
+    T38("38"),
+    T40("40"),
+    T42("42"),
 
     // Accesorios
-    UNICA(10, "Única");
+    UNICA("Única");
 
     private static final long serialVersionUID = 1L;
 
-    private final int idTalla;
     private final String talla;
 
     // Constructor SIEMPRE privado en enum
-    private Talla(int idTalla, String talla) {
-        this.idTalla = idTalla;
+    private Talla(String talla) {
         this.talla = talla;
     }
-
-    public int getIdTalla() {
-        return idTalla;
-    }
+    
 
     public String getTalla() {
         return talla;

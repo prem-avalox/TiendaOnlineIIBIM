@@ -61,6 +61,19 @@ public class StockTalla implements Serializable {
     public void setTalla(Talla talla) {
         this.talla = talla;
     }
+    
+
+	public Prenda getPrenda() {
+		return prenda;
+	}
+
+
+
+	public void setPrenda(Prenda prenda) {
+		this.prenda = prenda;
+	}
+
+
 
 	@Override
 	public String toString() {

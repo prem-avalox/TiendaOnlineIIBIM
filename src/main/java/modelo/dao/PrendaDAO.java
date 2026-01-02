@@ -3,6 +3,9 @@ package modelo.dao;
 import java.sql.Connection;
 import java.util.List;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
 import modelo.entidades.Categoria;
 import modelo.entidades.Prenda;
 import modelo.entidades.StockTalla;
@@ -13,9 +16,11 @@ public class PrendaDAO {
     private Connection conexion;
 
 
-    public PrendaDAO() {
-    }
+    private EntityManagerFactory emf;
 
+    public PrendaDAO() {
+        this.emf = Persistence.createEntityManagerFactory("persistencia");
+    }
 
     public Prenda buscarPrenda(int id) {
         return null;
@@ -45,7 +50,16 @@ public class PrendaDAO {
     }
 
     public List<Prenda> getListaPrendas() {
-        return null;
+        EntityManager em = emf.createEntityManager();
+        try {
+            // JPQL: Selecciona el objeto completo Prenda
+            return em.createQuery("SELECT p FROM Prenda p", Prenda.class).getResultList();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+            em.close();
+        }
     }
 
     public List<Prenda> getListaPrendas(String nombre) {

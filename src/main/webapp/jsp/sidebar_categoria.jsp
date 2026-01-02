@@ -16,7 +16,7 @@
 		<ul style="list-style: none; padding: 0;">
 			<li><a href="#">Camisetas</a></li>
 			<li><a href="#">Pantalones</a></li>
-			<li><a href="#">Chaquetas</a></li>
+			<li><a href="#">Calzado</a></li>
 			<li><a href="#">Accesorios</a></li>
 		</ul>
 </div>

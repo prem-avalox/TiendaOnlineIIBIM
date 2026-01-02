@@ -7,7 +7,8 @@
 <head>
 <meta charset="UTF-8">
 <title>Clothing Store - Catálogo</title>
-<script src="../js/catalogo.js"></script>
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/estilos.css">
+<script src="${pageContext.request.contextPath}/js/catalogo.js"></script>
 </head>
 
 <body>
@@ -56,28 +57,16 @@
         </form>
     </nav>
 
-    <!-- Sección de productos -->
-    <section>
-
-        <!-- Tarjeta de producto -->
-        <div>
-            <img src="" alt="Camisa negra" width="200">
-            <h3>Camisa Negra</h3>
-            <p>$25.99</p>
-        </div>
-
-        <div>
-            <img src="" alt="Pantalón azul" width="200">
-            <h3>Pantalón Azul</h3>
-            <p>$39.99</p>
-        </div>
-
-        <div>
-            <img src="" alt="Chaqueta gris" width="200">
-            <h3>Chaqueta Gris</h3>
-            <p>$59.99</p>
-        </div>
-
+    <!-- Sección de prendas -->
+    <section class="contenedor-prendas">
+        <c:forEach var="prenda" items="${prendas}">
+            <div class="tarjeta-prenda">
+                <img src="${pageContext.request.contextPath}/${prenda.imagen}" alt="${prenda.nombrePrenda}">
+                <h3>${prenda.nombrePrenda}</h3>
+                <p class="precio">$${prenda.precio}</p>
+                <a href="VerCatalogoController?ruta=detalle&id=${prenda.idPrenda}" class="btn-detalle">Ver detalle</a>
+            </div>
+        </c:forEach>
     </section>
     
     
