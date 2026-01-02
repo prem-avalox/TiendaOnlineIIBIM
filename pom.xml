@@ -77,6 +77,28 @@
             <version>${mysql.version}</version>
         </dependency>
         
+                    <!--PERSISTENCIA-->
+            <!--
+		https://mvnrepository.com/artifact/jakarta.persistence/jakarta.persistence-api -->
+		<dependency>
+			<groupId>jakarta.persistence</groupId>
+			<artifactId>jakarta.persistence-api</artifactId>
+			<version>3.1.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.mysql</groupId>
+			<artifactId>mysql-connector-j</artifactId>
+			<version>8.3.0</version>
+		</dependency>
+		<!--
+		https://mvnrepository.com/artifact/org.eclipse.persistence/eclipselink -->
+		<dependency>
+			<groupId>org.eclipse.persistence</groupId>
+			<artifactId>eclipselink</artifactId>
+			<version>4.0.2</version>
+		</dependency>
+        
     </dependencies>
     
     <!-- ================================================
@@ -151,6 +173,8 @@
                     </deployables>
                 </configuration>
             </plugin>
+            
+
             
         </plugins>
     </build>

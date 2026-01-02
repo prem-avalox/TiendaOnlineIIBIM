@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="modelo.Prenda" %>
-<%@ page import="modelo.Talla" %>
+<%@ page import="modelo.entidades.Prenda" %>
+<%@ page import="modelo.entidades.Talla" %>
 <%@ page import="java.util.List" %>
 <!DOCTYPE html>
 <html lang="es">

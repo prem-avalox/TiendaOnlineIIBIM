@@ -9,10 +9,10 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import modelo.Prenda;
-import modelo.Talla;
-import dao.PrendaDAO;
-import dao.TallaDAO;
+import modelo.dao.PrendaDAO;
+import modelo.dao.TallaDAO;
+import modelo.entidades.Prenda;
+import modelo.entidades.Talla;
 
 /**
  * Servlet para la gestión administrativa de prendas (CRUD)

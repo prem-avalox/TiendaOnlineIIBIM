@@ -10,10 +10,10 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import modelo.ItemBolsa;
-import modelo.Prenda;
-import dao.PrendaDAO;
-import dao.TallaDAO;
+import modelo.dao.PrendaDAO;
+import modelo.dao.TallaDAO;
+import modelo.entidades.ItemBolsa;
+import modelo.entidades.Prenda;
 
 /**
  * Servlet para gestionar la bolsa de compras

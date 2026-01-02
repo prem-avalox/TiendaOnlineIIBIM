@@ -10,7 +10,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import util.ConexionBD;
+import modelo.conexion.ConexionBD;
 
 /**
  * Servlet de diagnóstico para verificar la conexión a la base de datos

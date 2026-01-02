@@ -7,8 +7,8 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import modelo.Prenda;
-import dao.PrendaDAO;
+import modelo.dao.PrendaDAO;
+import modelo.entidades.Prenda;
 
 /**
  * Servlet para mostrar el catálogo de prendas

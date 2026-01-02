@@ -12,10 +12,9 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
-import dao.PrendaDAO;
-import modelo.Prenda;
-import util.ConexionBD;
+import modelo.conexion.ConexionBD;
+import modelo.dao.PrendaDAO;
+import modelo.entidades.Prenda;
 
 /**
  * Servlet de diagnóstico para verificar la conexión y datos desde Tomcat

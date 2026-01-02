@@ -7,10 +7,10 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import modelo.Prenda;
-import modelo.Talla;
-import dao.PrendaDAO;
-import dao.TallaDAO;
+import modelo.dao.PrendaDAO;
+import modelo.dao.TallaDAO;
+import modelo.entidades.Prenda;
+import modelo.entidades.Talla;
 
 /**
  * Servlet para mostrar los detalles de una prenda

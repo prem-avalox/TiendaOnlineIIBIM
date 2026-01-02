@@ -54,12 +54,12 @@
         <!-- Bolsa -->
         <div id="shopping-bag" onclick="toggleCartSidebar()">
             <i class="far fa-shopping-bag"></i>
-            <% 
+            <%
             @SuppressWarnings("unchecked")
-            java.util.Map<String, modelo.ItemBolsa> bolsaSession = 
-                (java.util.Map<String, modelo.ItemBolsa>) session.getAttribute("bolsa");
-            int cantidadItems = (bolsaSession != null) ? bolsaSession.size() : 0;
-            if (cantidadItems > 0) {
+                        java.util.Map<String, modelo.entidades.ItemBolsa> bolsaSession = 
+                            (java.util.Map<String, modelo.entidades.ItemBolsa>) session.getAttribute("bolsa");
+                        int cantidadItems = (bolsaSession != null) ? bolsaSession.size() : 0;
+                        if (cantidadItems > 0) {
             %>
                 <span class="cart-badge"><%= cantidadItems %></span>
             <% } %>

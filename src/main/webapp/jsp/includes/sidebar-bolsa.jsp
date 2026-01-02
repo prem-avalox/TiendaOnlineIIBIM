@@ -2,7 +2,7 @@
 <%@ page import="java.util.Map" %>
 <%@ page import="java.util.Collection" %>
 <%@ page import="java.math.BigDecimal" %>
-<%@ page import="modelo.ItemBolsa" %>
+<%@ page import="modelo.entidades.ItemBolsa" %>
 
 <!-- Cart Sidebar - Estilo Clothing Store -->
 <div class="cart-sidebar" id="cartSidebar">
