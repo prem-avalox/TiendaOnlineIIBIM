@@ -63,7 +63,22 @@ public class PrendaDAO {
     }
 
     public List<Prenda> getListaPrendas(String nombre) {
-        return null;
+        EntityManager em = emf.createEntityManager();
+        List<Prenda> resultados = null;
+        try {
+            String jpql = "SELECT p FROM Prenda p WHERE p.nombrePrenda LIKE ?1";
+            
+            resultados = em.createQuery(jpql, Prenda.class)
+                           .setParameter(1, "%" + nombre + "%")
+                           .getResultList();
+                           
+        } catch (Exception e) {
+            System.out.println("Error en búsqueda por nombre: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            em.close();
+        }
+        return resultados;
     }
 
     public List<Prenda> filtrarPrenda(Talla tamano,

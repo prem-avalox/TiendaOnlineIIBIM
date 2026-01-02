@@ -72,21 +72,50 @@ public class VerCatalogoController extends HttpServlet {
 		System.out.println("Entrando al listar del VerCatalogoController");
 		// 1. Obtener los parametros
 		
-		// 2. Hablar con el modelo
-		PrendaDAO prendaDAO = new PrendaDAO();
-		List<Prenda> prendas = prendaDAO.getListaPrendas();
-		// 3. Llamar a la vista
-		req.setAttribute("prendas", prendas);
-		req.getRequestDispatcher("jsp/catalogo.jsp").forward(req, resp);
+		try {
+	        // 2. hablar con el modelo
+	        PrendaDAO prendaDAO = new PrendaDAO();
+	        List<Prenda> prendas = prendaDAO.getListaPrendas();
+	        
+	        // Validar si se obtuvieron resultados
+	        if (prendas != null && !prendas.isEmpty()) {
+	            // Paso 1.2: listar prendas
+	            req.setAttribute("prendas", prendas);
+	        } else {
+	            // Paso 1.3: presentar mensaje de error si la lista falla
+	            req.setAttribute("mensajeError", "No hay prendas.");
+	        }
+	    } catch (Exception e) {
+	        // Paso 1.3: Captura de excepción y envío de mensaje
+	        req.setAttribute("mensajeError", "Error interno al procesar el catálogo: " + e.getMessage());
+	    }
+
+	    // 3. Llamar a la vista (siempre a catalogo.jsp)
+	    req.getRequestDispatcher("jsp/catalogo.jsp").forward(req, resp);
 	}
 
 	private void buscarPrenda(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		System.out.println("hola buscar prenda");
+		System.out.println("entrando al buscarPrenda del contoller catalogo");
 		// 1. Obtener los parametros
-		// 2. Hablar con el modelo
+		String nombreBusqueda = req.getParameter("nombre");
+		try {
+			// 2. Hablar con el modelo
+			PrendaDAO prendaDAO = new PrendaDAO();
+			List<Prenda> prendasEncontradas = prendaDAO.getListaPrendas(nombreBusqueda);
+			
+			//validar el resultado
+			if(prendasEncontradas != null && !prendasEncontradas.isEmpty()) {
+				req.setAttribute("prendas", prendasEncontradas);
+			} else {
+				req.setAttribute("mensajeError", "No se encontraron prendas con el nombre: " + nombreBusqueda);
+			}
+
+		} catch (Exception e) {
+			req.setAttribute("mensajeError", "Error interno al buscar prendas: " + e.getMessage());
+		}
 		// 3. Llamar a la vista
-		resp.sendRedirect("jsp/catalogo.jsp");
-	}
+		req.getRequestDispatcher("jsp/catalogo.jsp").forward(req, resp);
+}
 
 	private void seleccionarFiltros(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {

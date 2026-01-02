@@ -1,25 +1,19 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core"%>
 
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
-</head>
-<body>
-
-<div id="sidebarCategoria" style="display:none; border: 1px solid #ccc; padding: 10px; width: 200px;">
-    <!-- CONTENIDO ACTUAL DEL SIDEBAR -->
-    <h3>Categorías</h3>
-		<ul style="list-style: none; padding: 0;">
-			<li><a href="#">Camisetas</a></li>
-			<li><a href="#">Pantalones</a></li>
-			<li><a href="#">Calzado</a></li>
-			<li><a href="#">Accesorios</a></li>
-		</ul>
-</div>
-
-</body>
-</html>
+<aside id="sidebar" class="sidebar">
+    <div class="sidebar-header">
+        <h2>CATEGORÍAS</h2>
+        <label for="toggle-sidebar" class="close-btn">
+            <i class="fas fa-times"></i>
+        </label>
+    </div>
+    
+    <ul class="sidebar-menu">
+        <li><a href="VerCatalogoController?ruta=listar" class="active-category">Ver Todo</a></li>
+        <li><a href="VerCatalogoController?ruta=categoria&id=CAMISAS">Camisas</a></li>
+        <li><a href="VerCatalogoController?ruta=categoria&id=PANTALONES">Pantalones</a></li>
+        <li><a href="VerCatalogoController?ruta=categoria&id=CALZADO">Calzado</a></li>
+        <li><a href="VerCatalogoController?ruta=categoria&id=ACCESORIOS">Accesorios</a></li>
+    </ul>
+</aside>
