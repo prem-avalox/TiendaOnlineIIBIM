@@ -23,15 +23,9 @@ public class StockTalla implements Serializable {
     @JoinColumn(name = "idPrenda", nullable = false)
     private Prenda prenda;
 
-    // 0..* Tallas (enum) por StockTalla
-    @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(
-        name = "StockTalla_Talla",
-        joinColumns = @JoinColumn(name = "idStockTalla")
-    )
     @Enumerated(EnumType.STRING)
     @Column(name = "talla", nullable = false)
-    private List<Talla> tallas;
+    private Talla talla;
 
     public StockTalla() {}
 
@@ -41,7 +35,7 @@ public class StockTalla implements Serializable {
 		super();
 		this.idStockTalla = idStockTalla;
 		this.cantidad = cantidad;
-		this.tallas = tallas;
+		this.talla = talla;
 	}
 
 	public int getIdStockTalla() {
@@ -60,17 +54,17 @@ public class StockTalla implements Serializable {
 		this.cantidad = cantidad;
 	}
 
-	public List<Talla> getTallas() {
-		return tallas;
-	}
+	public Talla getTalla() {
+        return talla;
+    }
 
-	public void setTallas(List<Talla> tallas) {
-		this.tallas = tallas;
-	}
+    public void setTalla(Talla talla) {
+        this.talla = talla;
+    }
 
 	@Override
 	public String toString() {
-		return "StockTalla [idStockTalla=" + idStockTalla + ", cantidad=" + cantidad + ", tallas=" + tallas + "]";
+		return "StockTalla [idStockTalla=" + idStockTalla + ", cantidad=" + cantidad + ", talla=" + talla + "]";
 	}
 	
 	

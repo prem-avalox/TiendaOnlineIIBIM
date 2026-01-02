@@ -27,7 +27,9 @@ public class ItemBolsa implements Serializable {
 	@JoinColumn(name = "prenda_id")
 	private Prenda prenda;
 
-	
+	@ManyToOne
+	@JoinColumn(name = "idBolsa", nullable = false) 
+	private Bolsa bolsa; 
 	
 	
 	// Constructores
@@ -81,6 +83,14 @@ public class ItemBolsa implements Serializable {
 
 	public void setPrenda(Prenda prenda) {
 		this.prenda = prenda;
+	}
+	
+	public Bolsa getBolsa() {
+	    return bolsa;
+	}
+
+	public void setBolsa(Bolsa bolsa) {
+	    this.bolsa = bolsa;
 	}
 
 

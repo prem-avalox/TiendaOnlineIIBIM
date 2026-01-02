@@ -13,11 +13,19 @@ public class ORMTest {
 		EntityManagerFactory emf = Persistence.createEntityManagerFactory("persistencia");
 		EntityManager em = emf.createEntityManager();
 		
-		//Insertar
-		Usuario user = new Usuario (0, "user", "user@gmail.com", "1234", null);
-		
+		Bolsa miBolsa = new Bolsa();
+		miBolsa.setPrecioTotal(0.0);
+
+		// 2. Crear el Usuario y ASIGNARLE la bolsa
+		Usuario miUsuario = new Usuario();
+		miUsuario.setNombreUsuario("user");
+		miUsuario.setEmail("user@gmail.com");
+		miUsuario.setContrasena("1234");
+		miUsuario.setBolsa(miBolsa); // <--- ESTO ES LO QUE FALTA O ESTÁ LLEGANDO NULL
+
+		// 3. Persistir
 		em.getTransaction().begin();
-		em.persist(user);
+		em.persist(miUsuario); // Gracias al CascadeType.ALL en Usuario, persistirá la Bolsa automáticamente
 		em.getTransaction().commit();
 	}
 

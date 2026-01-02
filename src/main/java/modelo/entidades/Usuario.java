@@ -30,19 +30,24 @@ public class Usuario implements Serializable {
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "idBolsa", nullable = false)
     private Bolsa bolsa;
+    
+    @Column(name = "isAdmin", nullable = false)
+    private boolean isAdmin = false; // Por defecto es falso (usuario normal)
+
 	
 	// Constructores
 	public Usuario() {
 	}
 
-	public Usuario(int idUsuario, String nombreUsuario, String email, String contrasena, Bolsa bolsa) {
-		super();
-		this.idUsuario = idUsuario;
-		this.nombreUsuario = nombreUsuario;
-		this.email = email;
-		this.contrasena = contrasena;
-		this.bolsa = bolsa;
-	}
+
+    public Usuario(int idUsuario, String nombreUsuario, String email, String contrasena, Bolsa bolsa, boolean isAdmin) {
+        this.idUsuario = idUsuario;
+        this.nombreUsuario = nombreUsuario;
+        this.email = email;
+        this.contrasena = contrasena;
+        this.bolsa = bolsa;
+        this.isAdmin = isAdmin;
+    }
 
 	public int getIdUsuario() {
 		return idUsuario;
@@ -85,6 +90,13 @@ public class Usuario implements Serializable {
 		this.bolsa = bolsa;
 	}
 
+	public boolean isIsAdmin() {
+		return isAdmin; 
+	}
+    public void setIsAdmin(boolean isAdmin) {
+    	this.isAdmin = isAdmin; 
+    }
+    
 	@Override
 	public String toString() {
 		return "Usuario [idUsuario=" + idUsuario + ", nombreUsuario=" + nombreUsuario + ", email=" + email

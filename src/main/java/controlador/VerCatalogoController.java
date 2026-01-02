@@ -18,31 +18,74 @@ public class VerCatalogoController extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        this.ruteador(req, resp);
 
 	}
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
+        this.ruteador(req, resp);
 	}
 
+	private void ruteador(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+
+        String ruta = (req.getParameter("ruta") != null)? req.getParameter("ruta"): "listar";
+
+        switch (ruta) {
+            case "listar":
+                this.listar(req, resp);
+                break;
+
+            case "buscar":
+                this.buscarPrenda(req, resp);
+                break;
+
+            case "filtros":
+                this.seleccionarFiltros(req, resp);
+                break;
+
+            case "categorias":
+                this.desplegarCategorias(req, resp);
+                break;
+
+            case "categoria":
+                this.seleccionarCategoria(req, resp);
+                break;
+
+            case "detalle":
+                this.seleccionarPrenda(req, resp);
+                break;
+
+            default:
+                this.listar(req, resp);
+                break;
+        }
+    }
+
+
+	
 	private void listar(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		System.out.println("Entrando al listar del VerCatalogoController");
 		// 1. Obtener los parametros
 		// 2. Hablar con el modelo
 		// 3. Llamar a la vista
+		resp.sendRedirect("jsp/catalogo.jsp");
 	}
 
 	private void buscarPrenda(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		// 1. Obtener los parametros
 		// 2. Hablar con el modelo
 		// 3. Llamar a la vista
+		resp.sendRedirect("jsp/catalogo.jsp");
 	}
 
-	private void seleccionarFlitros(HttpServletRequest req, HttpServletResponse resp)
+	private void seleccionarFiltros(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		// 1. Obtener los parametros
 		// 2. Hablar con el modelo
 		// 3. Llamar a la vista
+		resp.sendRedirect("jsp/catalogo.jsp");
 	}
 
 	private void desplegarCategorias(HttpServletRequest req, HttpServletResponse resp)
@@ -50,6 +93,7 @@ public class VerCatalogoController extends HttpServlet {
 		// 1. Obtener los parametros
 		// 2. Hablar con el modelo
 		// 3. Llamar a la vista
+		resp.sendRedirect("jsp/sidebar_categoria.jsp");
 	}
 
 	private void seleccionarCategoria(HttpServletRequest req, HttpServletResponse resp)
@@ -57,6 +101,8 @@ public class VerCatalogoController extends HttpServlet {
 		// 1. Obtener los parametros
 		// 2. Hablar con el modelo
 		// 3. Llamar a la vista
+		resp.sendRedirect("jsp/catalogo.jsp");
+
 	}
 
 	private void seleccionarPrenda(HttpServletRequest req, HttpServletResponse resp)
@@ -64,6 +110,7 @@ public class VerCatalogoController extends HttpServlet {
 		// 1. Obtener los parametros
 		// 2. Hablar con el modelo
 		// 3. Llamar a la vista
+		resp.sendRedirect("jsp/prenda.jsp");
 	}
 
 }
