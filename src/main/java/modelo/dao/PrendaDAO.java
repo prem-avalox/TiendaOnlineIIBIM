@@ -6,6 +6,7 @@ import java.util.List;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
+import jakarta.persistence.TypedQuery;
 import modelo.entidades.Categoria;
 import modelo.entidades.Prenda;
 import modelo.entidades.StockTalla;
@@ -81,12 +82,43 @@ public class PrendaDAO {
         return resultados;
     }
 
-    public List<Prenda> filtrarPrenda(Talla tamano,
-                                      String color,
-                                      String corte) {
-        return null;
-    }
+    public List<Prenda> filtrarPrenda(String tallaStr, String color, String corte) {
+        EntityManager em = emf.createEntityManager();
+        List<Prenda> resultados = null;
+        try {
+            StringBuilder jpql = new StringBuilder("SELECT DISTINCT p FROM Prenda p JOIN p.stockTallas s WHERE 1=1");
+            
+            // 1. manejo de Talla (Conversión de String a Enum Talla)
+            if (tallaStr != null && !tallaStr.isEmpty()) {
+                jpql.append(" AND s.talla = :talla");
+            }
+            if (color != null && !color.isEmpty()) {
+                jpql.append(" AND p.color = :color");
+            }
+            if (corte != null && !corte.isEmpty()) {
+                jpql.append(" AND p.corte = :corte");
+            }
 
+            TypedQuery<Prenda> query = em.createQuery(jpql.toString(), Prenda.class);
+
+            // 2. asignación de parámetros con conversión segura
+            if (tallaStr != null && !tallaStr.isEmpty()) {
+                // se convierte el String a Enum Talla
+                query.setParameter("talla", modelo.entidades.Talla.valueOf(tallaStr));
+            }
+            if (color != null && !color.isEmpty()) query.setParameter("color", color);
+            if (corte != null && !corte.isEmpty()) query.setParameter("corte", corte);
+
+            resultados = query.getResultList();
+        } catch (Exception e) {
+            System.out.println("Error en filtrarPrenda: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            em.close();
+        }
+        return resultados;
+    }
+    
     public Categoria getCategoria() {
         return null;
     }

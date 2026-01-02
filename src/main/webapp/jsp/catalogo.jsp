@@ -52,6 +52,7 @@
     <%@ include file="sidebar_categoria.jsp" %>
     <label id="overlay" class="overlay" for="toggle-sidebar"></label>
 
+	<!-- seccion para aplicar filtros -->
     <nav class="category-nav-bar">
         <form action="VerCatalogoController" method="get">
             <input type="hidden" name="ruta" value="filtros">

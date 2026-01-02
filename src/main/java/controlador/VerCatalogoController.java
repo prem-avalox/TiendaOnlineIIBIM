@@ -119,11 +119,29 @@ public class VerCatalogoController extends HttpServlet {
 
 	private void seleccionarFiltros(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
+		System.out.println("entrando a seleccionarFiltros del controller catalogo");
 		// 1. Obtener los parametros
-		// 2. Hablar con el modelo
+		String talla = req.getParameter("talla");
+		String color = req.getParameter("color");
+		String corte = req.getParameter("corte");
+		
+		try {
+	        // 2. Hablar con el modelo 
+	        PrendaDAO prendaDAO = new PrendaDAO();
+	        List<Prenda> prendasFiltradas = prendaDAO.filtrarPrenda(talla, color, corte);
+	        
+	        //validar el resultado
+	        if (prendasFiltradas != null && !prendasFiltradas.isEmpty()) {
+	            req.setAttribute("prendas", prendasFiltradas); 
+	        } else {
+	            req.setAttribute("mensajeError", "No hay prendas que coincidan con los filtros seleccionados.");
+	        }
+	    } catch (Exception e) {
+	        req.setAttribute("mensajeError", "Error al aplicar filtros: " + e.getMessage());
+	    }
+		
 		// 3. Llamar a la vista
-		resp.sendRedirect("jsp/catalogo.jsp");
-	}
+		req.getRequestDispatcher("jsp/catalogo.jsp").forward(req, resp);	}
 
 	private void desplegarCategorias(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
