@@ -6,7 +6,6 @@ import java.util.List;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
-import jakarta.persistence.TypedQuery;
 import modelo.entidades.Categoria;
 import modelo.entidades.Prenda;
 import modelo.entidades.StockTalla;
@@ -14,143 +13,94 @@ import modelo.entidades.Talla;
 
 public class PrendaDAO {
 
-    private Connection conexion;
+	private Connection conexion;
 
+	private EntityManagerFactory emf;
 
-    private EntityManagerFactory emf;
+	public PrendaDAO() {
+		this.emf = Persistence.createEntityManagerFactory("persistencia");
+	}
 
-    public PrendaDAO() {
-        this.emf = Persistence.createEntityManagerFactory("persistencia");
-    }
+	public Prenda buscarPrenda(int id) {
+		return null;
+	}
 
+	public boolean insertar(Prenda prenda) {
+		return false;
+	}
 
-    public boolean insertar(Prenda prenda) {
-        return false;
-    }
+	public boolean actualizar(Prenda prenda) {
+		return false;
+	}
 
-    public boolean actualizar(Prenda prenda) {
-        return false;
-    }
+	public boolean eliminar(int id) {
+		return false;
+	}
 
-    public boolean eliminar(int id) {
-        return false;
-    }
+	// Métodos de negocio
 
-    
-    // Métodos de negocio
+	public void guardar(String nombre, String descripcion, Categoria categoria, double precio,
+			List<StockTalla> stockTallas, String imagen, String color, String corte) {
 
-    public void guardar(String nombre,
-                        String descripcion,
-                        Categoria categoria,
-                        double precio,
-                        List<StockTalla> stockTallas,
-                        String imagen) {
-    }
+		EntityManager em = emf.createEntityManager();
+		try {
+			em.getTransaction().begin();
 
-    public List<Prenda> getListaPrendas() {
-        EntityManager em = emf.createEntityManager();
-        try {
-            // JPQL: Selecciona el objeto completo Prenda
-            return em.createQuery("SELECT p FROM Prenda p", Prenda.class).getResultList();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        } finally {
-            em.close();
-        }
-    }
+			Prenda prenda = new Prenda();
+			prenda.setNombrePrenda(nombre);
+			prenda.setDescripcion(descripcion);
+			prenda.setCategoria(categoria);
+			prenda.setPrecio(precio);
+			prenda.setImagen(imagen);
+			prenda.setColor(color);
+			prenda.setCorte(corte);
 
-    public List<Prenda> getListaPrendas(String nombre) {
-        EntityManager em = emf.createEntityManager();
-        List<Prenda> resultados = null;
-        try {
-            String jpql = "SELECT p FROM Prenda p WHERE p.nombrePrenda LIKE ?1";
-            
-            resultados = em.createQuery(jpql, Prenda.class)
-                           .setParameter(1, "%" + nombre + "%")
-                           .getResultList();
-                           
-        } catch (Exception e) {
-            System.out.println("Error en búsqueda por nombre: " + e.getMessage());
-            e.printStackTrace();
-        } finally {
-            em.close();
-        }
-        return resultados;
-    }
+// Relación bidireccional (muy importante)
+			if (stockTallas != null) {
+				for (StockTalla st : stockTallas) {
+					st.setPrenda(prenda);
+				}
+				prenda.setStockTallas(stockTallas);
+			}
 
-    public List<Prenda> filtrarPrenda(String tallaStr, String color, String corte) {
-        EntityManager em = emf.createEntityManager();
-        List<Prenda> resultados = null;
-        try {
-            StringBuilder jpql = new StringBuilder("SELECT DISTINCT p FROM Prenda p JOIN p.stockTallas s WHERE 1=1");
-            
-            // 1. manejo de Talla (Conversión de String a Enum Talla)
-            if (tallaStr != null && !tallaStr.isEmpty()) {
-                jpql.append(" AND s.talla = :talla");
-            }
-            if (color != null && !color.isEmpty()) {
-                jpql.append(" AND p.color = :color");
-            }
-            if (corte != null && !corte.isEmpty()) {
-                jpql.append(" AND p.corte = :corte");
-            }
+			em.persist(prenda); // Cascade.ALL guardará StockTalla también
+			em.getTransaction().commit();
 
-            TypedQuery<Prenda> query = em.createQuery(jpql.toString(), Prenda.class);
+		} catch (Exception e) {
+			if (em.getTransaction().isActive())
+				em.getTransaction().rollback();
+			throw e;
+		} finally {
+			em.close();
+		}
+	}
 
-            // 2. asignación de parámetros con conversión segura
-            if (tallaStr != null && !tallaStr.isEmpty()) {
-                // se convierte el String a Enum Talla
-                query.setParameter("talla", modelo.entidades.Talla.valueOf(tallaStr));
-            }
-            if (color != null && !color.isEmpty()) query.setParameter("color", color);
-            if (corte != null && !corte.isEmpty()) query.setParameter("corte", corte);
+	public List<Prenda> getListaPrendas() {
+		EntityManager em = emf.createEntityManager();
+		try {
+			// JPQL: Selecciona el objeto completo Prenda
+			return em.createQuery("SELECT p FROM Prenda p", Prenda.class).getResultList();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		} finally {
+			em.close();
+		}
+	}
 
-            resultados = query.getResultList();
-        } catch (Exception e) {
-            System.out.println("Error en filtrarPrenda: " + e.getMessage());
-            e.printStackTrace();
-        } finally {
-            em.close();
-        }
-        return resultados;
-    }
-    
+	public List<Prenda> getListaPrendas(String nombre) {
+		return null;
+	}
 
-    public List<Prenda> buscarPrendas(String idCategoriaStr) {
-        EntityManager em = emf.createEntityManager();
-        List<Prenda> resultados = null;
-        try {
-            // convertir string a enum
-            Categoria categoriaEnum = Categoria.valueOf(idCategoriaStr);
+	public List<Prenda> filtrarPrenda(Talla tamano, String color, String corte) {
+		return null;
+	}
 
-            // JPQL: Buscamos prendas filtrando por el objeto Enum
-            String jpql = "SELECT p FROM Prenda p WHERE p.categoria = :cat";
-            
-            resultados = em.createQuery(jpql, Prenda.class)
-                           .setParameter("cat", categoriaEnum)
-                           .getResultList();
-                           
-        } catch (Exception e) {
-            System.out.println("Error al buscar prendas por categoría: " + e.getMessage());
-            e.printStackTrace();
-        } finally {
-            em.close();
-        }
-        return resultados;
-    }
-    
-    public Prenda buscarPrenda(int idPrenda) {
-        EntityManager em = emf.createEntityManager();
-        Prenda prenda = null;
-        try {
-            // Buscamos la prenda directamente por su ID
-            prenda = em.find(Prenda.class, idPrenda);
-        } catch (Exception e) {
-            System.out.println("Error al buscar detalle de prenda: " + e.getMessage());
-        } finally {
-            em.close();
-        }
-        return prenda;
-    }
+	public Categoria getCategoria() {
+		return null;
+	}
+
+	public List<Prenda> buscarPrendas(Categoria categoria) {
+		return null;
+	}
 }

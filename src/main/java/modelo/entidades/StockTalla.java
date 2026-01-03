@@ -31,7 +31,7 @@ public class StockTalla implements Serializable {
 
 
 
-	public StockTalla(int idStockTalla, int cantidad, List<Talla> tallas) {
+	public StockTalla(int idStockTalla, int cantidad, Talla talla) {
 		super();
 		this.idStockTalla = idStockTalla;
 		this.cantidad = cantidad;

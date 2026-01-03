@@ -16,8 +16,7 @@
         <hr>
         
         <ul>
-            <li><a href="formulario_registro.jsp">Registrar otra prenda</a></li>
-            <li><a href="catalogo.jsp">Volver al catálogo</a></li>
+            <li><a href="formulario_registro_prenda.jsp">Registrar otra prenda</a></li>
         </ul>
     </div>
 </body>
