@@ -10,10 +10,14 @@
     </div>
     
     <ul class="sidebar-menu">
-        <li><a href="VerCatalogoController?ruta=listar" class="active-category">Ver Todo</a></li>
-        <li><a href="VerCatalogoController?ruta=categoria&id=CAMISAS">Camisas</a></li>
-        <li><a href="VerCatalogoController?ruta=categoria&id=PANTALONES">Pantalones</a></li>
-        <li><a href="VerCatalogoController?ruta=categoria&id=CALZADO">Calzado</a></li>
-        <li><a href="VerCatalogoController?ruta=categoria&id=ACCESORIOS">Accesorios</a></li>
-    </ul>
+    <li><a href="VerCatalogoController?ruta=listar" class="active-category">Ver Todo</a></li>
+    
+    <c:forEach var="cat" items="${categorias}">
+        <li>
+            <a href="VerCatalogoController?ruta=categoria&id=${cat}">
+                ${cat.nombreCategoria}
+            </a>
+        </li>
+    </c:forEach>
+</ul>
 </aside>

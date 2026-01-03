@@ -12,13 +12,14 @@
 </head>
 
 <body class="general">
-    <input type="checkbox" id="toggle-sidebar" hidden>
+    <input type="checkbox" id="toggle-sidebar" ${menuAbierto} hidden>
     <input type="checkbox" id="toggle-cart" hidden>
 
     <div class="header">
-        <label for="toggle-sidebar" class="filter-bar-btn">
-            <i class="fas fa-bars"></i>
-        </label>
+    	<!-- boton para abrir el sidebar categorias -->
+        <a href="VerCatalogoController?ruta=categorias" class="filter-bar-btn">
+        <i class="fas fa-bars"></i>
+    </a>
 
         <div class="logo">
             <h1>CLOTHING STORE</h1>
@@ -49,6 +50,7 @@
         </div>
     </div>
 
+	<!-- seccion del sidebar de categorias -->
     <%@ include file="sidebar_categoria.jsp" %>
     <label id="overlay" class="overlay" for="toggle-sidebar"></label>
 

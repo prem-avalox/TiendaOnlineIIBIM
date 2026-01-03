@@ -23,9 +23,6 @@ public class PrendaDAO {
         this.emf = Persistence.createEntityManagerFactory("persistencia");
     }
 
-    public Prenda buscarPrenda(int id) {
-        return null;
-    }
 
     public boolean insertar(Prenda prenda) {
         return false;
@@ -119,11 +116,41 @@ public class PrendaDAO {
         return resultados;
     }
     
-    public Categoria getCategoria() {
-        return null;
-    }
 
-    public List<Prenda> buscarPrendas(Categoria categoria) {
-        return null;
+    public List<Prenda> buscarPrendas(String idCategoriaStr) {
+        EntityManager em = emf.createEntityManager();
+        List<Prenda> resultados = null;
+        try {
+            // convertir string a enum
+            Categoria categoriaEnum = Categoria.valueOf(idCategoriaStr);
+
+            // JPQL: Buscamos prendas filtrando por el objeto Enum
+            String jpql = "SELECT p FROM Prenda p WHERE p.categoria = :cat";
+            
+            resultados = em.createQuery(jpql, Prenda.class)
+                           .setParameter("cat", categoriaEnum)
+                           .getResultList();
+                           
+        } catch (Exception e) {
+            System.out.println("Error al buscar prendas por categoría: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            em.close();
+        }
+        return resultados;
+    }
+    
+    public Prenda buscarPrenda(int idPrenda) {
+        EntityManager em = emf.createEntityManager();
+        Prenda prenda = null;
+        try {
+            // Buscamos la prenda directamente por su ID
+            prenda = em.find(Prenda.class, idPrenda);
+        } catch (Exception e) {
+            System.out.println("Error al buscar detalle de prenda: " + e.getMessage());
+        } finally {
+            em.close();
+        }
+        return prenda;
     }
 }

@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import modelo.dao.PrendaDAO;
+import modelo.entidades.Categoria;
 import modelo.entidades.Prenda;
 
 @WebServlet("/VerCatalogoController")
@@ -141,31 +142,84 @@ public class VerCatalogoController extends HttpServlet {
 	    }
 		
 		// 3. Llamar a la vista
-		req.getRequestDispatcher("jsp/catalogo.jsp").forward(req, resp);	}
+		req.getRequestDispatcher("jsp/catalogo.jsp").forward(req, resp);
+	}
 
 	private void desplegarCategorias(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
-		// 1. Obtener los parametros
-		// 2. Hablar con el modelo
-		// 3. Llamar a la vista
-		resp.sendRedirect("jsp/sidebar_categoria.jsp");
+	        throws ServletException, IOException {
+	    System.out.println("entrando a desplegar categoria del controller catalogo");
+	    //1. Obtener los parametros
+	    
+	    // 2. Hablar con el modelo para las categorías 
+	    Categoria[] categorias = Categoria.values();
+	    req.setAttribute("categorias", categorias);
+	    
+	    //cargar las prendas para que la vista no quede vacía
+	    PrendaDAO prendaDAO = new PrendaDAO();
+	    req.setAttribute("prendas", prendaDAO.getListaPrendas()); 
+	    
+	    // Activar el checkbox del sidebar desde el servidor
+	    req.setAttribute("menuAbierto", "checked");
+
+	    //3. Llamar a la vista 
+	    req.getRequestDispatcher("jsp/catalogo.jsp").forward(req, resp);	
 	}
 
 	private void seleccionarCategoria(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
-		// 1. Obtener los parametros
-		// 2. Hablar con el modelo
-		// 3. Llamar a la vista
-		resp.sendRedirect("jsp/catalogo.jsp");
+	        throws ServletException, IOException {
+	    System.out.println("entrando a seleccionarCategoria del controlador");	    
+	    // . Obtener el parámetro 
+	    String idCategoriaStr = req.getParameter("id");
 
+	    try {
+	        // 2. Hablar con el modelo
+	        PrendaDAO prendaDAO = new PrendaDAO();
+	        List<Prenda> prendasFiltradas = prendaDAO.buscarPrendas(idCategoriaStr);
+
+	        // validar el resultado
+	        if (prendasFiltradas != null && !prendasFiltradas.isEmpty()) {
+	            req.setAttribute("prendas", prendasFiltradas);
+	        } else {
+	            req.setAttribute("mensajeError", "No hay prendas en la categoría seleccionada.");
+	        }
+	        
+	        // Recargar categorías para el sidebar
+	        //req.setAttribute("categorias", Categoria.values());
+
+	    } catch (Exception e) {
+	        req.setAttribute("mensajeError", "Error al procesar la categoría: " + e.getMessage());
+	    }
+
+	    // 3. Llamar a la vista 
+	    req.getRequestDispatcher("jsp/catalogo.jsp").forward(req, resp);
 	}
-
+	
 	private void seleccionarPrenda(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
-		// 1. Obtener los parametros
-		// 2. Hablar con el modelo
-		// 3. Llamar a la vista
-		resp.sendRedirect("jsp/prenda.jsp");
+	        throws ServletException, IOException {
+	    // 1. Obtener los parametros (ID de la prenda seleccionada)
+	    String idStr = req.getParameter("id");
+	    
+	    try {
+	        if (idStr != null) {
+	            int idPrenda = Integer.parseInt(idStr);
+	            
+	            // 2. Hablar con el modelo
+	            PrendaDAO prendaDAO = new PrendaDAO();
+	            Prenda prendaEncontrada = prendaDAO.buscarPrenda(idPrenda);
+	            
+	            if (prendaEncontrada != null) {
+	                // Enviamos el objeto a la página de detalle
+	                req.setAttribute("prenda", prendaEncontrada);
+	            } else {
+	                req.setAttribute("mensajeError", "La prenda solicitada no existe.");
+	            }
+	        }
+	    } catch (NumberFormatException e) {
+	        req.setAttribute("mensajeError", "ID de prenda no válido.");
+	    }
+
+	    // 3. Llamar a la vista (forward para pasar el objeto 'p')
+	    req.getRequestDispatcher("jsp/prenda.jsp").forward(req, resp);
 	}
 
 }
