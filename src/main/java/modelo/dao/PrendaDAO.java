@@ -140,14 +140,17 @@ public class PrendaDAO {
         return resultados;
     }
     
-    public Prenda buscarPrenda(int idPrenda) {
+    public Prenda buscarPrenda(String idStr) {
         EntityManager em = emf.createEntityManager();
         Prenda prenda = null;
         try {
-            // Buscamos la prenda directamente por su ID
-            prenda = em.find(Prenda.class, idPrenda);
-        } catch (Exception e) {
-            System.out.println("Error al buscar detalle de prenda: " + e.getMessage());
+            // convertir String a int
+            int idInt = Integer.parseInt(idStr);
+            
+            // busca por la llave primaria numérica
+            prenda = em.find(Prenda.class, idInt);
+        } catch (NumberFormatException | NullPointerException e) {
+            System.out.println("ID inválido recibido en el DAO: " + idStr);
         } finally {
             em.close();
         }

@@ -196,30 +196,24 @@ public class VerCatalogoController extends HttpServlet {
 	
 	private void seleccionarPrenda(HttpServletRequest req, HttpServletResponse resp)
 	        throws ServletException, IOException {
-	    // 1. Obtener los parametros (ID de la prenda seleccionada)
+	    // 1. Obtener el parámetro tal cual viene (String)
 	    String idStr = req.getParameter("id");
 	    
 	    try {
-	        if (idStr != null) {
-	            int idPrenda = Integer.parseInt(idStr);
-	            
-	            // 2. Hablar con el modelo
-	            PrendaDAO prendaDAO = new PrendaDAO();
-	            Prenda prendaEncontrada = prendaDAO.buscarPrenda(idPrenda);
-	            
-	            if (prendaEncontrada != null) {
-	                // Enviamos el objeto a la página de detalle
-	                req.setAttribute("prenda", prendaEncontrada);
-	            } else {
-	                req.setAttribute("mensajeError", "La prenda solicitada no existe.");
-	            }
+	        // 2. Delegar la búsqueda al DAO pasando el String
+	        PrendaDAO prendaDAO = new PrendaDAO();
+	        Prenda prendaEncontrada = prendaDAO.buscarPrenda(idStr);
+	        
+	        if (prendaEncontrada != null) {
+	            req.setAttribute("prenda", prendaEncontrada); // 
+	        } else {
+	            req.setAttribute("mensajeError", "La prenda no existe.");
 	        }
-	    } catch (NumberFormatException e) {
-	        req.setAttribute("mensajeError", "ID de prenda no válido.");
+	    } catch (Exception e) {
+	        req.setAttribute("mensajeError", "Error al cargar el detalle: " + e.getMessage());
 	    }
 
-	    // 3. Llamar a la vista (forward para pasar el objeto 'p')
+	    // 3. Llamar a la vista
 	    req.getRequestDispatcher("jsp/prenda.jsp").forward(req, resp);
 	}
-
 }
