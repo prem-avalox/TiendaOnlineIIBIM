@@ -5,6 +5,12 @@ function cerrarModal() {
     const modal = document.getElementById('modalExito');
     if (modal) {
         modal.style.display = 'none';
+        
+        // Esto limpia los parámetros de la URL (?ruta=guardar) 
+        // para que si el usuario recarga, no salga el modal de nuevo.
+        const url = new URL(window.location);
+        url.searchParams.set('ruta', 'agregar');
+        window.history.replaceState({}, '', url);
     }
 }
 

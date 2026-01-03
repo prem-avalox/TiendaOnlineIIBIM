@@ -73,16 +73,16 @@
     </div>
 
     <c:if test="${registroExitoso}">
-        <div id="modalExito" class="modal-overlay">
-            <div class="modal-content">
-                <span class="close-btn" onclick="cerrarModal()">&times;</span>
-                <h1>¡Operación Exitosa!</h1>
-                <p>La prenda ha sido registrada correctamente en el sistema.</p>
-                <hr>
-                <button type="button" class="btn-aceptar" onclick="cerrarModal()">Aceptar</button>
+    <div id="modalExito" class="modal-overlay" onclick="cerrarModalExterno(event)">
+        <div class="modal-content">
+            <span class="close-btn-minimal" onclick="cerrarModal()">&times;</span>
+            <div class="modal-body">
+                <h2 class="modal-title">¡Operación Exitosa!</h2>
+                <p class="modal-text">La prenda ha sido registrada correctamente en el sistema.</p>
             </div>
         </div>
-    </c:if>
+    </div>
+</c:if>
 
     <script src="${pageContext.request.contextPath}/js/formulario.js"></script>
 
