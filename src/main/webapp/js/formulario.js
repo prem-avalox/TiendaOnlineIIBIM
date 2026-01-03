@@ -23,3 +23,25 @@ window.onclick = function(event) {
         modal.style.display = "none";
     }
 }
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    
+    if (form) {
+        form.addEventListener('submit', function(event) {
+            const cantidades = document.querySelectorAll('input[name="cantidad"]');
+            let totalStock = 0;
+
+            cantidades.forEach(input => {
+                totalStock += parseInt(input.value) || 0;
+            });
+
+            if (totalStock <= 0) {
+                event.preventDefault(); // Detiene el envío
+                
+                alert("Atención: Debe asignar stock a al menos una talla para registrar la prenda.");
+            }
+        });
+    }
+});
