@@ -10,9 +10,17 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body class="general">
+    <input type="checkbox" id="toggle-cart" hidden>
+    
     <div class="header">
         <a href="VerCatalogoController?ruta=listar" class="filter-bar-btn"><i class="fas fa-arrow-left"></i> Volver</a>
         <div class="logo"><h1>DETALLE</h1></div>
+        
+        <div class="button-container">
+            <label for="toggle-cart" id="shopping-bag" class="icon-link" onclick="cargarBolsa()">
+                <i class="fas fa-briefcase"></i>
+            </label>
+        </div>
     </div>
 
     <div class="prenda-container-detalle">
@@ -68,5 +76,53 @@
             </div>
         </div>
     </div>
+    
+    <%@ include file="sidebar_bolsa.jsp" %>
+    <label id="cart-overlay" class="overlay" for="toggle-cart"></label>
+    
+    <script>
+    // Función para cargar el contenido de la bolsa
+    function cargarBolsa() {
+        fetch('${pageContext.request.contextPath}/VerBolsaController?action=abrirBolsa')
+            .then(response => response.text())
+            .then(html => {
+                // Extraer solo el contenido del cart-content-data
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const content = doc.querySelector('.cart-content-data');
+                
+                if (content) {
+                    document.getElementById('cartContent').innerHTML = content.innerHTML;
+                } else {
+                    // Si no hay contenido específico, usar todo el HTML
+                    document.getElementById('cartContent').innerHTML = html;
+                }
+            })
+            .catch(error => {
+                console.error('Error al cargar la bolsa:', error);
+                document.getElementById('cartContent').innerHTML = `
+                    <div class="empty-cart">
+                        <i class="fas fa-exclamation-triangle empty-icon" style="color: #dc2626;"></i>
+                        <p class="empty-message">Error al cargar la bolsa</p>
+                        <button class="continue-shopping-btn" onclick="cargarBolsa()">Reintentar</button>
+                    </div>
+                `;
+            });
+    }
+    
+    // Función para cambiar la cantidad de un item
+    function cambiarCantidad(idItem, cambio) {
+        // TODO: Implementar endpoint para actualizar cantidad
+        console.log("Cambiar cantidad del item " + idItem + " en " + cambio);
+    }
+    
+    // Función para eliminar un item
+    function eliminarItem(idItem) {
+        if (confirm('¿Estás seguro de eliminar este artículo?')) {
+            // TODO: Implementar endpoint para eliminar item
+            console.log("Eliminar item " + idItem);
+        }
+    }
+    </script>
 </body>
 </html>
