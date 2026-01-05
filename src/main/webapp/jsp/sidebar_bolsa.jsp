@@ -1,74 +1,22 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core"%>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt"%>
 
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-</head>
-<body>
-
-	<div id="sidebarBolsa" style="display: none;">
-		<h3>Mi Bolsa</h3>
-		<p>
-			Tienes <strong>3</strong> prendas
-		</p>
-		<hr>
-
-		<ul>
-			<li><img src="" alt="Military Knit Sweater"
-				width="100">
-				<div>
-					<strong>Military Knit Sweater - Black</strong>
-					<p>$345.00</p>
-					<p>Size: XS</p>
-					<div>
-						<button type="button">-</button>
-						<span>01</span>
-						<button type="button">+</button>
-						<button type="button">Eliminar</button>
-					</div>
-				</div></li>
-			<br>
-
-			<li><img src="" alt="Scandicci Suede Bag" width="100">
-				<div>
-					<strong>Scandicci Suede Slouch Bag - Dark Brown</strong>
-					<p>$530.00</p>
-					<p>Size: ONE SIZE</p>
-					<div>
-						<button type="button">-</button>
-						<span>01</span>
-						<button type="button">+</button>
-						<button type="button">Eliminar</button>
-					</div>
-				</div></li>
-			<br>
-
-			<li><img src="" alt="Marcello Shirt" width="100">
-				<div>
-					<strong>Marcello Shirt V2 - Navy</strong>
-					<p>$370.00 x 2</p>
-					<p>Size: S</p>
-					<div>
-						<button type="button">-</button>
-						<span>02</span>
-						<button type="button">+</button>
-						<button type="button">Eliminar</button>
-					</div>
-				</div></li>
-		</ul>
-
-		<hr>
-		<p>
-			<strong>TOTAL: $1,615.00</strong>
-		</p>
-
-		<div>
-			<button type="button">Vaciar Bolsa</button>
+<!-- SIDEBAR DE LA BOLSA -->
+<aside class="cart-sidebar" id="cartSidebar">
+	<div class="cart-sidebar-header">
+		<h3>MI BOLSA</h3>
+		<label for="toggle-cart" class="close-cart-btn">
+			<i class="fas fa-times"></i>
+		</label>
+	</div>
+	
+	<div class="cart-sidebar-content" id="cartContent">
+		<!-- Contenido se cargará dinámicamente -->
+		<div class="empty-cart">
+			<i class="fas fa-shopping-bag empty-icon"></i>
+			<p class="empty-message">Cargando...</p>
 		</div>
 	</div>
-
-</body>
-</html>
+</aside>

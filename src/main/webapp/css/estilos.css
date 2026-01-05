@@ -664,3 +664,373 @@ textarea.form-control {
 .close-btn-minimal:hover {
     color: #000;
 }
+
+/* ==========================================================================
+   10. SIDEBAR DE LA BOLSA (CARRITO DE COMPRAS)
+   ========================================================================== */
+
+/* Overlay para cerrar el sidebar al hacer click fuera */
+#cart-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1999;
+}
+
+#toggle-cart:checked ~ #cart-overlay {
+    display: block;
+}
+
+/* Sidebar de la bolsa */
+.cart-sidebar {
+    position: fixed;
+    top: 0;
+    right: -450px; /* Oculto por defecto */
+    width: 450px;
+    height: 100vh;
+    background: white;
+    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+    z-index: 2000;
+    transition: right 0.3s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+#toggle-cart:checked ~ .cart-sidebar {
+    right: 0; /* Muestra el sidebar */
+}
+
+/* Header del sidebar */
+.cart-sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 25px 30px;
+    border-bottom: 1px solid var(--color-acento);
+    background: white;
+}
+
+.cart-sidebar-header h3 {
+    font-family: var(--fuente-texto);
+    font-size: 20px;
+    letter-spacing: 3px;
+    margin: 0;
+    color: var(--color-primario);
+    font-weight: 400;
+}
+
+.close-cart-btn {
+    cursor: pointer;
+    font-size: 24px;
+    color: #666;
+    transition: color 0.2s;
+}
+
+.close-cart-btn:hover {
+    color: #000;
+}
+
+/* Contenido del sidebar con scroll */
+.cart-sidebar-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px 30px;
+}
+
+/* Resumen de items */
+.cart-summary {
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--color-acento);
+}
+
+.cart-summary p {
+    font-family: var(--fuente-texto);
+    font-size: 14px;
+    color: var(--color-precio);
+    margin: 0;
+}
+
+/* Lista de items */
+.cart-items-list {
+    margin-bottom: 20px;
+}
+
+/* Item individual del carrito */
+.cart-item {
+    display: flex;
+    gap: 15px;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--color-acento);
+}
+
+.cart-item:last-child {
+    border-bottom: none;
+}
+
+.cart-item-image {
+    width: 100px;
+    height: 100px;
+    flex-shrink: 0;
+}
+
+.cart-item-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border: 1px solid var(--color-acento);
+}
+
+.cart-item-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.cart-item-name {
+    font-family: var(--fuente-texto);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-primario);
+    margin: 0;
+    line-height: 1.4;
+}
+
+.cart-item-color {
+    font-weight: 400;
+    color: var(--color-precio);
+}
+
+.cart-item-price,
+.cart-item-size,
+.cart-item-subtotal {
+    font-family: var(--fuente-precio);
+    font-size: 13px;
+    color: var(--color-precio);
+    margin: 0;
+}
+
+.cart-item-quantity {
+    color: #999;
+}
+
+.cart-item-subtotal {
+    font-weight: 600;
+    color: var(--color-primario);
+}
+
+/* Acciones del item (cantidad y eliminar) */
+.cart-item-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.quantity-btn {
+    width: 30px;
+    height: 30px;
+    border: 1px solid var(--color-acento);
+    background: white;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.2s;
+}
+
+.quantity-btn:hover {
+    background: var(--color-primario);
+    color: white;
+    border-color: var(--color-primario);
+}
+
+.quantity-display {
+    min-width: 30px;
+    text-align: center;
+    font-family: var(--fuente-precio);
+    font-size: 14px;
+}
+
+.remove-btn {
+    margin-left: auto;
+    background: transparent;
+    border: none;
+    color: #dc2626;
+    cursor: pointer;
+    font-size: 12px;
+    font-family: var(--fuente-texto);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: color 0.2s;
+}
+
+.remove-btn:hover {
+    color: #991b1b;
+}
+
+/* Total de la compra */
+.cart-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 0;
+    border-top: 2px solid var(--color-primario);
+    margin-top: 20px;
+}
+
+.total-label {
+    font-family: var(--fuente-texto);
+    font-size: 16px;
+    letter-spacing: 2px;
+    color: var(--color-primario);
+    margin: 0;
+    font-weight: 600;
+}
+
+.total-amount {
+    font-family: var(--fuente-precio);
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--color-primario);
+    margin: 0;
+}
+
+/* Botones de acción */
+.cart-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.clear-cart-btn,
+.checkout-btn {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    cursor: pointer;
+    font-family: var(--fuente-texto);
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    transition: all 0.3s;
+}
+
+.clear-cart-btn {
+    background: white;
+    color: var(--color-primario);
+    border: 1px solid var(--color-primario);
+}
+
+.clear-cart-btn:hover {
+    background: #f5f5f5;
+}
+
+.checkout-btn {
+    background: var(--color-primario);
+    color: white;
+}
+
+.checkout-btn:hover {
+    background: var(--color-boton-animacion);
+}
+
+/* Estado: Bolsa vacía */
+.empty-cart {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    text-align: center;
+}
+
+.empty-icon {
+    font-size: 60px;
+    color: var(--color-acento);
+    margin-bottom: 20px;
+}
+
+.empty-message {
+    font-family: var(--fuente-texto);
+    font-size: 18px;
+    color: var(--color-primario);
+    margin: 0 0 10px 0;
+}
+
+.empty-submessage {
+    font-family: var(--fuente-precio);
+    font-size: 14px;
+    color: var(--color-precio);
+    margin: 0 0 30px 0;
+}
+
+.continue-shopping-btn {
+    padding: 15px 40px;
+    background: var(--color-primario);
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-family: var(--fuente-texto);
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    transition: background 0.3s;
+}
+
+.continue-shopping-btn:hover {
+    background: var(--color-boton-animacion);
+}
+
+/* Responsive para el sidebar */
+@media (max-width: 768px) {
+    .cart-sidebar {
+        width: 100%;
+        right: -100%;
+    }
+}
+
+
+/*11. diseño para la lsita de las prendaas*/
+.admin-container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.admin-table th {
+    background-color: var(--color-primario);
+    color: white;
+    padding: 15px;
+    text-align: left;
+    font-family: var(--fuente-texto);
+}
+
+.admin-table td {
+    padding: 15px;
+    border-bottom: 1px solid var(--color-acento);
+    font-family: var(--fuente-texto);
+}
+
+.img-mini {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.btn-edit { color: #2ecc71; font-size: 1.2rem; }
+.btn-delete { color: #e74c3c; font-size: 1.2rem; }
