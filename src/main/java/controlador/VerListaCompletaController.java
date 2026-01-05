@@ -54,42 +54,38 @@ public class VerListaCompletaController extends HttpServlet {
 	private void listarPrendas(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		System.out.println("Entrando al listar del ver lista completa controller");
 
-		// 1. Obtener parámetros (No se requieren filtros para la lista completa del admin)
-	    
+		// 1. Obtener parámetros 
+		
 	    try {
-	        // 2. Hablar con el modelo (Paso 1.1 del diagrama)
+	        // 2. Hablar con el modelo 
 	        PrendaDAO prendaDAO = new PrendaDAO();
 	        List<Prenda> lista = prendaDAO.getListaPrendas();
 	        
-	        // 3. Pasar los datos a la vista (Paso 1.2 del diagrama)
 	        req.setAttribute("prendas", lista);
 	        
 	    } catch (Exception e) {
 	        req.setAttribute("mensajeError", "Error al cargar la lista: " + e.getMessage());
 	    }
 	    
-	    // Llamar a la vista listar_prendas.jsp
+	    //3. Llamar a la vista listar_prendas.jsp
 	    req.getRequestDispatcher("jsp/lista_prendas.jsp").forward(req, resp);
 	}
 
 	private void editar(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-	    // 1. Obtener parámetros (el ID de la fila seleccionada en listar_prendas.jsp)
+	    // 1. Obtener parámetros
 	    String idStr = req.getParameter("id");
 	    
 	    try {
-	        // 2. Hablar con el modelo (Paso 2.1 del diagrama)
+	        // 2. Hablar con el modelo
 	        PrendaDAO prendaDAO = new PrendaDAO();
-	        Prenda prenda = prendaDAO.buscarPrenda(idStr); // Reutilizamos el método de búsqueda
+	        Prenda prenda = prendaDAO.buscarPrenda(idStr); 
 	        
 	        if (prenda != null) {
-	            // Cargamos los datos para la vista (Paso 2.2)
 	            req.setAttribute("p", prenda);
 	            
-	            // Cargamos los Enums para los select y la lista de stock
 	            req.setAttribute("categorias", modelo.entidades.Categoria.values());
 	            req.setAttribute("tallasDisponibles", modelo.entidades.Talla.values());
 	            
-	            // 3. Llamar a la vista datos_prenda.jsp
 	            req.getRequestDispatcher("jsp/datos_prenda.jsp").forward(req, resp);
 	        } 
 	    } catch (Exception e) {
@@ -98,7 +94,7 @@ public class VerListaCompletaController extends HttpServlet {
 	}
 	
 	private void guardar(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-	    // 1. Obtener parámetros (el ID llega como String desde el campo oculto)
+	    // 1. Obtener parámetros 
 	    String idPrendaStr = req.getParameter("idPrenda");
 	    String imagen = req.getParameter("imagen");
 	    String nombre = req.getParameter("nombrePrenda");
@@ -125,11 +121,11 @@ public class VerListaCompletaController extends HttpServlet {
 	            }
 	        }
 
-	        // 2. Hablar con el modelo pasando el ID como String (Paso 3.1 del diagrama)
+	        // 2. Hablar con el modelo 
 	        PrendaDAO prendaDAO = new PrendaDAO();
 	        prendaDAO.actualizar(idPrendaStr, nombre, descripcion, categoria, precio, listaStock, imagen, color, corte);
 
-	        // 3. Éxito: Activar modal
+	        // 3. El controlador presenta la lista
 	        req.setAttribute("registroExitoso", true);
 	        this.listarPrendas(req, resp); 
 
@@ -140,25 +136,23 @@ public class VerListaCompletaController extends HttpServlet {
 
 	private void confirmarEliminacion(HttpServletRequest req, HttpServletResponse resp)
 	        throws ServletException, IOException {
-	    // 1. Obtener parámetros (ID de la prenda y la respuesta del modal)
+	    // 1. Obtener parámetros 
 	    String idStr = req.getParameter("id");
-	    String respuesta = req.getParameter("confirm"); // "si" o "no"
+	    String respuesta = req.getParameter("confirm"); 
 
 	    try {
-	        // Bloque Alt: [resp = true] (Si el usuario confirmó en el modal)
 	        if ("si".equals(respuesta) && idStr != null) {
-	            // 2. Hablar con el modelo (Paso 5.2: eliminar)
+	            // 2. Hablar con el modelo 
 	            PrendaDAO dao = new PrendaDAO();
 	            boolean eliminado = dao.eliminar(Integer.parseInt(idStr));
 	            
 	            if (eliminado) {
-	                // Paso 5.1: Presentar mensaje de éxito (exito2)
+	                
 	                req.setAttribute("mensajeExito2", "Prenda eliminada correctamente.");
 	            }
 	        }
 	        
-	        // 3. Llamar a la vista (Paso 5.3: presentar lista actualizada)
-	        // Tanto si fue "si" como "no", regresamos a la lista completa
+	        // 3. Llamar a la vista 
 	        this.listarPrendas(req, resp);
 
 	    } catch (Exception e) {
