@@ -53,6 +53,7 @@ public class VerBolsaController extends HttpServlet {
 	 * Según el diagrama de secuencia: Usuario -> abrirBolsa() -> VerBolsaController
 	 */
 	private void abrirBolsa(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		/*
 		// 1. Obtener la sesión del usuario
 		HttpSession session = req.getSession(false);
 		
@@ -67,6 +68,7 @@ public class VerBolsaController extends HttpServlet {
 		
 		// 3. Obtener el contenido de la bolsa
 		obtenerContenido(req, resp, usuario);
+		*/
 	}
 
 	/**
@@ -75,9 +77,9 @@ public class VerBolsaController extends HttpServlet {
 	 */
 	private void obtenerContenido(HttpServletRequest req, HttpServletResponse resp, Usuario usuario)
 			throws ServletException, IOException {
-		
+		/*
 		// 1. Obtener la bolsa del usuario (relación JPA OneToOne)
-		Bolsa bolsa = usuario.getBolsa();
+		//Bolsa bolsa = usuario.getBolsa();
 		
 		if (bolsa == null) {
 			// Si no tiene bolsa, mostrar vacía
@@ -97,7 +99,7 @@ public class VerBolsaController extends HttpServlet {
 		}
 		
 		// 4. Presentar la lista en la vista
-		presentarLista(req, resp, items, montoTotal);
+		presentarLista(req, resp, items, montoTotal);*/
 	}
 
 	/**
@@ -124,7 +126,7 @@ public class VerBolsaController extends HttpServlet {
 		}
 		
 		// Forward solo al contenido del sidebar (para carga AJAX)
-		req.getRequestDispatcher("/jsp/sidebar_bolsa_content.jsp").forward(req, resp);
+		req.getRequestDispatcher("jsp/SidebarBolsa.jsp").forward(req, resp);
 	}
 
 	/**
@@ -154,7 +156,7 @@ public class VerBolsaController extends HttpServlet {
 	 */
 	private void vaciarBolsa(HttpServletRequest req, HttpServletResponse resp) 
 			throws ServletException, IOException {
-		
+		/*
 		HttpSession session = req.getSession(false);
 		
 		if (session != null && session.getAttribute("usuario") != null) {
@@ -171,5 +173,6 @@ public class VerBolsaController extends HttpServlet {
 		
 		// Redirigir de vuelta a la bolsa
 		resp.sendRedirect(req.getContextPath() + "/VerBolsaController?action=abrirBolsa");
+		*/
 	}
 }

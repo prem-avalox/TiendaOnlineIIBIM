@@ -34,11 +34,11 @@ public class VerCatalogoController extends HttpServlet {
 	private void ruteador(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        String ruta = (req.getParameter("ruta") != null)? req.getParameter("ruta"): "listar";
+        String ruta = (req.getParameter("ruta") != null)? req.getParameter("ruta"): "ingresar";
 
         switch (ruta) {
-            case "listar":
-                this.listar(req, resp);
+            case "ingresar":
+                this.verCatalogo(req, resp);
                 break;
 
             case "buscar":
@@ -62,16 +62,16 @@ public class VerCatalogoController extends HttpServlet {
                 break;
 
             default:
-                this.listar(req, resp);
+                this.verCatalogo(req, resp);
                 break;
         }
     }
 
 
 	
-	private void listar(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		System.out.println("Entrando al listar del VerCatalogoController");
+	private void verCatalogo(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		// 1. Obtener los parametros
+		System.out.println("entrando al verCatalogo del controller catalogo");
 		
 		try {
 	        // 2. hablar con el modelo
@@ -92,7 +92,7 @@ public class VerCatalogoController extends HttpServlet {
 	    }
 
 	    // 3. Llamar a la vista (siempre a catalogo.jsp)
-	    req.getRequestDispatcher("jsp/catalogo.jsp").forward(req, resp);
+	    req.getRequestDispatcher("/jsp/Catalogo.jsp").forward(req, resp);
 	}
 
 	private void buscarPrenda(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -115,7 +115,7 @@ public class VerCatalogoController extends HttpServlet {
 			req.setAttribute("mensajeError", "Error interno al buscar prendas: " + e.getMessage());
 		}
 		// 3. Llamar a la vista
-		req.getRequestDispatcher("jsp/catalogo.jsp").forward(req, resp);
+		req.getRequestDispatcher("/jsp/Catalogo.jsp").forward(req, resp);
 }
 
 	private void seleccionarFiltros(HttpServletRequest req, HttpServletResponse resp)
@@ -142,7 +142,7 @@ public class VerCatalogoController extends HttpServlet {
 	    }
 		
 		// 3. Llamar a la vista
-		req.getRequestDispatcher("jsp/catalogo.jsp").forward(req, resp);
+		req.getRequestDispatcher("/jsp/Catalogo.jsp").forward(req, resp);
 	}
 
 	private void desplegarCategorias(HttpServletRequest req, HttpServletResponse resp)
@@ -162,7 +162,7 @@ public class VerCatalogoController extends HttpServlet {
 	    req.setAttribute("menuAbierto", "checked");
 
 	    //3. Llamar a la vista 
-	    req.getRequestDispatcher("jsp/catalogo.jsp").forward(req, resp);	
+	    req.getRequestDispatcher("/jsp/Catalogo.jsp").forward(req, resp);	
 	}
 
 	private void seleccionarCategoria(HttpServletRequest req, HttpServletResponse resp)
@@ -191,16 +191,16 @@ public class VerCatalogoController extends HttpServlet {
 	    }
 
 	    // 3. Llamar a la vista 
-	    req.getRequestDispatcher("jsp/catalogo.jsp").forward(req, resp);
+	    req.getRequestDispatcher("/jsp/Catalogo.jsp").forward(req, resp);
 	}
 	
 	private void seleccionarPrenda(HttpServletRequest req, HttpServletResponse resp)
 	        throws ServletException, IOException {
-	    // 1. Obtener el parámetro tal cual viene (String)
+	    // 1. Obtener el parámetro tal cual viene
 	    String idStr = req.getParameter("id");
 	    
 	    try {
-	        // 2. Delegar la búsqueda al DAO pasando el String
+	        // 2. Hablar con el modelo
 	        PrendaDAO prendaDAO = new PrendaDAO();
 	        Prenda prendaEncontrada = prendaDAO.buscarPrenda(idStr);
 	        
@@ -214,6 +214,6 @@ public class VerCatalogoController extends HttpServlet {
 	    }
 
 	    // 3. Llamar a la vista
-	    req.getRequestDispatcher("jsp/prenda.jsp").forward(req, resp);
+	    req.getRequestDispatcher("/jsp/Prenda.jsp").forward(req, resp);
 	}
 }

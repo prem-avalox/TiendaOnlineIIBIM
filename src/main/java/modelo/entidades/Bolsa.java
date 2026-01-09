@@ -18,6 +18,9 @@ public class Bolsa implements Serializable {
 
     @Column(name = "precioTotal")
     private double precioTotal;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Usuario usuario;
 
     @OneToMany(mappedBy = "bolsa", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<ItemBolsa> items = new ArrayList<>();
@@ -60,6 +63,18 @@ public class Bolsa implements Serializable {
 	@Override
 	public String toString() {
 		return "Bolsa [idBolsa=" + idBolsa + ", precioTotal=" + precioTotal + ", items=" + items + "]";
+	}
+
+
+
+	public Usuario getUsuario() {
+		return usuario;
+	}
+
+
+
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
 	}
 	
 	

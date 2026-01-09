@@ -95,7 +95,7 @@
 				<div class="modal-body">
 					<h2 class="modal-title">¡Operación Exitosa!</h2>
 					<p class="modal-text">La prenda ha sido registrada
-						correctamente en el sistema.</p>
+						correctamente.</p>
 				</div>
 			</div>
 		</div>

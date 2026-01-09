@@ -43,7 +43,7 @@
                             <td>${p.nombrePrenda}</td>
                             <td>$${p.precio}</td>
                             <td>
-                                <a href="VerListaCompletaController?ruta=editar&id=${p.idPrenda}" class="btn-edit">
+                                <a href="GestionarPrendasController?ruta=editar&id=${p.idPrenda}" class="btn-edit">
                                     <i class="fas fa-edit"></i>
                                 </a>
                             </td>
@@ -62,7 +62,7 @@
     <div id="modalConfirmarEliminar" class="modal-overlay" style="display:none;">
         <div class="modal-content">
             <div class="modal-body">
-                <h2 class="modal-title">¿Desea eliminar esta prenda?</h2>
+                <h2 class="modal-title">¿Está seguro que desea eliminar la prenda?</h2>
                 <p class="modal-text">Esta acción borrará el registro permanentemente del sistema.</p>
                 <div class="button-group-admin" style="display: flex; gap: 10px; margin-top: 20px; justify-content: center;">
                     <a id="btnSiEliminar" href="#" class="btn-delete-confirm" 
@@ -101,8 +101,7 @@
 
     <script>
         function abrirModalConfirmacion(id) {
-            // Se usa "categorias" para coincidir con el ruteador del VerListaCompletaController proporcionado anteriormente
-            document.getElementById('btnSiEliminar').href = "VerListaCompletaController?ruta=confirmar&confirm=si&id=" + id;
+            document.getElementById('btnSiEliminar').href = "GestionarPrendasController?ruta=confirmar&confirm=si&id=" + id;
             document.getElementById('modalConfirmarEliminar').style.display = 'flex';
         }
 

@@ -10,8 +10,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import modelo.dao.PrendaDAO;
 import modelo.entidades.Prenda;
-@WebServlet("/VerListaCompletaController")
-public class VerListaCompletaController extends HttpServlet {
+@WebServlet("/GestionarPrendasController")
+public class GestionarPrendasController extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -53,7 +53,7 @@ public class VerListaCompletaController extends HttpServlet {
 
 	private void listarPrendas(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		System.out.println("Entrando al listar del ver lista completa controller");
-
+		
 		// 1. Obtener parámetros 
 		
 	    try {
@@ -68,7 +68,7 @@ public class VerListaCompletaController extends HttpServlet {
 	    }
 	    
 	    //3. Llamar a la vista listar_prendas.jsp
-	    req.getRequestDispatcher("jsp/lista_prendas.jsp").forward(req, resp);
+	    req.getRequestDispatcher("jsp/ListaPrendas.jsp").forward(req, resp);
 	}
 
 	private void editar(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -86,7 +86,7 @@ public class VerListaCompletaController extends HttpServlet {
 	            req.setAttribute("categorias", modelo.entidades.Categoria.values());
 	            req.setAttribute("tallasDisponibles", modelo.entidades.Talla.values());
 	            
-	            req.getRequestDispatcher("jsp/datos_prenda.jsp").forward(req, resp);
+	            req.getRequestDispatcher("jsp/DatosPrenda.jsp").forward(req, resp);
 	        } 
 	    } catch (Exception e) {
 	        req.setAttribute("mensajeError", "Error al cargar datos para edición: " + e.getMessage());

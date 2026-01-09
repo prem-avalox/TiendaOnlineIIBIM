@@ -51,7 +51,7 @@
     </div>
 
 	<!-- seccion del sidebar de categorias -->
-    <%@ include file="sidebar_categoria.jsp" %>
+    <%@ include file="SidebarCategorias.jsp" %>
     <label id="overlay" class="overlay" for="toggle-sidebar"></label>
 
 	<!-- seccion para aplicar filtros -->
@@ -139,7 +139,7 @@
         </c:choose>
     </section>
 
-    <%@ include file="sidebar_bolsa.jsp" %>
+    <%@ include file="SidebarBolsa.jsp" %>
     <label id="cart-overlay" class="overlay" for="toggle-cart"></label>
 
     <footer class="footer">

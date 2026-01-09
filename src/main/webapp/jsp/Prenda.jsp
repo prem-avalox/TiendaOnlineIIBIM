@@ -11,7 +11,6 @@
 </head>
 <body class="general">
     <input type="checkbox" id="toggle-cart" hidden>
-    
     <div class="header">
         <a href="VerCatalogoController?ruta=listar" class="filter-bar-btn"><i class="fas fa-arrow-left"></i> Volver</a>
         <div class="logo"><h1>DETALLE</h1></div>
@@ -77,7 +76,7 @@
         </div>
     </div>
     
-    <%@ include file="sidebar_bolsa.jsp" %>
+    <%@ include file="SidebarBolsa.jsp" %>
     <label id="cart-overlay" class="overlay" for="toggle-cart"></label>
     
     <script>

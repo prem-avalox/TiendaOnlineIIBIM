@@ -26,10 +26,7 @@ public class Usuario implements Serializable {
     @Column(name = "contrasena", nullable = false, length = 255)
     private String contrasena;
 
-    // Un usuario tiene una única bolsa
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "idBolsa", nullable = false)
-    private Bolsa bolsa;
+   
     
     @Column(name = "isAdmin", nullable = false)
     private boolean isAdmin = false; // Por defecto es falso (usuario normal)
@@ -40,12 +37,11 @@ public class Usuario implements Serializable {
 	}
 
 
-    public Usuario(int idUsuario, String nombreUsuario, String email, String contrasena, Bolsa bolsa, boolean isAdmin) {
+    public Usuario(int idUsuario, String nombreUsuario, String email, String contrasena, boolean isAdmin) {
         this.idUsuario = idUsuario;
         this.nombreUsuario = nombreUsuario;
         this.email = email;
         this.contrasena = contrasena;
-        this.bolsa = bolsa;
         this.isAdmin = isAdmin;
     }
 
@@ -82,13 +78,6 @@ public class Usuario implements Serializable {
 	}
 
 	
-	public Bolsa getBolsa() {
-		return bolsa;
-	}
-
-	public void setBolsa(Bolsa bolsa) {
-		this.bolsa = bolsa;
-	}
 
 	public boolean isIsAdmin() {
 		return isAdmin; 

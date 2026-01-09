@@ -65,7 +65,7 @@ public class AgregarPrendaController extends HttpServlet {
 		}
 
 		// 3. Llamar a la vista
-		req.getRequestDispatcher("jsp/formulario_registro_prenda.jsp").forward(req, resp);
+		req.getRequestDispatcher("jsp/FormularioRegistroPrenda.jsp").forward(req, resp);
 	}
 
 	private void guardar(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

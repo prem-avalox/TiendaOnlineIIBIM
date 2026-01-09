@@ -21,7 +21,6 @@ public class ORMTest {
 		miUsuario.setNombreUsuario("user");
 		miUsuario.setEmail("user@gmail.com");
 		miUsuario.setContrasena("1234");
-		miUsuario.setBolsa(miBolsa); // <--- ESTO ES LO QUE FALTA O ESTÁ LLEGANDO NULL
 
 		// 3. Persistir
 		em.getTransaction().begin();

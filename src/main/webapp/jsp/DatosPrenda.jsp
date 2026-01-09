@@ -18,7 +18,7 @@
 
 	<div class="formulario-registro">
 		<form method="POST"
-			action="${pageContext.request.contextPath}/VerListaCompletaController">
+			action="${pageContext.request.contextPath}/GestionarPrendasController">
 			<%-- Identificador de ruta para el ruteador del controlador --%>
 			<input type="hidden" name="ruta" value="guardar">
 			<%-- Campo oculto para el ID de la prenda (necesario para actualizar en la BD) --%>
@@ -95,7 +95,7 @@
 			<div class="button-group-admin">
 				<button type="submit" class="btn-guardar">Actualizar
 					Cambios</button>
-				<a href="VerListaCompletaController?ruta=guardar"
+				<a href="GestionarPrendasController?ruta=guardar"
 					class="btn-cancelar">Cancelar</a>
 			</div>
 		</form>
