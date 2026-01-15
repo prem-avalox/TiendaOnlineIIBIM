@@ -60,7 +60,7 @@ public class PrendaDAO {
 						prendaExistente.getStockTallas().add(st);
 					}
 				}
-
+				em.merge(prendaExistente);
 				// JPA sincroniza los cambios automáticamente al hacer commit
 				em.getTransaction().commit();
 			}
@@ -223,7 +223,7 @@ public class PrendaDAO {
 		return resultados;
 	}
 
-	public Prenda buscarPrenda(String idStr) {
+	public Prenda getPrenda(String idStr) {
 		EntityManager em = emf.createEntityManager();
 		Prenda prenda = null;
 		try {

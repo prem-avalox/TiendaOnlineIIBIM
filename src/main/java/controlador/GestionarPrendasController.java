@@ -13,6 +13,11 @@ import modelo.entidades.Prenda;
 @WebServlet("/GestionarPrendasController")
 public class GestionarPrendasController extends HttpServlet {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		this.ruteador(req, resp);
@@ -29,7 +34,7 @@ public class GestionarPrendasController extends HttpServlet {
 
 		switch (ruta) {
 		case "listar":
-			this.listarPrendas(req, resp);
+			this.listar(req, resp);
 			break;
 
 		case "editar":
@@ -45,13 +50,13 @@ public class GestionarPrendasController extends HttpServlet {
 			break;
 
 		default:
-			this.listarPrendas(req, resp);
+			this.listar(req, resp);
 			break;
 		}
 
 	}
 
-	private void listarPrendas(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	private void listar(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		System.out.println("Entrando al listar del ver lista completa controller");
 		
 		// 1. Obtener parámetros 
@@ -78,7 +83,7 @@ public class GestionarPrendasController extends HttpServlet {
 	    try {
 	        // 2. Hablar con el modelo
 	        PrendaDAO prendaDAO = new PrendaDAO();
-	        Prenda prenda = prendaDAO.buscarPrenda(idStr); 
+	        Prenda prenda = prendaDAO.getPrenda(idStr); 
 	        
 	        if (prenda != null) {
 	            req.setAttribute("p", prenda);
@@ -86,6 +91,7 @@ public class GestionarPrendasController extends HttpServlet {
 	            req.setAttribute("categorias", modelo.entidades.Categoria.values());
 	            req.setAttribute("tallasDisponibles", modelo.entidades.Talla.values());
 	            
+	            //3. Llamar a la vista
 	            req.getRequestDispatcher("jsp/DatosPrenda.jsp").forward(req, resp);
 	        } 
 	    } catch (Exception e) {
@@ -127,7 +133,7 @@ public class GestionarPrendasController extends HttpServlet {
 
 	        // 3. El controlador presenta la lista
 	        req.setAttribute("registroExitoso", true);
-	        this.listarPrendas(req, resp); 
+	        this.listar(req, resp); 
 
 	    } catch (Exception e) {
 	        req.setAttribute("mensajeError", "Error al procesar los datos: " + e.getMessage());
@@ -153,11 +159,11 @@ public class GestionarPrendasController extends HttpServlet {
 	        }
 	        
 	        // 3. Llamar a la vista 
-	        this.listarPrendas(req, resp);
+	        this.listar(req, resp);
 
 	    } catch (Exception e) {
 	        req.setAttribute("mensajeError", "Error al eliminar: " + e.getMessage());
-	        this.listarPrendas(req, resp);
+	        this.listar(req, resp);
 	    }
 	}
 

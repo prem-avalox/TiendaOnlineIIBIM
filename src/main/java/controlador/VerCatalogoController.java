@@ -77,6 +77,7 @@ public class VerCatalogoController extends HttpServlet {
 	        // 2. hablar con el modelo
 	        PrendaDAO prendaDAO = new PrendaDAO();
 	        List<Prenda> prendas = prendaDAO.getListaPrendas();
+	        System.out.println("aqui");
 	        
 	        // Validar si se obtuvieron resultados
 	        if (prendas != null && !prendas.isEmpty()) {
@@ -86,13 +87,13 @@ public class VerCatalogoController extends HttpServlet {
 	            // Paso 1.3: presentar mensaje de error si la lista falla
 	            req.setAttribute("mensajeError", "No hay prendas.");
 	        }
-	    } catch (Exception e) {
+	    } catch (Throwable e) {
 	        // Paso 1.3: Captura de excepción y envío de mensaje
 	        req.setAttribute("mensajeError", "Error interno al procesar el catálogo: " + e.getMessage());
 	    }
 
 	    // 3. Llamar a la vista (siempre a catalogo.jsp)
-	    req.getRequestDispatcher("/jsp/Catalogo.jsp").forward(req, resp);
+	    req.getRequestDispatcher("jsp/Catalogo.jsp").forward(req, resp);
 	}
 
 	private void buscarPrenda(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -202,7 +203,7 @@ public class VerCatalogoController extends HttpServlet {
 	    try {
 	        // 2. Hablar con el modelo
 	        PrendaDAO prendaDAO = new PrendaDAO();
-	        Prenda prendaEncontrada = prendaDAO.buscarPrenda(idStr);
+	        Prenda prendaEncontrada = prendaDAO.getPrenda(idStr);
 	        
 	        if (prendaEncontrada != null) {
 	            req.setAttribute("prenda", prendaEncontrada); // 

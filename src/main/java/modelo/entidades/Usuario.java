@@ -25,8 +25,6 @@ public class Usuario implements Serializable {
 
     @Column(name = "contrasena", nullable = false, length = 255)
     private String contrasena;
-
-   
     
     @Column(name = "isAdmin", nullable = false)
     private boolean isAdmin = false; // Por defecto es falso (usuario normal)
