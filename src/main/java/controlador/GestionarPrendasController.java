@@ -80,7 +80,7 @@ public class GestionarPrendasController extends HttpServlet {
 	    // 1. Obtener parámetros
 	    String idStr = req.getParameter("id");
 	    
-	    try {
+	    /*try {
 	        // 2. Hablar con el modelo
 	        PrendaDAO prendaDAO = new PrendaDAO();
 	        Prenda prenda = prendaDAO.getPrenda(idStr); 
@@ -96,7 +96,7 @@ public class GestionarPrendasController extends HttpServlet {
 	        } 
 	    } catch (Exception e) {
 	        req.setAttribute("mensajeError", "Error al cargar datos para edición: " + e.getMessage());
-	    }
+	    }*/
 	}
 	
 	private void guardar(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -129,7 +129,7 @@ public class GestionarPrendasController extends HttpServlet {
 
 	        // 2. Hablar con el modelo 
 	        PrendaDAO prendaDAO = new PrendaDAO();
-	        prendaDAO.actualizar(idPrendaStr, nombre, descripcion, categoria, precio, listaStock, imagen, color, corte);
+	        //prendaDAO.actualizar(idPrendaStr, nombre, descripcion, categoria, precio, listaStock, imagen, color, corte);
 
 	        // 3. El controlador presenta la lista
 	        req.setAttribute("registroExitoso", true);

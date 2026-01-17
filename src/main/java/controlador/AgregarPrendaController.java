@@ -128,7 +128,7 @@ public class AgregarPrendaController extends HttpServlet {
 		// --- PERSISTENCIA: Si la validación pasó, guardamos en la Base de Datos ---
 		try {
 			PrendaDAO prendaDAO = new PrendaDAO();
-			prendaDAO.guardar(nombre, descripcion, categoria, precio, stockTallas, imagen, color, corte);
+			//prendaDAO.guardar(nombre, descripcion, categoria, precio, stockTallas, imagen, color, corte);
 		} catch (Exception e) {
 			req.setAttribute("mensajeError", "Error técnico al guardar en la base de datos: " + e.getMessage());
 			this.agregarPrenda(req, resp);

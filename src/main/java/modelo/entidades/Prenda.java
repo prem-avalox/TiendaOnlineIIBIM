@@ -28,29 +28,31 @@ public class Prenda implements Serializable {
     @Column(name = "descripcion", length = 500)
     private String descripcion;
 
+    // CAMBIO: Ahora es tipo Color (Enum) y se persiste como STRING
+    @Enumerated(EnumType.STRING)
     @Column(name = "color", length = 50)
-    private String color;
+    private Color color;
 
+    // CAMBIO: Ahora es tipo Corte (Enum) y se persiste como STRING
+    @Enumerated(EnumType.STRING)
     @Column(name = "corte", length = 30)
-    private String corte;
+    private Corte corte;
 
-    // Enum persistido como STRING (recomendado)
     @Enumerated(EnumType.STRING)
     @Column(name = "categoria", nullable = false, length = 30)
     private Categoria categoria;
 
-    // Una Prenda tiene muchas filas de StockTalla (stock por talla)
     @OneToMany(mappedBy = "prenda",
                cascade = CascadeType.ALL,
                orphanRemoval = true,
                fetch = FetchType.LAZY)
     private List<StockTalla> stockTallas = new ArrayList<>();
 
-    // Constructor vacío requerido por JPA
     public Prenda() {}
 
+    // Constructor actualizado con los nuevos tipos de Enum
     public Prenda(int idPrenda, String imagen, String nombrePrenda, double precio, String descripcion,
-                  String color, String corte, Categoria categoria, List<StockTalla> stockTallas) {
+                  Color color, Corte corte, Categoria categoria, List<StockTalla> stockTallas) {
         this.idPrenda = idPrenda;
         this.imagen = imagen;
         this.nombrePrenda = nombrePrenda;
@@ -62,7 +64,7 @@ public class Prenda implements Serializable {
         this.stockTallas = (stockTallas != null) ? stockTallas : new ArrayList<>();
     }
 
-    // Getters/Setters
+    // Getters/Setters actualizados
     public int getIdPrenda() { return idPrenda; }
     public void setIdPrenda(int idPrenda) { this.idPrenda = idPrenda; }
 
@@ -78,11 +80,11 @@ public class Prenda implements Serializable {
     public String getDescripcion() { return descripcion; }
     public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
 
-    public String getColor() { return color; }
-    public void setColor(String color) { this.color = color; }
+    public Color getColor() { return color; }
+    public void setColor(Color color) { this.color = color; }
 
-    public String getCorte() { return corte; }
-    public void setCorte(String corte) { this.corte = corte; }
+    public Corte getCorte() { return corte; }
+    public void setCorte(Corte corte) { this.corte = corte; }
 
     public Categoria getCategoria() { return categoria; }
     public void setCategoria(Categoria categoria) { this.categoria = categoria; }
@@ -91,8 +93,6 @@ public class Prenda implements Serializable {
     public void setStockTallas(List<StockTalla> stockTallas) {
         this.stockTallas = (stockTallas != null) ? stockTallas : new ArrayList<>();
     }
-
-   
 
     @Override
     public String toString() {
