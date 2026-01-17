@@ -28,12 +28,11 @@ public class Prenda implements Serializable {
     @Column(name = "descripcion", length = 500)
     private String descripcion;
 
-    // CAMBIO: Ahora es tipo Color (Enum) y se persiste como STRING
+    
     @Enumerated(EnumType.STRING)
     @Column(name = "color",nullable = false, length = 50)
     private Color color;
 
-    // CAMBIO: Ahora es tipo Corte (Enum) y se persiste como STRING
     @Enumerated(EnumType.STRING)
     @Column(name = "corte", nullable = false,length = 30)
     private Corte corte;
@@ -53,9 +52,9 @@ public class Prenda implements Serializable {
 
     public Prenda() {}
 
+
     // Constructor actualizado con los nuevos tipos de Enum
-    public Prenda(String imagen, String nombrePrenda, double precio, String descripcion,
-                  Color color, Corte corte, Categoria categoria, List<StockTalla> stockTallas) {
+    public Prenda(String imagen, String nombrePrenda, double precio, String descripcion, Color color, Corte corte, Categoria categoria, List<StockTalla> stockTallas) {
         this.imagen = imagen;
         this.nombrePrenda = nombrePrenda;
         this.precio = precio;
@@ -71,7 +70,6 @@ public class Prenda implements Serializable {
         }
     }
 
-    // Getters/Setters actualizados
     public int getIdPrenda() { return idPrenda; }
     public void setIdPrenda(int idPrenda) { this.idPrenda = idPrenda; }
 

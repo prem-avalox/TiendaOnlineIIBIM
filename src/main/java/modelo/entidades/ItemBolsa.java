@@ -21,26 +21,14 @@ public class ItemBolsa implements Serializable {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "talla")
 	private Talla tallaSeleccionada;
-
-	/*
-     * Relación con Prenda:
-     * - ItemBolsa referencia a UNA Prenda
-     * - Prenda NO necesita conocer ItemBolsa
-     */
+	
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "idPrenda", nullable = false)
     private Prenda prenda;
 
-	
-	/*
-     * Relación con Bolsa:
-     * - ItemBolsa NO existe sin Bolsa
-     * - Es el lado dueño de la relación
-     */
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "idBolsa", nullable = false)
-    private Bolsa bolsa;
-	
+	@ManyToOne
+	@JoinColumn(name = "id_bolsa", nullable = false) 
+	private Bolsa bolsa; 
 	
 	// Constructores
 	public ItemBolsa() {

@@ -19,17 +19,11 @@ public class Bolsa implements Serializable {
     @Column(name = "precioTotal")
     private double precioTotal;
     
-    // Relación con Usuario (0..1) - Unidireccional según tu diagrama
-    @OneToOne(fetch = FetchType.LAZY, optional = true)
-    @JoinColumn(
-        name = "idUsuario", 
-        nullable = true, 
-        unique = true 
-    )
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_usuario", nullable = false)
+
     private Usuario usuario;
 
-    // COMPOSICIÓN con ItemBolsa (0..*)
-    // Usamos ArrayList para que la bolsa pueda empezar vacía (0)
     @OneToMany(mappedBy = "bolsa", 
                cascade = CascadeType.ALL, 
                orphanRemoval = true, 
@@ -40,8 +34,6 @@ public class Bolsa implements Serializable {
 	public Bolsa() {
 		
 	}
-
-	
 	
 	public Bolsa(double precioTotal, Usuario usuario, List<ItemBolsa> items) {
 		this.precioTotal = precioTotal;
@@ -50,11 +42,10 @@ public class Bolsa implements Serializable {
 	}
 
 
+
 	public void setIdBolsa(int idBolsa) {
 		this.idBolsa = idBolsa;
 	}
-
-
 
 	public int getIdBolsa() {
 		return idBolsa;
