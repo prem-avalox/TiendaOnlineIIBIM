@@ -22,14 +22,24 @@ public class ItemBolsa implements Serializable {
 	@Column(name = "talla")
 	private Talla tallaSeleccionada;
 
-	
-	@ManyToOne
-	@JoinColumn(name = "prenda_id")
-	private Prenda prenda;
+	/*
+     * Relación con Prenda:
+     * - ItemBolsa referencia a UNA Prenda
+     * - Prenda NO necesita conocer ItemBolsa
+     */
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "idPrenda", nullable = false)
+    private Prenda prenda;
 
-	@ManyToOne
-	@JoinColumn(name = "idBolsa", nullable = false) 
-	private Bolsa bolsa; 
+	
+	/*
+     * Relación con Bolsa:
+     * - ItemBolsa NO existe sin Bolsa
+     * - Es el lado dueño de la relación
+     */
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "idBolsa", nullable = false)
+    private Bolsa bolsa;
 	
 	
 	// Constructores
@@ -37,14 +47,12 @@ public class ItemBolsa implements Serializable {
 	}
 	
 	
+	
 	public ItemBolsa(int idItem, int cantidad, Talla tallaSeleccionada, Prenda prenda) {
-		super();
-		this.idItem = idItem;
 		this.cantidad = cantidad;
 		this.tallaSeleccionada = tallaSeleccionada;
 		this.prenda = prenda;
 	}
-
 	
 	public int getIdItem() {
 		return idItem;

@@ -4,9 +4,6 @@ import java.io.Serializable;
 
 import jakarta.persistence.*;
 
-/**
- * Clase que representa un Usuario del sistema
- */
 @Entity
 @Table(name = "Usuario")
 public class Usuario implements Serializable {
@@ -35,8 +32,7 @@ public class Usuario implements Serializable {
 	}
 
 
-    public Usuario(int idUsuario, String nombreUsuario, String email, String contrasena, boolean isAdmin) {
-        this.idUsuario = idUsuario;
+    public Usuario(String nombreUsuario, String email, String contrasena, boolean isAdmin) {
         this.nombreUsuario = nombreUsuario;
         this.email = email;
         this.contrasena = contrasena;
@@ -45,10 +41,6 @@ public class Usuario implements Serializable {
 
 	public int getIdUsuario() {
 		return idUsuario;
-	}
-
-	public void setIdUsuario(int idUsuario) {
-		this.idUsuario = idUsuario;
 	}
 
 	public String getNombreUsuario() {

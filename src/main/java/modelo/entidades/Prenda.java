@@ -30,18 +30,21 @@ public class Prenda implements Serializable {
 
     // CAMBIO: Ahora es tipo Color (Enum) y se persiste como STRING
     @Enumerated(EnumType.STRING)
-    @Column(name = "color", length = 50)
+    @Column(name = "color",nullable = false, length = 50)
     private Color color;
 
     // CAMBIO: Ahora es tipo Corte (Enum) y se persiste como STRING
     @Enumerated(EnumType.STRING)
-    @Column(name = "corte", length = 30)
+    @Column(name = "corte", nullable = false,length = 30)
     private Corte corte;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "categoria", nullable = false, length = 30)
     private Categoria categoria;
 
+    
+ // Relación 1:N con StockTalla (Una prenda tiene múltiples registros de stock)
+    // CascadeType.ALL asegura que si borras la prenda, se borra su stock
     @OneToMany(mappedBy = "prenda",
                cascade = CascadeType.ALL,
                orphanRemoval = true,
@@ -51,9 +54,8 @@ public class Prenda implements Serializable {
     public Prenda() {}
 
     // Constructor actualizado con los nuevos tipos de Enum
-    public Prenda(int idPrenda, String imagen, String nombrePrenda, double precio, String descripcion,
+    public Prenda(String imagen, String nombrePrenda, double precio, String descripcion,
                   Color color, Corte corte, Categoria categoria, List<StockTalla> stockTallas) {
-        this.idPrenda = idPrenda;
         this.imagen = imagen;
         this.nombrePrenda = nombrePrenda;
         this.precio = precio;
@@ -61,7 +63,12 @@ public class Prenda implements Serializable {
         this.color = color;
         this.corte = corte;
         this.categoria = categoria;
-        this.stockTallas = (stockTallas != null) ? stockTallas : new ArrayList<>();
+        if (stockTallas != null) {
+            for (StockTalla stock : stockTallas) {
+                stock.setPrenda(this);   // 🔑 CLAVE
+                this.stockTallas.add(stock);
+            }
+        }
     }
 
     // Getters/Setters actualizados
