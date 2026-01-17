@@ -1,6 +1,7 @@
 package controlador;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.servlet.ServletException;
@@ -10,6 +11,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import modelo.dao.PrendaDAO;
 import modelo.entidades.Prenda;
+import modelo.entidades.StockTalla;
+import modelo.entidades.Talla;
+
 @WebServlet("/GestionarPrendasController")
 public class GestionarPrendasController extends HttpServlet {
 
@@ -37,16 +41,20 @@ public class GestionarPrendasController extends HttpServlet {
 			this.listar(req, resp);
 			break;
 
-		case "editar":
-			this.editar(req, resp);
+		case "editarPrenda":
+			this.editarPrenda(req, resp);
 			break;
-			
+
 		case "guardar":
 			this.guardar(req, resp);
 			break;
 
-		case "confirmar":
-			this.confirmarEliminacion(req, resp);
+		case "eliminarPrenda":
+			this.eliminarPrenda(req, resp);
+			break;
+
+		case "confirmarEliminar":
+			this.enviarConfirmacion(req, resp);
 			break;
 
 		default:
@@ -58,113 +66,161 @@ public class GestionarPrendasController extends HttpServlet {
 
 	private void listar(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		System.out.println("Entrando al listar del ver lista completa controller");
-		
-		// 1. Obtener parámetros 
-		
-	    try {
-	        // 2. Hablar con el modelo 
-	        PrendaDAO prendaDAO = new PrendaDAO();
-	        List<Prenda> lista = prendaDAO.getListaPrendas();
-	        
-	        req.setAttribute("prendas", lista);
-	        
-	    } catch (Exception e) {
-	        req.setAttribute("mensajeError", "Error al cargar la lista: " + e.getMessage());
-	    }
-	    
-	    //3. Llamar a la vista listar_prendas.jsp
-	    req.getRequestDispatcher("jsp/ListaPrendas.jsp").forward(req, resp);
+
+		// 1. Obtener parámetros
+
+		try {
+			// 2. Hablar con el modelo
+			PrendaDAO prendaDAO = new PrendaDAO();
+			List<Prenda> lista = prendaDAO.getListaPrendas();
+
+			req.setAttribute("prendas", lista);
+
+		} catch (Exception e) {
+			req.setAttribute("mensajeError", "Error al cargar la lista: " + e.getMessage());
+		}
+
+		// 3. Llamar a la vista listar_prendas.jsp
+		req.getRequestDispatcher("jsp/ListaPrendas.jsp").forward(req, resp);
 	}
 
-	private void editar(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-	    // 1. Obtener parámetros
-	    String idStr = req.getParameter("id");
-	    
-	    /*try {
-	        // 2. Hablar con el modelo
-	        PrendaDAO prendaDAO = new PrendaDAO();
-	        Prenda prenda = prendaDAO.getPrenda(idStr); 
-	        
-	        if (prenda != null) {
-	            req.setAttribute("p", prenda);
-	            
-	            req.setAttribute("categorias", modelo.entidades.Categoria.values());
-	            req.setAttribute("tallasDisponibles", modelo.entidades.Talla.values());
-	            
-	            //3. Llamar a la vista
-	            req.getRequestDispatcher("jsp/DatosPrenda.jsp").forward(req, resp);
-	        } 
-	    } catch (Exception e) {
-	        req.setAttribute("mensajeError", "Error al cargar datos para edición: " + e.getMessage());
-	    }*/
+	private void eliminarPrenda(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+		// 1. Obtener parámetro
+		String idStr = req.getParameter("id");
+
+		if (idStr == null) {
+			req.setAttribute("mensajeError", "ID de prenda no válido");
+			listar(req, resp);
+			return;
+		}
+
+		// 2. Hablar con el modelo
+		// (no se elimina nada todavía, solo se prepara la confirmación)
+
+		// 3. Llamar a la vista
+		req.setAttribute("idPrenda", idStr);
+		req.getRequestDispatcher("jsp/MsgConfirmacion.jsp").forward(req, resp);
 	}
-	
+
+	private void enviarConfirmacion(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+
+		// 1. Obtener parámetros
+		String respuesta = req.getParameter("respuesta");
+		String idStr = req.getParameter("idPrenda");
+
+		// 2. Hablar con el modelo
+		if ("si".equals(respuesta)) {
+			PrendaDAO dao = new PrendaDAO();
+			dao.eliminar(Integer.parseInt(idStr));
+			req.setAttribute("mensajeExito2", "Prenda eliminada correctamente.");
+		}
+
+		// 3. Llamar a la vista
+		listar(req, resp);
+	}
+
+	private void editarPrenda(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+		// 1. Obtener parámetros
+		String idStr = req.getParameter("id");
+
+		// 2. Hablar con el modelo
+		try {
+			int idPrenda = Integer.parseInt(idStr);
+
+			PrendaDAO prendaDAO = new PrendaDAO();
+			Prenda prenda = prendaDAO.getPrenda(idPrenda);
+
+			if (prenda == null) {
+				req.setAttribute("mensajeError", "La prenda no existe.");
+				listar(req, resp);
+				return;
+			}
+
+			req.setAttribute("p", prenda);
+			req.setAttribute("categorias", modelo.entidades.Categoria.values());
+			req.setAttribute("colores", modelo.entidades.Color.values());
+			req.setAttribute("cortes", modelo.entidades.Corte.values());
+			req.setAttribute("tallasDisponibles", modelo.entidades.Talla.values());
+
+		} catch (Exception e) {
+			req.setAttribute("mensajeError", "Error al cargar la prenda: " + e.getMessage());
+			listar(req, resp);
+			return;
+		}
+
+		// 3. Llamar a la vista
+		req.getRequestDispatcher("jsp/DatosPrenda.jsp").forward(req, resp);
+	}
+
 	private void guardar(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-	    // 1. Obtener parámetros 
-	    String idPrendaStr = req.getParameter("idPrenda");
-	    String imagen = req.getParameter("imagen");
-	    String nombre = req.getParameter("nombrePrenda");
-	    String descripcion = req.getParameter("descripcion");
-	    String precioStr = req.getParameter("precio");
-	    String categoriaStr = req.getParameter("categoria");
-	    String color = req.getParameter("color");
-	    String corte = req.getParameter("corte");
-	    
-	    String[] tallasArr = req.getParameterValues("talla");
-	    String[] cantidadesArr = req.getParameterValues("cantidad");
 
-	    try {
-	        double precio = Double.parseDouble(precioStr);
-	        modelo.entidades.Categoria categoria = modelo.entidades.Categoria.valueOf(categoriaStr);
-	        
-	        java.util.List<modelo.entidades.StockTalla> listaStock = new java.util.ArrayList<>();
-	        if (tallasArr != null && cantidadesArr != null) {
-	            for (int i = 0; i < tallasArr.length; i++) {
-	                modelo.entidades.StockTalla st = new modelo.entidades.StockTalla();
-	                st.setTalla(modelo.entidades.Talla.valueOf(tallasArr[i]));
-	                st.setCantidad(Integer.parseInt(cantidadesArr[i]));
-	                listaStock.add(st);
-	            }
+		// 1. Obtener parámetros
+		String idStr = req.getParameter("idPrenda");
+		String imagen = req.getParameter("imagen");
+		String nombre = req.getParameter("nombrePrenda");
+		String descripcion = req.getParameter("descripcion");
+		String precioStr = req.getParameter("precio");
+		String categoriaStr = req.getParameter("categoria");
+		String colorStr = req.getParameter("color");
+		String corteStr = req.getParameter("corte");
+
+		String[] tallasArr = req.getParameterValues("tallas");
+
+		try {
+
+			int idPrenda = Integer.parseInt(idStr);
+			double precio = Double.parseDouble(precioStr);
+
+			// 2. Hablar con el modelo
+			Prenda prenda = new Prenda();
+			prenda.setIdPrenda(idPrenda);
+			prenda.setImagen(imagen);
+			prenda.setNombrePrenda(nombre);
+			prenda.setDescripcion(descripcion);
+			prenda.setPrecio(precio);
+			prenda.setCategoria(modelo.entidades.Categoria.valueOf(categoriaStr));
+			prenda.setColor(modelo.entidades.Color.valueOf(colorStr));
+			prenda.setCorte(modelo.entidades.Corte.valueOf(corteStr));
+
+			List<StockTalla> listaStock = new ArrayList<>();
+
+			if (tallasArr != null) {
+				for (String tallaStr : tallasArr) {
+
+					String cantidadStr = req.getParameter("cantidad_" + tallaStr);
+					if (cantidadStr == null || cantidadStr.isEmpty()) {
+						continue;
+					}
+
+					int cantidad = Integer.parseInt(cantidadStr);
+
+					StockTalla stock = new StockTalla(cantidad, Talla.valueOf(tallaStr));
+
+					listaStock.add(stock);
+				}
+			}
+
+			prenda.setStockTallas(listaStock);
+
+			PrendaDAO dao = new PrendaDAO();
+			boolean actualizado = dao.actualizar(prenda);
+
+			if (actualizado) {
+	            req.setAttribute("registroExitoso", true);
+	        } else {
+	            req.setAttribute("mensajeError", "No se pudo actualizar la prenda.");
 	        }
 
-	        // 2. Hablar con el modelo 
-	        PrendaDAO prendaDAO = new PrendaDAO();
-	        //prendaDAO.actualizar(idPrendaStr, nombre, descripcion, categoria, precio, listaStock, imagen, color, corte);
-
-	        // 3. El controlador presenta la lista
-	        req.setAttribute("registroExitoso", true);
-	        this.listar(req, resp); 
-
 	    } catch (Exception e) {
-	        req.setAttribute("mensajeError", "Error al procesar los datos: " + e.getMessage());
+	        e.printStackTrace();
+	        req.setAttribute("mensajeError", "Error al actualizar la prenda.");
 	    }
-	}
 
-	private void confirmarEliminacion(HttpServletRequest req, HttpServletResponse resp)
-	        throws ServletException, IOException {
-	    // 1. Obtener parámetros 
-	    String idStr = req.getParameter("id");
-	    String respuesta = req.getParameter("confirm"); 
-
-	    try {
-	        if ("si".equals(respuesta) && idStr != null) {
-	            // 2. Hablar con el modelo 
-	            PrendaDAO dao = new PrendaDAO();
-	            boolean eliminado = dao.eliminar(Integer.parseInt(idStr));
-	            
-	            if (eliminado) {
-	                
-	                req.setAttribute("mensajeExito2", "Prenda eliminada correctamente.");
-	            }
-	        }
-	        
-	        // 3. Llamar a la vista 
-	        this.listar(req, resp);
-
-	    } catch (Exception e) {
-	        req.setAttribute("mensajeError", "Error al eliminar: " + e.getMessage());
-	        this.listar(req, resp);
-	    }
+		// 3. Llamar a la vista
+		listar(req, resp);
 	}
 
 }

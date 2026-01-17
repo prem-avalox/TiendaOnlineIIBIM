@@ -21,30 +21,26 @@ public class ItemBolsa implements Serializable {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "talla")
 	private Talla tallaSeleccionada;
-
 	
-	@ManyToOne
-	@JoinColumn(name = "prenda_id")
-	private Prenda prenda;
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "idPrenda", nullable = false)
+    private Prenda prenda;
 
 	@ManyToOne
 	@JoinColumn(name = "id_bolsa", nullable = false) 
 	private Bolsa bolsa; 
-	
 	
 	// Constructores
 	public ItemBolsa() {
 	}
 	
 	
+	
 	public ItemBolsa(int idItem, int cantidad, Talla tallaSeleccionada, Prenda prenda) {
-		super();
-		this.idItem = idItem;
 		this.cantidad = cantidad;
 		this.tallaSeleccionada = tallaSeleccionada;
 		this.prenda = prenda;
 	}
-
 	
 	public int getIdItem() {
 		return idItem;

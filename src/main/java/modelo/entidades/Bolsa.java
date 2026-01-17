@@ -21,31 +21,36 @@ public class Bolsa implements Serializable {
     
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_usuario", nullable = false)
+
     private Usuario usuario;
 
-    @OneToMany(mappedBy = "bolsa", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "bolsa", 
+               cascade = CascadeType.ALL, 
+               orphanRemoval = true, 
+               fetch = FetchType.LAZY)
     private List<ItemBolsa> items = new ArrayList<>();
 	
 	
 	public Bolsa() {
 		
 	}
-
-		
-	public Bolsa(int idBolsa, double precioTotal, List<ItemBolsa> items) {
-		super();
-		this.idBolsa = idBolsa;
+	
+	public Bolsa(double precioTotal, Usuario usuario, List<ItemBolsa> items) {
 		this.precioTotal = precioTotal;
+		this.usuario = usuario;
 		this.items = items;
 	}
 
 
-	public int getIdBolsa() {
-		return idBolsa;
-	}
+
 	public void setIdBolsa(int idBolsa) {
 		this.idBolsa = idBolsa;
 	}
+
+	public int getIdBolsa() {
+		return idBolsa;
+	}
+	
 	public double getPrecioTotal() {
 		return precioTotal;
 	}

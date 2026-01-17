@@ -6,7 +6,12 @@ import java.util.List;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "StockTalla")
+@Table(
+	    name = "StockTalla",
+	    uniqueConstraints = {
+	        @UniqueConstraint(columnNames = {"idPrenda", "talla"})
+	    }
+	)
 public class StockTalla implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -30,13 +35,13 @@ public class StockTalla implements Serializable {
     public StockTalla() {}
 
 
-
-	public StockTalla(int idStockTalla, int cantidad, Talla talla) {
-		super();
-		this.idStockTalla = idStockTalla;
+	public StockTalla(int cantidad, Talla talla) {
 		this.cantidad = cantidad;
 		this.talla = talla;
 	}
+
+
+
 
 	public int getIdStockTalla() {
 		return idStockTalla;
