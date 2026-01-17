@@ -16,8 +16,6 @@ import modelo.entidades.Talla;
 
 public class PrendaDAO {
 
-	private Connection conexion;
-
 	private EntityManagerFactory emf;
 
 	public PrendaDAO() {

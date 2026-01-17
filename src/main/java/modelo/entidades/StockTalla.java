@@ -3,6 +3,8 @@ package modelo.entidades;
 import java.io.Serializable;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -26,6 +28,7 @@ public class StockTalla implements Serializable {
     // MUCHOS StockTalla pertenecen a UNA Prenda
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "idPrenda", nullable = false)
+    @JsonIgnore   //
     private Prenda prenda;
 
     @Enumerated(EnumType.STRING)
