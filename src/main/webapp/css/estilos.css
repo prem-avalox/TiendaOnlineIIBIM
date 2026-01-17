@@ -563,6 +563,7 @@ textarea.form-control {
     margin-top: 35px;
     border-top: 1px solid var(--color-acento);
     padding-top: 25px;
+    max-width: 400px; /* Opcional: limita el ancho para que no se estire demasiado */
 }
 
 .stock-container h3 {
@@ -571,14 +572,30 @@ textarea.form-control {
     text-transform: uppercase;
     letter-spacing: 1.5px;
     margin-bottom: 20px;
+    border-bottom: 2px solid #eee; /* Línea sutil bajo el título */
+    padding-bottom: 10px;
 }
 
 .talla-row {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-between; /* Empuja el label a la izq y el input a la der */
     align-items: center;
-    margin-bottom: 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid #f0f0f0; /* Separa cada fila con una línea fina */
 }
+
+.talla-row label {
+    font-weight: 500;
+    margin-bottom: 0; /* Quita márgenes por defecto */
+    white-space: nowrap; /* Asegura que el nombre esté en una sola línea */
+}
+
+.talla-row .form-control {
+    width: 80px; /* Ancho fijo para que los números se vean uniformes */
+    text-align: right; /* Alinea el número dentro del input a la derecha */
+}
+
+
 
 /* Botón Guardar - Mismo estilo que 'Agregar a Bolsa' */
 .btn-guardar {

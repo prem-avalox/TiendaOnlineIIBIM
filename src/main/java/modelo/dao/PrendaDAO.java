@@ -24,53 +24,122 @@ public class PrendaDAO {
 		this.emf = Persistence.createEntityManagerFactory("persistencia");
 	}
 
-	//operaciones CRUD básicas
+	// operaciones CRUD básicas
 
 	public boolean insertar(Prenda prenda) {
 		return false;
 	}
-	
-	public Prenda buscarPorId(int id) {
-		return null;
+
+	public boolean actualizar(Prenda prenda) {
+
+		EntityManager em = emf.createEntityManager();
+
+		try {
+			em.getTransaction().begin();
+
+			Prenda p = em.find(Prenda.class, prenda.getIdPrenda());
+
+			// 🔴 No existe la prenda
+			if (p == null) {
+				return false;
+			}
+
+			// Datos simples
+			p.setImagen(prenda.getImagen());
+			p.setNombrePrenda(prenda.getNombrePrenda());
+			p.setDescripcion(prenda.getDescripcion());
+			p.setPrecio(prenda.getPrecio());
+			p.setCategoria(prenda.getCategoria());
+			p.setColor(prenda.getColor());
+			p.setCorte(prenda.getCorte());
+
+			// Stock por talla
+			for (StockTalla stForm : prenda.getStockTallas()) {
+
+				StockTalla existente = p.getStockTallas().stream().filter(s -> s.getTalla() == stForm.getTalla())
+						.findFirst().orElse(null);
+
+				if (existente != null) {
+					existente.setCantidad(stForm.getCantidad());
+				} else {
+					StockTalla nuevo = new StockTalla(stForm.getCantidad(), stForm.getTalla());
+					nuevo.setPrenda(p);
+					p.getStockTallas().add(nuevo);
+				}
+			}
+
+			em.getTransaction().commit();
+			return true; // ✅ TODO OK
+
+		} catch (Exception e) {
+			if (em.getTransaction().isActive()) {
+				em.getTransaction().rollback();
+			}
+			return false; // ❌ Error controlado
+		} finally {
+			em.close();
+		}
 	}
-	
-	public void actualizar(Prenda prenda) {
-		
-	}
-	
+
 	public boolean eliminar(int id) {
-		return false;
+		EntityManager em = emf.createEntityManager();
+		try {
+			em.getTransaction().begin();
+
+			Prenda prenda = em.find(Prenda.class, id);
+			if (prenda == null) {
+				return false;
+			}
+
+			em.remove(prenda); // cascade + orphanRemoval hacen el resto
+			em.getTransaction().commit();
+			return true;
+
+		} catch (Exception e) {
+			if (em.getTransaction().isActive()) {
+				em.getTransaction().rollback();
+			}
+			e.printStackTrace();
+			return false;
+		} finally {
+			em.close();
+		}
 	}
-	
+
 	// Métodos de negocio
 
 	public List<Prenda> getListaPrendas() {
-	    EntityManager em = emf.createEntityManager();
-	    try {
-	        // JPQL: Recupera todas las prendas para el catálogo 
-	        return em.createQuery("SELECT p FROM Prenda p", Prenda.class).getResultList();
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        return null;
-	    } finally {
-	        em.close();
-	    }
+		EntityManager em = emf.createEntityManager();
+		try {
+			// JPQL: Recupera todas las prendas para el catálogo
+			return em.createQuery("SELECT p FROM Prenda p", Prenda.class).getResultList();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		} finally {
+			em.close();
+		}
 	}
-	
-	public List<Prenda> getListaPrendas(String nombre){
+
+	public List<Prenda> getListaPrendas(String nombre) {
 		return null;
 	}
-	
-	public List<Prenda> filtrarPrendas(Talla talla, Color color, Corte corte){
+
+	public List<Prenda> filtrarPrendas(Talla talla, Color color, Corte corte) {
 		return null;
 	}
-	
-	public List<Prenda> getListaPrendas(int idCategoria){
+
+	public List<Prenda> getListaPrendas(int idCategoria) {
 		return null;
 	}
-	
-	public Prenda getPrenda(int idPrenda){
-		return null;
+
+	public Prenda getPrenda(int idPrenda) {
+		EntityManager em = emf.createEntityManager();
+		try {
+			return em.find(Prenda.class, idPrenda);
+		} finally {
+			em.close();
+		}
 	}
 
 }

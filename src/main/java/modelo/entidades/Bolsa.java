@@ -50,6 +50,12 @@ public class Bolsa implements Serializable {
 	}
 
 
+	public void setIdBolsa(int idBolsa) {
+		this.idBolsa = idBolsa;
+	}
+
+
+
 	public int getIdBolsa() {
 		return idBolsa;
 	}
