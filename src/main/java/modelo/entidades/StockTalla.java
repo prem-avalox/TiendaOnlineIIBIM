@@ -20,7 +20,7 @@ public class StockTalla implements Serializable {
 
     // MUCHOS StockTalla pertenecen a UNA Prenda
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "idPrenda", nullable = false)
+    @JoinColumn(name = "id_prenda", nullable = false)
     private Prenda prenda;
 
     @Enumerated(EnumType.STRING)

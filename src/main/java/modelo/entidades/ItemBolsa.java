@@ -28,7 +28,7 @@ public class ItemBolsa implements Serializable {
 	private Prenda prenda;
 
 	@ManyToOne
-	@JoinColumn(name = "idBolsa", nullable = false) 
+	@JoinColumn(name = "id_bolsa", nullable = false) 
 	private Bolsa bolsa; 
 	
 	
