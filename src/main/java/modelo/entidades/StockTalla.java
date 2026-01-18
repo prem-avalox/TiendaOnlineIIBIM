@@ -11,7 +11,7 @@ import jakarta.persistence.*;
 @Table(
 	    name = "StockTalla",
 	    uniqueConstraints = {
-	        @UniqueConstraint(columnNames = {"idPrenda", "talla"})
+	        @UniqueConstraint(columnNames = {"id_prenda", "talla"})
 	    }
 	)
 public class StockTalla implements Serializable {

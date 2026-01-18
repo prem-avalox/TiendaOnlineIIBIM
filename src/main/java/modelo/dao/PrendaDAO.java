@@ -25,9 +25,30 @@ public class PrendaDAO {
 	// operaciones CRUD básicas
 
 	public boolean insertar(Prenda prenda) {
-		return false;
-	}
+	    EntityManager em = emf.createEntityManager();
+	    try {
+	        em.getTransaction().begin();
+	        if (prenda.getStockTallas() != null) {
+	            for (StockTalla st : prenda.getStockTallas()) {
+	                st.setPrenda(prenda); 
+	            }
+	        }
 
+	        em.persist(prenda);
+
+	        em.getTransaction().commit();
+	        return true; 
+
+	    } catch (Exception e) {
+	        if (em.getTransaction().isActive()) {
+	            em.getTransaction().rollback();
+	        }
+	        e.printStackTrace();
+	        return false; 
+	    } finally {
+	        em.close();
+	    }
+	}
 	public boolean actualizar(Prenda prenda) {
 
 		EntityManager em = emf.createEntityManager();

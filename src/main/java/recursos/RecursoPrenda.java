@@ -43,7 +43,7 @@ public class RecursoPrenda {
         return prendaDAO.getPrenda(id);
     }
 
-    /*
+    
     // =====================================================
     // POST - Crear prenda
     // =====================================================
@@ -53,7 +53,7 @@ public class RecursoPrenda {
     @Produces(MediaType.APPLICATION_JSON)
     public boolean agregarPrenda(Prenda prenda) {
         return prendaDAO.insertar(prenda);
-    }*/
+    }
 
     // =====================================================
     // PUT - Actualizar prenda
