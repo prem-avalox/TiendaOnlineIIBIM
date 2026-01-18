@@ -57,9 +57,14 @@ public class Bolsa implements Serializable {
 	public void setPrecioTotal(double precioTotal) {
 		this.precioTotal = precioTotal;
 	}
+	public List<ItemBolsa> getItemsBolsa() {
+		return items;
+	}
+	
 	public List<ItemBolsa> getItems() {
 		return items;
 	}
+	
 	public void setItems(List<ItemBolsa> items) {
 		this.items = items;
 	}
@@ -94,6 +99,14 @@ public class Bolsa implements Serializable {
 			}
 		}
 		return total;
+	}
+	
+	/**
+	 * Método según UML: getMontoTotal()
+	 * @return monto total calculado
+	 */
+	public double getMontoTotal() {
+		return calcularMontoTotal();
 	}
 	
 	

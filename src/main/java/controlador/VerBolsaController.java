@@ -10,9 +10,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import modelo.dao.BolsaDAO;
+import modelo.dao.StockTallaDAO;
 import modelo.dao.UsuarioDAO;
 import modelo.entidades.Bolsa;
 import modelo.entidades.ItemBolsa;
+import modelo.entidades.StockTalla;
 import modelo.entidades.Usuario;
 
 /**
@@ -28,6 +30,7 @@ public class VerBolsaController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private BolsaDAO bolsaDAO = new BolsaDAO();
 	private UsuarioDAO usuarioDAO = new UsuarioDAO();
+	private StockTallaDAO stockTallaDAO = new StockTallaDAO();
 	
 	@Override
 	public void init() throws ServletException {
@@ -237,6 +240,7 @@ public class VerBolsaController extends HttpServlet {
 	/**
 	 * Actualiza la cantidad de un item en la bolsa
 	 * Según UML: Bolsa.actualizarCantidad(idItem, cantidad)
+	 * INCLUYE validación de stock según diagrama de secuencia 2.3
 	 * Si la cantidad es 0, elimina el item automáticamente
 	 */
 	private void actualizarCantidad(HttpServletRequest req, HttpServletResponse resp) 
@@ -266,12 +270,45 @@ public class VerBolsaController extends HttpServlet {
 				
 				if (bolsa != null && bolsa.getItems() != null) {
 					// Buscar el item en la bolsa
+					ItemBolsa itemAActualizar = null;
 					for (ItemBolsa item : bolsa.getItems()) {
 						if (item.getIdItem() == idItem) {
-							item.setCantidad(nuevaCantidad);
+							itemAActualizar = item;
 							break;
 						}
 					}
+					
+					if (itemAActualizar == null) {
+						System.err.println("❌ Item no encontrado");
+						req.setAttribute("error", "Item no encontrado");
+						abrirBolsa(req, resp);
+						return;
+					}
+					
+					// VALIDACIÓN DE STOCK según diagrama de secuencia 2.3
+					System.out.println("🔍 Verificando stock disponible...");
+					StockTalla stock = stockTallaDAO.buscarStock(
+						itemAActualizar.getPrenda().getIdPrenda(), 
+						itemAActualizar.getTallaSeleccionada()
+					);
+					
+					boolean stockDisponible = stockTallaDAO.validarStock(stock, nuevaCantidad);
+					
+					if (!stockDisponible) {
+						System.err.println("❌ STOCK INSUFICIENTE");
+						req.setAttribute("error", 
+							"Stock insuficiente. Disponible: " + 
+							(stock != null ? stock.getCantidad() : 0) + 
+							" | Solicitado: " + nuevaCantidad
+						);
+						abrirBolsa(req, resp);
+						return;
+					}
+					
+					System.out.println("✅ Stock disponible - continuando actualización");
+					
+					// Actualizar cantidad
+					itemAActualizar.setCantidad(nuevaCantidad);
 					
 					// Recalcular total
 					double nuevoTotal = bolsa.calcularMontoTotal();
