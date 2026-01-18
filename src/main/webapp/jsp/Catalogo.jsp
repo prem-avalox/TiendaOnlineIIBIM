@@ -53,8 +53,25 @@
 		</div>
 	</div>
 
-	<!-- seccion del sidebar de categorias -->
-	<%@ include file="SidebarCategorias.jsp"%>
+	<aside id="sidebar" class="sidebar">
+		<div class="sidebar-header">
+			<h2>CATEGORÍAS</h2>
+			<label for="toggle-sidebar" class="close-btn"> <i
+				class="fas fa-times"></i></label>
+		</div>
+
+		<ul class="sidebar-menu">
+			<li><a href="VerCatalogoController?ruta=ingresar"
+				class="active-category">Ver Todo</a></li>
+
+			<c:forEach var="cat" items="${categorias}">
+				<li><a
+					href="VerCatalogoController?ruta=seleccionarCategoria&idCategoria=${cat.name()}">
+						${cat.nombreCategoria} </a></li>
+			</c:forEach>
+		</ul>
+	</aside>
+
 	<label id="overlay" class="overlay" for="toggle-sidebar"></label>
 
 	<!-- seccion para aplicar filtros -->
