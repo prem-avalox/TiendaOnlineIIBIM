@@ -131,8 +131,9 @@
 							class="product-link">
 							<div class="product-image-container">
 								<img class="product-image"
-									src="${pageContext.request.contextPath}/${prenda.imagen}"
-									alt="${prenda.nombrePrenda}">
+									src="${pageContext.request.contextPath}/img/${prenda.imagen}"
+									alt="${prenda.nombrePrenda}"
+									onerror="this.src='${pageContext.request.contextPath}/img/placeholder.jpg'">
 							</div>
 							<div class="product-info">
 								<p class="product-name">${prenda.nombrePrenda}</p>
@@ -153,21 +154,31 @@
 	</footer>
 
 	<script>
-    // Función para cargar el contenido de la bolsa
+    // Función para cargar el contenido de la bolsa (CU11 - Ver Bolsa según UML)
     function cargarBolsa() {
+        console.log('Cargando contenido de la bolsa...');
         fetch('${pageContext.request.contextPath}/VerBolsaController?action=abrirBolsa')
-            .then(response => response.text())
+            .then(response => {
+                console.log('Respuesta recibida:', response.status);
+                return response.text();
+            })
             .then(html => {
-                // Extraer solo el contenido del cart-content-data
+                console.log('HTML recibido, longitud:', html.length);
+                
+                // Parsear el HTML recibido
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(html, 'text/html');
-                const content = doc.querySelector('.cart-content-data');
                 
-                if (content) {
-                    document.getElementById('cartContent').innerHTML = content.innerHTML;
+                // Buscar el contenido del sidebar
+                const sidebarContent = doc.querySelector('.cart-sidebar-content');
+                
+                if (sidebarContent) {
+                    // Reemplazar el contenido del cartContent con el contenido del sidebar
+                    document.getElementById('cartContent').innerHTML = sidebarContent.innerHTML;
+                    console.log('Contenido de la bolsa actualizado exitosamente');
                 } else {
-                    // Si no hay contenido específico, usar todo el HTML
-                    document.getElementById('cartContent').innerHTML = html;
+                    console.error('No se encontró .cart-sidebar-content en la respuesta');
+                    throw new Error('Formato de respuesta inválido');
                 }
             })
             .catch(error => {
@@ -182,18 +193,59 @@
             });
     }
     
-    // Función para cambiar la cantidad de un item
-    function cambiarCantidad(idItem, cambio) {
-        // TODO: Implementar endpoint para actualizar cantidad
-        console.log("Cambiar cantidad del item " + idItem + " en " + cambio);
+    // Función para actualizar cantidad según UML: Bolsa.actualizarCantidad(idItem, cantidad)
+    // Si la cantidad es 0, el item se elimina automáticamente
+    function actualizarCantidad(idItem, nuevaCantidad) {
+        console.log('Actualizando cantidad del item ' + idItem + ' a ' + nuevaCantidad);
+        
+        fetch('${pageContext.request.contextPath}/VerBolsaController?action=actualizarCantidad&idItem=' + idItem + '&cantidad=' + nuevaCantidad)
+            .then(response => response.text())
+            .then(html => {
+                // Actualizar el contenido de la bolsa
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const sidebarContent = doc.querySelector('.cart-sidebar-content');
+                
+                if (sidebarContent) {
+                    document.getElementById('cartContent').innerHTML = sidebarContent.innerHTML;
+                    if (nuevaCantidad === 0) {
+                        console.log('Item eliminado automáticamente (cantidad = 0)');
+                    } else {
+                        console.log('Cantidad actualizada exitosamente');
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error al actualizar cantidad:', error);
+                alert('Error al actualizar la cantidad');
+            });
     }
     
-    // Función para eliminar un item
+    // Función para eliminar item según UML: Bolsa.eliminarItem(idItem)
     function eliminarItem(idItem) {
-        if (confirm('¿Estás seguro de eliminar este artículo?')) {
-            // TODO: Implementar endpoint para eliminar item
-            console.log("Eliminar item " + idItem);
+        if (!confirm('¿Estás seguro de eliminar este artículo?')) {
+            return;
         }
+        
+        console.log('Eliminando item ' + idItem);
+        
+        fetch('${pageContext.request.contextPath}/VerBolsaController?action=eliminarItem&idItem=' + idItem)
+            .then(response => response.text())
+            .then(html => {
+                // Actualizar el contenido de la bolsa
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const sidebarContent = doc.querySelector('.cart-sidebar-content');
+                
+                if (sidebarContent) {
+                    document.getElementById('cartContent').innerHTML = sidebarContent.innerHTML;
+                    console.log('Item eliminado exitosamente');
+                }
+            })
+            .catch(error => {
+                console.error('Error al eliminar item:', error);
+                alert('Error al eliminar el artículo');
+            });
     }
     </script>
 </body>

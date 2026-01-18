@@ -21,26 +21,14 @@ public class ItemBolsa implements Serializable {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "talla")
 	private Talla tallaSeleccionada;
-
-	/*
-     * Relación con Prenda:
-     * - ItemBolsa referencia a UNA Prenda
-     * - Prenda NO necesita conocer ItemBolsa
-     */
+	
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "idPrenda", nullable = false)
     private Prenda prenda;
 
-	
-	/*
-     * Relación con Bolsa:
-     * - ItemBolsa NO existe sin Bolsa
-     * - Es el lado dueño de la relación
-     */
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "idBolsa", nullable = false)
-    private Bolsa bolsa;
-	
+	@ManyToOne
+	@JoinColumn(name = "idBolsa", nullable = false) 
+	private Bolsa bolsa; 
 	
 	// Constructores
 	public ItemBolsa() {
@@ -99,6 +87,27 @@ public class ItemBolsa implements Serializable {
 
 	public void setBolsa(Bolsa bolsa) {
 	    this.bolsa = bolsa;
+	}
+	
+	/**
+	 * Calcula el subtotal del item (precio * cantidad)
+	 * Según diagrama de secuencia CU11 - Ver Bolsa
+	 * @return subtotal calculado
+	 */
+	public double calcularSubtotal() {
+		if (prenda != null) {
+			return prenda.getPrecio() * cantidad;
+		}
+		return 0.0;
+	}
+	
+	/**
+	 * Obtiene el tipo de talla seleccionada como String
+	 * Según diagrama de secuencia: talla.getTipoTalla()
+	 * @return nombre de la talla (S, M, L, XL, etc.)
+	 */
+	public String getTipoTalla() {
+		return tallaSeleccionada != null ? tallaSeleccionada.name() : null;
 	}
 
 

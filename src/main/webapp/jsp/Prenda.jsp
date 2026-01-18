@@ -24,7 +24,10 @@
 
     <div class="prenda-container-detalle">
         <div class="detalle-izquierda">
-            <img src="${pageContext.request.contextPath}/${prenda.imagen}" alt="${prenda.nombrePrenda}" class="img-detalle">
+            <img src="${pageContext.request.contextPath}/img/${prenda.imagen}" 
+                 alt="${prenda.nombrePrenda}" 
+                 class="img-detalle"
+                 onerror="this.src='${pageContext.request.contextPath}/img/placeholder.jpg'">
         </div>
 
         <div class="detalle-derecha">

@@ -19,17 +19,11 @@ public class Bolsa implements Serializable {
     @Column(name = "precioTotal")
     private double precioTotal;
     
-    // Relación con Usuario (0..1) - Unidireccional según tu diagrama
-    @OneToOne(fetch = FetchType.LAZY, optional = true)
-    @JoinColumn(
-        name = "idUsuario", 
-        nullable = true, 
-        unique = true 
-    )
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "idUsuario", nullable = false)
+
     private Usuario usuario;
 
-    // COMPOSICIÓN con ItemBolsa (0..*)
-    // Usamos ArrayList para que la bolsa pueda empezar vacía (0)
     @OneToMany(mappedBy = "bolsa", 
                cascade = CascadeType.ALL, 
                orphanRemoval = true, 
@@ -40,8 +34,6 @@ public class Bolsa implements Serializable {
 	public Bolsa() {
 		
 	}
-
-	
 	
 	public Bolsa(double precioTotal, Usuario usuario, List<ItemBolsa> items) {
 		this.precioTotal = precioTotal;
@@ -49,6 +41,11 @@ public class Bolsa implements Serializable {
 		this.items = items;
 	}
 
+
+
+	public void setIdBolsa(int idBolsa) {
+		this.idBolsa = idBolsa;
+	}
 
 	public int getIdBolsa() {
 		return idBolsa;
@@ -82,6 +79,21 @@ public class Bolsa implements Serializable {
 
 	public void setUsuario(Usuario usuario) {
 		this.usuario = usuario;
+	}
+	
+	/**
+	 * Calcula el monto total de la bolsa sumando los subtotales de todos los items
+	 * Según diagrama de secuencia CU11 - Ver Bolsa: bolsa.calcularMontoTotal()
+	 * @return monto total calculado
+	 */
+	public double calcularMontoTotal() {
+		double total = 0.0;
+		if (items != null && !items.isEmpty()) {
+			for (ItemBolsa item : items) {
+				total += item.calcularSubtotal();
+			}
+		}
+		return total;
 	}
 	
 	

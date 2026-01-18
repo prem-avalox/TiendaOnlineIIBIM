@@ -35,8 +35,6 @@ public class StockTalla implements Serializable {
     public StockTalla() {}
 
 
-    
-
 	public StockTalla(int cantidad, Talla talla) {
 		this.cantidad = cantidad;
 		this.talla = talla;

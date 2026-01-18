@@ -61,36 +61,60 @@
 			</div>
 
 			<div class="form-group">
-				<label for="color">Color:</label> <input type="text" id="color"
-					name="color" value="${p.color}" class="form-control">
+				<label for="color">Color:</label> <select name="color"
+					class="form-control" required>
+					<c:forEach var="c" items="${colores}">
+						<option value="${c.name()}" ${c == p.color ? 'selected' : ''}>
+							${c.nombreColor}</option>
+					</c:forEach>
+				</select>
 			</div>
 
-			<div class="form-group">
-				<label for="corte">Corte:</label> <input type="text" id="corte"
-					name="corte" value="${p.corte}" class="form-control">
-			</div>
+
+			<select name="corte" class="form-control" required>
+				<c:forEach var="co" items="${cortes}">
+					<option value="${co.name()}" ${co == p.corte ? 'selected' : ''}>
+						${co}</option>
+				</c:forEach>
+			</select>
+
+			<style>
+.talla-row {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	border-bottom: 1px solid #eee;
+	padding: 20px 0;
+	max-width: 600px; /* Para que no se estire a toda la pantalla */
+}
+
+.talla-row input {
+	text-align: right; /* Número a la derecha */
+	width: 50px;
+}
+</style>
 
 			<div class="stock-container">
 				<h3>Actualizar Stock por Talla</h3>
+
 				<c:forEach var="tallaDisp" items="${tallasDisponibles}">
+					<c:set var="cantidadActual" value="0" />
+
+					<c:forEach var="st" items="${p.stockTallas}">
+						<c:if test="${st.talla == tallaDisp}">
+							<c:set var="cantidadActual" value="${st.cantidad}" />
+						</c:if>
+					</c:forEach>
+
 					<div class="talla-row">
 						<label>Stock ${tallaDisp}:</label> <input type="hidden"
-							name="talla" value="${tallaDisp}" />
-
-						<%-- Buscamos si la prenda ya tiene stock definido para esta talla --%>
-						<c:set var="cantidadActual" value="0" />
-						<c:forEach var="st" items="${p.stockTallas}">
-							<c:if test="${st.talla == tallaDisp}">
-								<c:set var="cantidadActual" value="${st.cantidad}" />
-							</c:if>
-						</c:forEach>
-
-						<input type="number" name="cantidad" min="0"
-							value="${cantidadActual}" class="form-control"
-							style="width: 100px;" required>
+							name="tallas" value="${tallaDisp}" /> <input type="number"
+							name="cantidad_${tallaDisp}" min="0" value="${cantidadActual}"
+							class="form-control" required />
 					</div>
 				</c:forEach>
 			</div>
+
 
 			<div class="button-group-admin">
 				<button type="submit" class="btn-guardar">Actualizar

@@ -563,6 +563,7 @@ textarea.form-control {
     margin-top: 35px;
     border-top: 1px solid var(--color-acento);
     padding-top: 25px;
+    max-width: 400px; /* Opcional: limita el ancho para que no se estire demasiado */
 }
 
 .stock-container h3 {
@@ -571,14 +572,30 @@ textarea.form-control {
     text-transform: uppercase;
     letter-spacing: 1.5px;
     margin-bottom: 20px;
+    border-bottom: 2px solid #eee; /* Línea sutil bajo el título */
+    padding-bottom: 10px;
 }
 
 .talla-row {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-between; /* Empuja el label a la izq y el input a la der */
     align-items: center;
-    margin-bottom: 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid #f0f0f0; /* Separa cada fila con una línea fina */
 }
+
+.talla-row label {
+    font-weight: 500;
+    margin-bottom: 0; /* Quita márgenes por defecto */
+    white-space: nowrap; /* Asegura que el nombre esté en una sola línea */
+}
+
+.talla-row .form-control {
+    width: 80px; /* Ancho fijo para que los números se vean uniformes */
+    text-align: right; /* Alinea el número dentro del input a la derecha */
+}
+
+
 
 /* Botón Guardar - Mismo estilo que 'Agregar a Bolsa' */
 .btn-guardar {
@@ -669,7 +686,7 @@ textarea.form-control {
    10. SIDEBAR DE LA BOLSA (CARRITO DE COMPRAS)
    ========================================================================== */
 
-/* Overlay para cerrar el sidebar al hacer click fuera */
+/* Overlay para cerrar el sidebar al hacer click fuera - solo detrás del sidebar */
 #cart-overlay {
     display: none;
     position: fixed;
@@ -678,7 +695,7 @@ textarea.form-control {
     width: 100%;
     height: 100%;
     background: rgba(0, 0, 0, 0.5);
-    z-index: 1999;
+    z-index: 1900;
 }
 
 #toggle-cart:checked ~ #cart-overlay {
@@ -786,6 +803,13 @@ textarea.form-control {
     border: 1px solid var(--color-acento);
 }
 
+.cart-item-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
 .cart-item-info {
     flex: 1;
     display: flex;
@@ -809,11 +833,18 @@ textarea.form-control {
 
 .cart-item-price,
 .cart-item-size,
+.cart-item-quantity,
 .cart-item-subtotal {
     font-family: var(--fuente-precio);
     font-size: 13px;
     color: var(--color-precio);
     margin: 0;
+}
+
+.cart-item-size,
+.cart-item-quantity {
+    display: inline-block;
+    margin-right: 15px;
 }
 
 .cart-item-quantity {
@@ -823,6 +854,41 @@ textarea.form-control {
 .cart-item-subtotal {
     font-weight: 600;
     color: var(--color-primario);
+}
+
+/* Controles de cantidad */
+.cart-item-quantity-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 10px 0;
+}
+
+.quantity-btn {
+    width: 30px;
+    height: 30px;
+    border: 1px solid var(--color-acento);
+    background: white;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.quantity-btn:hover {
+    background: var(--color-primario);
+    color: white;
+    border-color: var(--color-primario);
+}
+
+.quantity-display {
+    min-width: 30px;
+    text-align: center;
+    font-family: var(--fuente-precio);
+    font-size: 14px;
+    font-weight: 600;
 }
 
 /* Acciones del item (cantidad y eliminar) */
@@ -876,12 +942,41 @@ textarea.form-control {
 
 /* Total de la compra */
 .cart-total {
+    border-top: 2px solid #eee;
+    padding-top: 15px;
+    margin-top: 20px;
+}
+
+.cart-total-row {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    padding: 20px 0;
-    border-top: 2px solid var(--color-primario);
-    margin-top: 20px;
+    margin-bottom: 10px;
+    font-size: 14px;
+    font-family: var(--fuente-texto);
+}
+
+.cart-total-label {
+    color: var(--color-precio);
+}
+
+.cart-total-value {
+    font-weight: 600;
+    color: var(--color-primario);
+}
+
+.cart-total-final {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--color-primario);
+    padding-top: 10px;
+    border-top: 1px solid #eee;
+    margin-top: 10px;
+}
+
+.cart-total-final .cart-total-label,
+.cart-total-final .cart-total-value {
+    color: var(--color-primario);
+    font-weight: 700;
 }
 
 .total-label {
@@ -964,6 +1059,7 @@ textarea.form-control {
     margin: 0 0 10px 0;
 }
 
+.empty-subtitle,
 .empty-submessage {
     font-family: var(--fuente-precio);
     font-size: 14px;
@@ -986,6 +1082,40 @@ textarea.form-control {
 
 .continue-shopping-btn:hover {
     background: var(--color-boton-animacion);
+}
+
+/* Estilos generales para botones */
+.btn {
+    padding: 15px;
+    border: none;
+    cursor: pointer;
+    font-family: var(--fuente-texto);
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    transition: all 0.3s;
+    text-decoration: none;
+    display: block;
+    text-align: center;
+}
+
+.btn-primary {
+    background: var(--color-primario);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: var(--color-boton-animacion);
+}
+
+.btn-secondary {
+    background: white;
+    color: var(--color-primario);
+    border: 1px solid var(--color-primario);
+}
+
+.btn-secondary:hover {
+    background: #f5f5f5;
 }
 
 /* Responsive para el sidebar */

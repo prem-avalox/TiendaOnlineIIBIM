@@ -16,7 +16,7 @@ public class Prenda implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int idPrenda;
 
-    @Column(name = "imagen", length = 255)
+    @Column(name = "imagenPrenda", length = 255)
     private String imagen;
 
     @Column(name = "nombrePrenda", nullable = false, length = 100)
@@ -28,12 +28,11 @@ public class Prenda implements Serializable {
     @Column(name = "descripcion", length = 500)
     private String descripcion;
 
-    // CAMBIO: Ahora es tipo Color (Enum) y se persiste como STRING
+    
     @Enumerated(EnumType.STRING)
     @Column(name = "color",nullable = false, length = 50)
     private Color color;
 
-    // CAMBIO: Ahora es tipo Corte (Enum) y se persiste como STRING
     @Enumerated(EnumType.STRING)
     @Column(name = "corte", nullable = false,length = 30)
     private Corte corte;
@@ -53,9 +52,9 @@ public class Prenda implements Serializable {
 
     public Prenda() {}
 
+
     // Constructor actualizado con los nuevos tipos de Enum
-    public Prenda(String imagen, String nombrePrenda, double precio, String descripcion,
-                  Color color, Corte corte, Categoria categoria, List<StockTalla> stockTallas) {
+    public Prenda(String imagen, String nombrePrenda, double precio, String descripcion, Color color, Corte corte, Categoria categoria, List<StockTalla> stockTallas) {
         this.imagen = imagen;
         this.nombrePrenda = nombrePrenda;
         this.precio = precio;
@@ -71,7 +70,6 @@ public class Prenda implements Serializable {
         }
     }
 
-    // Getters/Setters actualizados
     public int getIdPrenda() { return idPrenda; }
     public void setIdPrenda(int idPrenda) { this.idPrenda = idPrenda; }
 
@@ -99,6 +97,16 @@ public class Prenda implements Serializable {
     public List<StockTalla> getStockTallas() { return stockTallas; }
     public void setStockTallas(List<StockTalla> stockTallas) {
         this.stockTallas = (stockTallas != null) ? stockTallas : new ArrayList<>();
+    }
+    
+    /**
+     * Retorna un objeto con los datos básicos de la prenda
+     * Según diagrama de secuencia CU11: prenda.getDatosPrenda()
+     * Nota: Este método puede retornar la prenda misma, ya que todos los datos son accesibles vía getters
+     * @return esta instancia de Prenda con todos sus datos
+     */
+    public Prenda getDatosPrenda() {
+        return this;
     }
 
     @Override

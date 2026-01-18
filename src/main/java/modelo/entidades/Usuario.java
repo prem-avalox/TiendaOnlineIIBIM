@@ -24,10 +24,9 @@ public class Usuario implements Serializable {
     private String contrasena;
     
     @Column(name = "isAdmin", nullable = false)
-    private boolean isAdmin = false; // Por defecto es falso (usuario normal)
+    private boolean isAdmin = false; 
 
 	
-	// Constructores
 	public Usuario() {
 	}
 
@@ -67,8 +66,6 @@ public class Usuario implements Serializable {
 		this.contrasena = contrasena;
 	}
 
-	
-
 	public boolean isIsAdmin() {
 		return isAdmin; 
 	}
@@ -78,8 +75,7 @@ public class Usuario implements Serializable {
     
 	@Override
 	public String toString() {
-		return "Usuario [idUsuario=" + idUsuario + ", nombreUsuario=" + nombreUsuario + ", email=" + email
-				+ ", contrasena=" + contrasena + "]";
+		return "Usuario [idUsuario=" + idUsuario + ", nombreUsuario=" + nombreUsuario + ", email=" + email+  " ]";
 	}
 	
 	
