@@ -1,26 +1,20 @@
 /**
- * Función para cerrar el modal de éxito
+ * Función para cerrar el modal y redirigir
  */
 function cerrarModal() {
     const modal = document.getElementById('modalExito');
     if (modal) {
         modal.style.display = 'none';
-        
-        // Esto limpia los parámetros de la URL (?ruta=guardar) 
-        // para que si el usuario recarga, no salga el modal de nuevo.
-        const url = new URL(window.location);
-        url.searchParams.set('ruta', 'agregar');
-        window.history.replaceState({}, '', url);
+        // Redirección al controlador de gestión
+        window.location.href = 'GestionarPrendasController?ruta=listar';
     }
 }
 
-/**
- * Opcional: Cerrar el modal si el usuario hace clic fuera de la caja blanca
- */
 window.onclick = function(event) {
     const modal = document.getElementById('modalExito');
-    if (event.target == modal) {
-        modal.style.display = "none";
+    // Si el usuario hace clic exactamente en el overlay (fondo oscuro)
+    if (event.target === modal) {
+        cerrarModal(); // Reutilizamos la función de arriba que ya tiene la redirección
     }
 }
 
@@ -38,8 +32,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
 
             if (totalStock <= 0) {
-                event.preventDefault(); // Detiene el envío
-                
+                event.preventDefault(); 
                 alert("Atención: Debe asignar stock a al menos una talla para registrar la prenda.");
             }
         });
