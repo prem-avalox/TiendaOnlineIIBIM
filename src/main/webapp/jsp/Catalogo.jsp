@@ -77,7 +77,7 @@
 	<!-- seccion para aplicar filtros -->
 	<nav class="category-nav-bar">
 		<form action="VerCatalogoController" method="get">
-			<input type="hidden" name="ruta" value="filtros">
+			<input type="hidden" name="ruta" value="aplicarFiltros">
 			<ul class="cajas-filtro-lista">
 
 				<li class="filtro-item"><input type="checkbox"
@@ -144,7 +144,7 @@
 				<c:forEach var="prenda" items="${prendas}">
 					<div class="tarjeta-producto">
 						<a
-							href="VerCatalogoController?ruta=visualizarPrenda&id=${prenda.idPrenda}"
+							href="VerCatalogoController?ruta=visualizarPrenda&idPrenda=${prenda.idPrenda}"
 							class="product-link">
 							<div class="product-image-container">
 								<img class="product-image"

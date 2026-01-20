@@ -12,7 +12,7 @@
 <body class="general">
     <input type="checkbox" id="toggle-cart" hidden>
     <div class="header">
-        <a href="VerCatalogoController?ruta=listar" class="filter-bar-btn"><i class="fas fa-arrow-left"></i> Volver</a>
+        <a href="VerCatalogoController?ruta=iniciar" class="filter-bar-btn"><i class="fas fa-arrow-left"></i> Volver</a>
         <div class="logo"><h1>DETALLE</h1></div>
         
         <div class="button-container">

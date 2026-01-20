@@ -88,7 +88,7 @@ public class PrendaDAO {
 			}
 
 			em.getTransaction().commit();
-			return true; // ✅ TODO OK
+			return true; 
 
 		} catch (Exception e) {
 			if (em.getTransaction().isActive()) {
@@ -141,15 +141,71 @@ public class PrendaDAO {
 	}
 
 	public List<Prenda> getListaPrendas(String nombre) {
-		return null;
+	    EntityManager em = emf.createEntityManager();
+	    List<Prenda> prendas = null;
+	    try {
+	        String jpql = "SELECT p FROM Prenda p WHERE p.nombrePrenda LIKE :nombre";
+	        TypedQuery<Prenda> query = em.createQuery(jpql, Prenda.class);
+	        query.setParameter("nombre", "%" + nombre + "%");
+	        
+	        prendas = query.getResultList();
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    } finally {
+	        em.close();
+	    }
+	    return prendas;
 	}
-
+	
 	public List<Prenda> filtrarPrendas(Talla talla, Color color, Corte corte) {
-		return null;
+	    EntityManager em = emf.createEntityManager();
+	    List<Prenda> resultados = null;
+	    try {
+	        StringBuilder jpql = new StringBuilder("SELECT DISTINCT p FROM Prenda p JOIN p.stockTallas s WHERE 1=1");
+
+	        if (talla != null) {
+	            jpql.append(" AND s.talla = :talla");
+	        }
+	        if (color != null) {
+	            jpql.append(" AND p.color = :color");
+	        }
+	        if (corte != null) {
+	            jpql.append(" AND p.corte = :corte");
+	        }
+
+	        TypedQuery<Prenda> query = em.createQuery(jpql.toString(), Prenda.class);
+
+	        if (talla != null) query.setParameter("talla", talla);
+	        if (color != null) query.setParameter("color", color);
+	        if (corte != null) query.setParameter("corte", corte);
+
+	        resultados = query.getResultList();
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    } finally {
+	        em.close();
+	    }
+	    return resultados;
 	}
 
 	public List<Prenda> getListaPrendas(int idCategoria) {
-		return null;
+	    EntityManager em = emf.createEntityManager();
+	    List<Prenda> resultados = null;
+	    try {
+	        Categoria categoriaEnum = Categoria.values()[idCategoria];
+
+	        String jpql = "SELECT p FROM Prenda p WHERE p.categoria = :cat";
+	        TypedQuery<Prenda> query = em.createQuery(jpql, Prenda.class);
+	        query.setParameter("cat", categoriaEnum);
+
+	        resultados = query.getResultList();
+	    } catch (Exception e) {
+	        System.out.println("Error al buscar prendas por categoría: " + e.getMessage());
+	        e.printStackTrace();
+	    } finally {
+	        em.close();
+	    }
+	    return resultados;
 	}
 
 	public Prenda getPrenda(int idPrenda) {
