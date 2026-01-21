@@ -24,7 +24,7 @@ SET FOREIGN_KEY_CHECKS = 1;
 -- ================================================================
 -- 1. INSERTAR USUARIOS
 -- ================================================================
-INSERT INTO Usuario (nombreUsuario, correo, contrasenia, esAdministrador) VALUES
+INSERT INTO Usuario (nombreUsuario, email, contrasena, isAdmin) VALUES
 ('martin', 'martin@example.com', 'password123', 0),
 ('testuser', 'test@example.com', 'password123', 0),
 ('admin', 'admin@example.com', 'admin123', 1);
@@ -32,7 +32,7 @@ INSERT INTO Usuario (nombreUsuario, correo, contrasenia, esAdministrador) VALUES
 -- ================================================================
 -- 2. INSERTAR PRENDAS
 -- ================================================================
-INSERT INTO Prenda (imagenPrenda, nombrePrenda, precio, descripcion, color, corte, categoria) VALUES
+INSERT INTO Prenda (imagen, nombrePrenda, precio, descripcion, color, corte, categoria) VALUES
 ('camisa-celeste.jpg', 'Camisa Celeste Slim Fit', 29.99, 'Camisa elegante de corte slim', 'CELESTE', 'SLIM', 'CAMISAS'),
 ('pantalon-negro.jpg', 'Pantalón Negro Regular', 39.99, 'Pantalón clásico de corte regular', 'NEGRO', 'REGULAR', 'PANTALONES'),
 ('camisa-blanca.jpg', 'Camisa Blanca Regular', 24.99, 'Camisa básica de algodón', 'BLANCO', 'REGULAR', 'CAMISAS'),

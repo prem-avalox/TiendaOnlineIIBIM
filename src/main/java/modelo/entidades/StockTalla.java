@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 @Table(
@@ -26,6 +27,7 @@ public class StockTalla implements Serializable {
     // MUCHOS StockTalla pertenecen a UNA Prenda
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "idPrenda", nullable = false)
+    @JsonBackReference  // Evita serializar de vuelta a Prenda para evitar ciclos
     private Prenda prenda;
 
     @Enumerated(EnumType.STRING)

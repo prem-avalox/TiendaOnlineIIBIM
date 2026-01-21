@@ -128,9 +128,39 @@ public class VerCatalogoController extends HttpServlet {
 	private void seleccionarPrenda(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		// 1. Obtener los parametros
-		String idPrenda = req.getParameter("idPrenda");
-		// 2. Hablar con el modelo
+		String idPrendaStr = req.getParameter("idPrenda");
 		
-		// 3. Llamar a la vista
+		if (idPrendaStr == null || idPrendaStr.isEmpty()) {
+			req.setAttribute("mensajeError", "ID de prenda no especificado");
+			req.getRequestDispatcher("jsp/Catalogo.jsp").forward(req, resp);
+			return;
+		}
+		
+		try {
+			int idPrenda = Integer.parseInt(idPrendaStr);
+			
+			// 2. Hablar con el modelo - Obtener la prenda con sus datos completos
+			PrendaDAO prendaDAO = new PrendaDAO();
+			Prenda prenda = prendaDAO.getPrenda(idPrenda);
+			
+			if (prenda == null) {
+				req.setAttribute("mensajeError", "Prenda no encontrada");
+				req.getRequestDispatcher("jsp/Catalogo.jsp").forward(req, resp);
+				return;
+			}
+			
+			// Pasar la prenda a la vista
+			req.setAttribute("prenda", prenda);
+			
+			// 3. Llamar a la vista de detalle
+			req.getRequestDispatcher("jsp/Prenda.jsp").forward(req, resp);
+			
+		} catch (NumberFormatException e) {
+			req.setAttribute("mensajeError", "ID de prenda inválido");
+			req.getRequestDispatcher("jsp/Catalogo.jsp").forward(req, resp);
+		} catch (Exception e) {
+			req.setAttribute("mensajeError", "Error al cargar la prenda: " + e.getMessage());
+			req.getRequestDispatcher("jsp/Catalogo.jsp").forward(req, resp);
+		}
 	}
 }

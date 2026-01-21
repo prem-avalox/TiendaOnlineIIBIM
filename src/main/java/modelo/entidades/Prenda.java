@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name = "Prenda")
@@ -48,6 +49,7 @@ public class Prenda implements Serializable {
                cascade = CascadeType.ALL,
                orphanRemoval = true,
                fetch = FetchType.LAZY)
+    @JsonManagedReference  // Maneja la serialización JSON: serializa esta relación (Prenda → StockTallas)
     private List<StockTalla> stockTallas = new ArrayList<>();
 
     public Prenda() {}

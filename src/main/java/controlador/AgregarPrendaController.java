@@ -94,7 +94,7 @@ public class AgregarPrendaController extends HttpServlet {
 				    Talla talla = Talla.valueOf(tallasStr[i]);
 
 				    if (cantidad > 0) {
-				        stockTallas.add(new StockTalla(0, cantidad, talla));
+				        stockTallas.add(new StockTalla(cantidad, talla));
 				    }
 				} catch (Exception e) { 
 				    // Usamos Exception para atrapar cualquier error de formato o de Enum

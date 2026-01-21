@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name = "Bolsa")
@@ -27,7 +28,8 @@ public class Bolsa implements Serializable {
     @OneToMany(mappedBy = "bolsa", 
                cascade = CascadeType.ALL, 
                orphanRemoval = true, 
-               fetch = FetchType.LAZY)
+               fetch = FetchType.EAGER)
+    @JsonManagedReference  // Maneja la serialización JSON: serializa esta relación (Bolsa → Items)
     private List<ItemBolsa> items = new ArrayList<>();
 	
 	
@@ -106,6 +108,14 @@ public class Bolsa implements Serializable {
 	 * @return monto total calculado
 	 */
 	public double getMontoTotal() {
+		return calcularMontoTotal();
+	}
+	
+	/**
+	 * Alias para calcularMontoTotal
+	 * @return precio total calculado
+	 */
+	public double calcularPrecioTotal() {
 		return calcularMontoTotal();
 	}
 	

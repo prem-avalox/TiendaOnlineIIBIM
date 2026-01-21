@@ -32,36 +32,42 @@ public class BolsaDAO {
             System.out.println("\n🔍 DEBUG - BolsaDAO.buscarBolsaPorUsuario:");
             System.out.println("   - Buscando bolsa para usuario ID: " + idUsuario);
             
-            // JPQL: Buscar bolsa con TODOS los datos necesarios cargados
-            // LEFT JOIN FETCH b.items i -> Carga los items
-            // LEFT JOIN FETCH i.prenda p -> Carga las prendas de cada item
-            // Esto evita el problema de LazyInitializationException
+            System.out.println("   - Ejecutando query JPQL...");
+            
+            // Primero buscar la bolsa
             TypedQuery<Bolsa> query = em.createQuery(
-                "SELECT DISTINCT b FROM Bolsa b " +
-                "LEFT JOIN FETCH b.items i " +
-                "LEFT JOIN FETCH i.prenda p " +
-                "WHERE b.usuario.idUsuario = :idUsuario", 
+                "SELECT b FROM Bolsa b WHERE b.usuario.idUsuario = :idUsuario", 
                 Bolsa.class
             );
             query.setParameter("idUsuario", idUsuario);
             
-            System.out.println("   - Ejecutando query JPQL...");
             Bolsa bolsa = query.getSingleResult();
             
-            System.out.println("   ✅ Bolsa encontrada:");
-            System.out.println("      - ID Bolsa: " + bolsa.getIdBolsa());
-            System.out.println("      - Precio Total: $" + bolsa.getPrecioTotal());
-            
-            // Forzar la inicialización de la colección (por si acaso)
-            if (bolsa != null && bolsa.getItems() != null) {
-                int size = bolsa.getItems().size(); // Esto fuerza la carga de la colección
+            if (bolsa != null) {
+                System.out.println("   ✅ Bolsa encontrada:");
+                System.out.println("      - ID Bolsa: " + bolsa.getIdBolsa());
+                System.out.println("      - Precio Total: $" + bolsa.getPrecioTotal());
+                
+                // ✅ IMPORTANTE: Forzar la inicialización de la colección ANTES de cerrar el EM
+                // Esto evita LazyInitializationException cuando se accede a los items después
+                int size = bolsa.getItems().size();
                 System.out.println("      - Número de items: " + size);
                 
-                // Verificar cada item
+                // Verificar cada item Y forzar la carga de sus relaciones
                 for (ItemBolsa item : bolsa.getItems()) {
                     System.out.println("         • Item ID: " + item.getIdItem() + 
-                                     " | Prenda: " + (item.getPrenda() != null ? item.getPrenda().getNombrePrenda() : "NULL"));
+                                     " | Cantidad: " + item.getCantidad() +
+                                     " | Talla: " + item.getTallaSeleccionada());
+                    
+                    // ✅ Forzar carga de la prenda para evitar lazy loading posterior
+                    if (item.getPrenda() != null) {
+                        System.out.println("           Prenda: " + item.getPrenda().getNombrePrenda());
+                        // Acceder a propiedades importantes para inicializarlas
+                        item.getPrenda().getPrecio();
+                        item.getPrenda().getImagen();
+                    }
                 }
+                System.out.println("      - Todos los items completamente inicializados");
             }
             
             return bolsa;
@@ -79,6 +85,49 @@ public class BolsaDAO {
     }
 
     /**
+     * Busca una bolsa por su ID
+     * @param idBolsa ID de la bolsa
+     * @return Bolsa encontrada o null si no existe
+     */
+    public Bolsa buscarPorId(int idBolsa) {
+        EntityManager em = emf.createEntityManager();
+        try {
+            System.out.println("\n🔍 DEBUG - BolsaDAO.buscarPorId:");
+            System.out.println("   - Buscando bolsa ID: " + idBolsa);
+            
+            // Buscar por ID usando find() - con FetchType.EAGER cargará automáticamente los items
+            Bolsa bolsa = em.find(Bolsa.class, idBolsa);
+            
+            if (bolsa != null) {
+                // ✅ IMPORTANTE: Forzar la inicialización de la colección ANTES de cerrar el EM
+                // Esto evita LazyInitializationException cuando se accede a los items después
+                bolsa.getItems().size(); // Esto fuerza la carga de todos los items
+                
+                System.out.println("   ✅ Bolsa encontrada - ID: " + bolsa.getIdBolsa());
+                System.out.println("      - Número de items: " + bolsa.getItems().size());
+                
+                // Inicializar también las prendas de cada item (para evitar lazy loading posterior)
+                for (ItemBolsa item : bolsa.getItems()) {
+                    if (item.getPrenda() != null) {
+                        item.getPrenda().getNombrePrenda(); // Forzar carga de la prenda
+                    }
+                }
+                System.out.println("      - Items completamente inicializados");
+            } else {
+                System.out.println("   ❌ No se encontró bolsa con ID: " + idBolsa);
+            }
+            
+            return bolsa;
+        } catch (Exception e) {
+            System.err.println("   ❌ ERROR en buscarPorId:");
+            e.printStackTrace();
+            return null;
+        } finally {
+            em.close();
+        }
+    }
+
+    /**
      * Guarda una nueva bolsa en la base de datos
      * @param bolsa Bolsa a guardar
      * @return true si se guardó correctamente, false en caso contrario
@@ -88,6 +137,7 @@ public class BolsaDAO {
         try {
             em.getTransaction().begin();
             em.persist(bolsa);
+            em.flush(); // ✅ FORZAR escritura inmediata
             em.getTransaction().commit();
             return true;
         } catch (Exception e) {
@@ -100,6 +150,15 @@ public class BolsaDAO {
             em.close();
         }
     }
+    
+    /**
+     * Alias para guardarBolsa
+     * @param bolsa Bolsa a guardar
+     * @return true si se guardó correctamente, false en caso contrario
+     */
+    public boolean guardar(Bolsa bolsa) {
+        return guardarBolsa(bolsa);
+    }
 
     /**
      * Actualiza una bolsa existente
@@ -111,6 +170,7 @@ public class BolsaDAO {
         try {
             em.getTransaction().begin();
             Bolsa bolsaActualizada = em.merge(bolsa);
+            em.flush(); // ✅ FORZAR escritura inmediata
             em.getTransaction().commit();
             return bolsaActualizada;
         } catch (Exception e) {
@@ -122,6 +182,15 @@ public class BolsaDAO {
         } finally {
             em.close();
         }
+    }
+    
+    /**
+     * Alias para actualizarBolsa
+     * @param bolsa Bolsa a actualizar
+     * @return Bolsa actualizada
+     */
+    public Bolsa actualizar(Bolsa bolsa) {
+        return actualizarBolsa(bolsa);
     }
 
     /**

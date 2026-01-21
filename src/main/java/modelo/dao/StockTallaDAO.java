@@ -47,6 +47,16 @@ public class StockTallaDAO {
             em.close();
         }
     }
+    
+    /**
+     * Alias para buscarStock - busca el stock de una prenda en una talla específica
+     * @param idPrenda ID de la prenda
+     * @param talla Talla a buscar
+     * @return StockTalla encontrado o null si no existe
+     */
+    public StockTalla buscarStockPorPrendaYTalla(int idPrenda, Talla talla) {
+        return buscarStock(idPrenda, talla);
+    }
 
     /**
      * Actualiza el stock de una prenda

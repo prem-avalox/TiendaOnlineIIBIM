@@ -32,7 +32,7 @@
 			<c:otherwise>
 				<div class="cart-items">
 					<c:forEach var="item" items="${items}">
-						<div class="cart-item">
+						<div class="cart-item" data-item-id="${item.idItem}">
 							<div class="cart-item-image">
 								<img src="${pageContext.request.contextPath}/img/${item.prenda.imagen}" 
 								     alt="${item.prenda.nombrePrenda}"

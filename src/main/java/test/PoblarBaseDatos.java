@@ -19,9 +19,25 @@ public class PoblarBaseDatos {
         EntityManager em = emf.createEntityManager();
 
         try {
-            System.out.println("🚀 Iniciando población de base de datos...\n");
+            System.out.println("\n" + "=".repeat(60));
+            System.out.println("🚀 Iniciando población de base de datos...");
+            System.out.println("=".repeat(60) + "\n");
 
             em.getTransaction().begin();
+
+            // ========================================
+            // 0. LIMPIAR DATOS EXISTENTES
+            // ========================================
+            System.out.println("🧹 Limpiando datos existentes...");
+            
+            // Eliminar en orden para respetar las foreign keys
+            em.createQuery("DELETE FROM ItemBolsa").executeUpdate();
+            em.createQuery("DELETE FROM Bolsa").executeUpdate();
+            em.createQuery("DELETE FROM StockTalla").executeUpdate();
+            em.createQuery("DELETE FROM Prenda").executeUpdate();
+            em.createQuery("DELETE FROM Usuario").executeUpdate();
+            
+            System.out.println("   ✅ Datos anteriores eliminados\n");
 
             // ========================================
             // 1. CREAR USUARIOS
@@ -194,10 +210,10 @@ public class PoblarBaseDatos {
                 Corte.REGULAR,
                 Categoria.CALZADO
             );
-            agregarStock(loafers, Talla.S, 15);
-            agregarStock(loafers, Talla.M, 30);
-            agregarStock(loafers, Talla.L, 25);
-            agregarStock(loafers, Talla.XL, 20);
+            agregarStock(loafers, Talla.T38, 15);
+            agregarStock(loafers, Talla.T40, 30);
+            agregarStock(loafers, Talla.T42, 25);
+            agregarStock(loafers, Talla.T44, 20);
             em.persist(loafers);
 
             // CALZADO 2: Zapatos de Vestir
@@ -210,10 +226,11 @@ public class PoblarBaseDatos {
                 Corte.REGULAR,
                 Categoria.CALZADO
             );
-            agregarStock(zapatosVestir, Talla.S, 12);
-            agregarStock(zapatosVestir, Talla.M, 25);
-            agregarStock(zapatosVestir, Talla.L, 20);
-            agregarStock(zapatosVestir, Talla.XL, 15);
+            agregarStock(zapatosVestir, Talla.T39, 12);
+            agregarStock(zapatosVestir, Talla.T40, 25);
+            agregarStock(zapatosVestir, Talla.T41, 25);
+            agregarStock(zapatosVestir, Talla.T42, 20);
+            agregarStock(zapatosVestir, Talla.T43, 15);
             em.persist(zapatosVestir);
 
             // ACCESORIO 1: Cinturón
@@ -226,10 +243,7 @@ public class PoblarBaseDatos {
                 Corte.REGULAR,
                 Categoria.ACCESORIOS
             );
-            agregarStock(cinturon, Talla.S, 50);
-            agregarStock(cinturon, Talla.M, 80);
-            agregarStock(cinturon, Talla.L, 70);
-            agregarStock(cinturon, Talla.XL, 50);
+            agregarStock(cinturon, Talla.UNICA, 200);
             em.persist(cinturon);
 
             // ACCESORIO 2: Gorra
@@ -242,7 +256,7 @@ public class PoblarBaseDatos {
                 Corte.REGULAR,
                 Categoria.ACCESORIOS
             );
-            agregarStock(gorra, Talla.M, 100); // Talla única
+            agregarStock(gorra, Talla.UNICA, 100);
             em.persist(gorra);
 
             // ACCESORIO 3: Bolso
@@ -255,7 +269,7 @@ public class PoblarBaseDatos {
                 Corte.REGULAR,
                 Categoria.ACCESORIOS
             );
-            agregarStock(bolso, Talla.M, 60); // Talla única
+            agregarStock(bolso, Talla.UNICA, 60);
             em.persist(bolso);
 
             System.out.println("   ✅ 13 prendas creadas con stock\n");
@@ -314,20 +328,20 @@ public class PoblarBaseDatos {
             bolsaMartin.getItems().add(item2);
             em.persist(item2);
 
-            // Item 3: Loafers x1 (Talla M)
+            // Item 3: Loafers x1 (Talla 42)
             ItemBolsa item3 = new ItemBolsa();
             item3.setPrenda(loafers);
             item3.setCantidad(1);
-            item3.setTallaSeleccionada(Talla.M);
+            item3.setTallaSeleccionada(Talla.T42);
             item3.setBolsa(bolsaMartin);
             bolsaMartin.getItems().add(item3);
             em.persist(item3);
 
-            // Item 4: Cinturón x1 (Talla M)
+            // Item 4: Cinturón x1 (Talla Única)
             ItemBolsa item4 = new ItemBolsa();
             item4.setPrenda(cinturon);
             item4.setCantidad(1);
-            item4.setTallaSeleccionada(Talla.M);
+            item4.setTallaSeleccionada(Talla.UNICA);
             item4.setBolsa(bolsaMartin);
             bolsaMartin.getItems().add(item4);
             em.persist(item4);
@@ -378,13 +392,17 @@ public class PoblarBaseDatos {
             System.out.println("📊 RESUMEN:");
             System.out.println("   - 3 usuarios");
             System.out.println("   - 13 prendas");
-            System.out.println("   - 50 registros de stock");
+            System.out.println("   - 46 registros de stock");
             System.out.println("   - 3 bolsas");
             System.out.println("   - 6 items en bolsas");
             System.out.println("\n👤 USUARIOS CREADOS:");
             System.out.println("   • martin / martin123");
             System.out.println("   • testuser / password123");
             System.out.println("   • admin / admin123");
+            System.out.println("\n👕 TALLAS POR CATEGORÍA:");
+            System.out.println("   • Ropa (Camisas/Pantalones): XS, S, M, L, XL, XXL");
+            System.out.println("   • Calzado: 36, 37, 38, 39, 40, 41, 42, 43, 44, 45");
+            System.out.println("   • Accesorios: Única");
             System.out.println("\n🎉 ¡Listo para probar!");
 
         } catch (Exception e) {

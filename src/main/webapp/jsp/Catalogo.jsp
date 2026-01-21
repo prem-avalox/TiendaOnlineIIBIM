@@ -127,7 +127,7 @@
 				<c:forEach var="prenda" items="${prendas}">
 					<div class="tarjeta-producto">
 						<a
-							href="VerCatalogoController?ruta=visualizarPrenda&id=${prenda.idPrenda}"
+							href="VerCatalogoController?ruta=visualizarPrenda&idPrenda=${prenda.idPrenda}"
 							class="product-link">
 							<div class="product-image-container">
 								<img class="product-image"
@@ -196,28 +196,37 @@
     // Función para actualizar cantidad según UML: Bolsa.actualizarCantidad(idItem, cantidad)
     // Si la cantidad es 0, el item se elimina automáticamente
     function actualizarCantidad(idItem, nuevaCantidad) {
-        console.log('Actualizando cantidad del item ' + idItem + ' a ' + nuevaCantidad);
+        console.log('🔄 Actualizando cantidad del item ' + idItem + ' a ' + nuevaCantidad);
+        
+        // Validar que la cantidad sea válida
+        if (nuevaCantidad < 0) {
+            console.warn('Cantidad inválida: ' + nuevaCantidad);
+            return;
+        }
+        
+        // Mostrar indicador de carga
+        const itemElement = document.querySelector('[data-item-id="' + idItem + '"]');
+        if (itemElement) {
+            itemElement.style.opacity = '0.5';
+        }
         
         fetch('${pageContext.request.contextPath}/VerBolsaController?action=actualizarCantidad&idItem=' + idItem + '&cantidad=' + nuevaCantidad)
-            .then(response => response.text())
+            .then(response => {
+                console.log('✅ Respuesta recibida del servidor');
+                return response.text();
+            })
             .then(html => {
-                // Actualizar el contenido de la bolsa
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(html, 'text/html');
-                const sidebarContent = doc.querySelector('.cart-sidebar-content');
-                
-                if (sidebarContent) {
-                    document.getElementById('cartContent').innerHTML = sidebarContent.innerHTML;
-                    if (nuevaCantidad === 0) {
-                        console.log('Item eliminado automáticamente (cantidad = 0)');
-                    } else {
-                        console.log('Cantidad actualizada exitosamente');
-                    }
-                }
+                console.log('✅ Cantidad actualizada - recargando bolsa');
+                // Recargar el contenido de la bolsa
+                cargarBolsa();
             })
             .catch(error => {
-                console.error('Error al actualizar cantidad:', error);
-                alert('Error al actualizar la cantidad');
+                console.error('❌ Error al actualizar cantidad:', error);
+                // Restaurar opacidad
+                if (itemElement) {
+                    itemElement.style.opacity = '1';
+                }
+                alert('Error al actualizar la cantidad. Por favor intenta de nuevo.');
             });
     }
     
@@ -227,24 +236,31 @@
             return;
         }
         
-        console.log('Eliminando item ' + idItem);
+        console.log('🗑️ Eliminando item ' + idItem);
+        
+        // Mostrar indicador de carga
+        const itemElement = document.querySelector('[data-item-id="' + idItem + '"]');
+        if (itemElement) {
+            itemElement.style.opacity = '0.5';
+        }
         
         fetch('${pageContext.request.contextPath}/VerBolsaController?action=eliminarItem&idItem=' + idItem)
-            .then(response => response.text())
+            .then(response => {
+                console.log('✅ Respuesta recibida del servidor');
+                return response.text();
+            })
             .then(html => {
-                // Actualizar el contenido de la bolsa
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(html, 'text/html');
-                const sidebarContent = doc.querySelector('.cart-sidebar-content');
-                
-                if (sidebarContent) {
-                    document.getElementById('cartContent').innerHTML = sidebarContent.innerHTML;
-                    console.log('Item eliminado exitosamente');
-                }
+                console.log('✅ Item eliminado - recargando bolsa');
+                // Recargar el contenido de la bolsa
+                cargarBolsa();
             })
             .catch(error => {
-                console.error('Error al eliminar item:', error);
-                alert('Error al eliminar el artículo');
+                console.error('❌ Error al eliminar item:', error);
+                // Restaurar opacidad
+                if (itemElement) {
+                    itemElement.style.opacity = '1';
+                }
+                alert('Error al eliminar el artículo. Por favor intenta de nuevo.');
             });
     }
     </script>

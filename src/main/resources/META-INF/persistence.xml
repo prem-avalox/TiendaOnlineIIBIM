@@ -14,14 +14,23 @@
 			<property name="jakarta.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
 			
 		    
-
-			
-			<property name="eclipselink.ddl-generation" value="drop-and-create-tables" /> 
+			<!-- Configuración de generación de esquema -->
+			<!-- IMPORTANTE: Usar 'none' para NO borrar datos existentes -->
+			<property name="eclipselink.ddl-generation" value="none" />
 			
 			<!-- 
-			<property name="eclipselink.ddl-generation" value="none" />
+			<property name="eclipselink.ddl-generation" value="drop-and-create-tables" />
 			<property name="eclipselink.ddl-generation" value="create-tables" />
 			-->
+			
+			<!-- Logging SQL para debug -->
+			<property name="eclipselink.logging.level.sql" value="FINE"/>
+			<property name="eclipselink.logging.parameters" value="true"/>
+			
+			<!-- ✅ Deshabilitar cache completamente para evitar problemas de consistencia -->
+			<property name="eclipselink.cache.shared.default" value="false"/>
+			<property name="eclipselink.query-results-cache" value="false"/>
+			<property name="eclipselink.query-results-cache.type" value="NONE"/>
 			
 		</properties>
 	</persistence-unit>

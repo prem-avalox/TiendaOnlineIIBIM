@@ -3,6 +3,7 @@ package modelo.entidades;
 import java.io.Serializable;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 /**
  * Clase que representa un item en la bolsa de compras
@@ -22,12 +23,13 @@ public class ItemBolsa implements Serializable {
 	@Column(name = "talla")
 	private Talla tallaSeleccionada;
 	
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "idPrenda", nullable = false)
     private Prenda prenda;
 
 	@ManyToOne
-	@JoinColumn(name = "idBolsa", nullable = false) 
+	@JoinColumn(name = "idBolsa", nullable = false)
+	@JsonBackReference  // Evita serialización circular: NO serializa esta referencia (Items ← Bolsa)
 	private Bolsa bolsa; 
 	
 	// Constructores

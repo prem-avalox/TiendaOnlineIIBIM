@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
-        
+    
     <wb-module deploy-name="tiendaOnline">
         <wb-resource deploy-path="/" source-path="/target/m2e-wtp/web-resources"/>
                 
@@ -9,7 +9,7 @@
                 
         <property name="context-root" value="tiendaOnline"/>
                 
-        <property name="java-output-path" value="/tiendaOnline/build/classes"/>
+        <property name="java-output-path" value="/TiendaOnlineIIBIM/target/classes"/>
             
     </wb-module>
     

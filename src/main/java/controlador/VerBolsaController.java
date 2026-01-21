@@ -1,6 +1,7 @@
 package controlador;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 
 import jakarta.servlet.ServletException;
@@ -10,6 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import modelo.dao.BolsaDAO;
+import modelo.dao.ItemBolsaDAO;
 import modelo.dao.StockTallaDAO;
 import modelo.dao.UsuarioDAO;
 import modelo.entidades.Bolsa;
@@ -122,8 +124,10 @@ public class VerBolsaController extends HttpServlet {
 		System.out.println("\n🔍 DEBUG - obtenerContenido:");
 		System.out.println("   - Usuario ID: " + usuario.getIdUsuario());
 		System.out.println("   - Usuario Nombre: " + usuario.getNombreUsuario());
+		System.out.println("   ⚠️  FORZANDO REFRESH COMPLETO DESDE BD");
 		
 		// 1. Buscar la bolsa del usuario usando BolsaDAO (según diagrama UML)
+		// ✅ IMPORTANTE: Esto siempre trae datos frescos de la BD
 		Bolsa bolsa = bolsaDAO.buscarBolsaPorUsuario(usuario.getIdUsuario());
 		
 		System.out.println("   - Bolsa encontrada: " + (bolsa != null ? "SÍ (ID: " + bolsa.getIdBolsa() + ")" : "NO"));
@@ -131,14 +135,26 @@ public class VerBolsaController extends HttpServlet {
 		if (bolsa == null) {
 			// Si no tiene bolsa, mostrar vacía
 			System.out.println("   ⚠️  Bolsa es NULL - mostrando vacía");
-			presentarLista(req, resp, null, 0.0);
+			presentarLista(req, resp, Collections.emptyList(), 0.0);
 			return;
 		}
 		
 		// 2. Obtener los items de la bolsa (según diagrama: bolsa.getItems())
+		// ✅ Los items ya deben estar completamente inicializados por BolsaDAO
 		List<ItemBolsa> items = bolsa.getItems();
 		
 		System.out.println("   - Items obtenidos: " + (items != null ? items.size() + " items" : "NULL"));
+		
+		// ✅ VERIFICACIÓN ADICIONAL: Si items es null o vacío, intentar recargar
+		if (items == null || items.isEmpty()) {
+			System.out.println("   ⚠️  Items NULL o vacío - Intentando refresh adicional...");
+			// Recargar la bolsa usando el ID para forzar un refresh completo
+			bolsa = bolsaDAO.buscarPorId(bolsa.getIdBolsa());
+			if (bolsa != null) {
+				items = bolsa.getItems();
+				System.out.println("   - Items después de refresh: " + (items != null ? items.size() + " items" : "NULL"));
+			}
+		}
 		
 		// DEBUG: Mostrar detalles de cada item
 		if (items != null && !items.isEmpty()) {
@@ -188,13 +204,16 @@ public class VerBolsaController extends HttpServlet {
 		System.out.println("   - Items recibidos: " + (items != null ? items.size() : "NULL"));
 		System.out.println("   - Monto Total: $" + montoTotal);
 		
+		// Normalizar lista para evitar nulls que dejan el sidebar en estado "Cargando"
+		List<ItemBolsa> safeItems = (items != null) ? items : Collections.emptyList();
+
 		// FLUJO ALTERNO del diagrama de secuencia: [items > 0]
-		if (items != null && items.size() > 0) {
+		if (!safeItems.isEmpty()) {
 			// Caso 1: HAY items en la bolsa -> presentar(items, montoTotal)
 			System.out.println("   ✅ HAY ITEMS - Configurando atributos para JSP");
-			req.setAttribute("items", items);
+			req.setAttribute("items", safeItems);
 			req.setAttribute("montoTotal", montoTotal);
-			req.setAttribute("cantidadItems", items.size());
+			req.setAttribute("cantidadItems", safeItems.size());
 			req.setAttribute("bolsaVacia", false);
 			
 			System.out.println("   → Attributes set:");
@@ -205,7 +224,7 @@ public class VerBolsaController extends HttpServlet {
 		} else {
 			// Caso 2: NO HAY items -> mostrarMensajeVacio()
 			System.out.println("   ⚠️  NO HAY ITEMS - Mostrando bolsa vacía");
-			req.setAttribute("items", null);
+			req.setAttribute("items", Collections.emptyList());
 			req.setAttribute("montoTotal", 0.0);
 			req.setAttribute("cantidadItems", 0);
 			req.setAttribute("bolsaVacia", true);
@@ -307,17 +326,21 @@ public class VerBolsaController extends HttpServlet {
 					
 					System.out.println("✅ Stock disponible - continuando actualización");
 					
-					// Actualizar cantidad
-					itemAActualizar.setCantidad(nuevaCantidad);
+					// Usar ItemBolsaDAO para actualizar correctamente
+					ItemBolsaDAO itemBolsaDAO = new ItemBolsaDAO();
+					boolean actualizado = itemBolsaDAO.actualizarCantidad(itemAActualizar, nuevaCantidad);
 					
-					// Recalcular total
-					double nuevoTotal = bolsa.calcularMontoTotal();
-					bolsa.setPrecioTotal(nuevoTotal);
-					
-					// Actualizar en la base de datos
-					bolsaDAO.actualizarBolsa(bolsa);
-					
-					System.out.println("✅ Cantidad actualizada exitosamente. Nuevo total: $" + nuevoTotal);
+					if (actualizado) {
+						// Recargar la bolsa y recalcular total
+						bolsa = bolsaDAO.buscarBolsaPorUsuario(usuario.getIdUsuario());
+						double nuevoTotal = bolsa.calcularMontoTotal();
+						bolsa.setPrecioTotal(nuevoTotal);
+						bolsaDAO.actualizarBolsa(bolsa);
+						
+						System.out.println("✅ Cantidad actualizada exitosamente. Nuevo total: $" + nuevoTotal);
+					} else {
+						System.err.println("❌ Error al actualizar la cantidad en la base de datos");
+					}
 				}
 			} catch (NumberFormatException e) {
 				System.err.println("❌ Error al parsear parámetros: " + e.getMessage());
@@ -337,36 +360,68 @@ public class VerBolsaController extends HttpServlet {
 		
 		HttpSession session = req.getSession(false);
 		
+		System.out.println("\n========== ELIMINAR ITEM ==========");
+		System.out.println("📋 Sesión activa: " + (session != null));
+		
 		if (session != null && session.getAttribute("usuario") != null) {
 			Usuario usuario = (Usuario) session.getAttribute("usuario");
+			System.out.println("👤 Usuario: " + usuario.getNombreUsuario());
 			
 			try {
-				int idItem = Integer.parseInt(req.getParameter("idItem"));
+				// Obtener idItem del parámetro o del atributo (cuando viene de actualizarCantidad)
+				String idItemParam = req.getParameter("idItem");
+				if (idItemParam == null) {
+					idItemParam = String.valueOf(req.getAttribute("idItem"));
+					System.out.println("📝 ID Item obtenido desde atributo: " + idItemParam);
+				} else {
+					System.out.println("📝 ID Item obtenido desde parámetro: " + idItemParam);
+				}
 				
-				System.out.println("🗑️ Eliminando item " + idItem);
+				int idItem = Integer.parseInt(idItemParam);
 				
-				// Buscar la bolsa del usuario
+				System.out.println("🗑️ Eliminando item con ID: " + idItem);
+				
+				// Usar ItemBolsaDAO para eliminar correctamente
+				ItemBolsaDAO itemBolsaDAO = new ItemBolsaDAO();
+				System.out.println("🔧 ItemBolsaDAO creado, ejecutando eliminarItem()...");
+				itemBolsaDAO.eliminarItem(idItem);
+				System.out.println("✅ Método eliminarItem() del DAO ejecutado");
+				
+				// IMPORTANTE: Buscar una bolsa FRESCA después de la eliminación
+				// Esto asegura que la colección de items esté actualizada
+				System.out.println("🔄 Refrescando bolsa desde BD...");
 				Bolsa bolsa = bolsaDAO.buscarBolsaPorUsuario(usuario.getIdUsuario());
 				
-				if (bolsa != null && bolsa.getItems() != null) {
-					// Buscar y eliminar el item
-					bolsa.getItems().removeIf(item -> item.getIdItem() == idItem);
+				if (bolsa != null) {
+					System.out.println("📦 Bolsa refrescada - ID: " + bolsa.getIdBolsa());
+					System.out.println("📊 Items restantes en la bolsa: " + (bolsa.getItems() != null ? bolsa.getItems().size() : 0));
 					
-					// Recalcular total
+					// Recalcular total usando los items actuales
 					double nuevoTotal = bolsa.calcularMontoTotal();
 					bolsa.setPrecioTotal(nuevoTotal);
 					
 					// Actualizar en la base de datos
 					bolsaDAO.actualizarBolsa(bolsa);
 					
-					System.out.println("✅ Item eliminado exitosamente. Nuevo total: $" + nuevoTotal);
+					System.out.println("✅ Item eliminado exitosamente");
+					System.out.println("💰 Nuevo total de la bolsa: $" + String.format("%.2f", nuevoTotal));
+				} else {
+					System.err.println("❌ No se encontró la bolsa del usuario");
 				}
 			} catch (NumberFormatException e) {
-				System.err.println("❌ Error al parsear parámetros: " + e.getMessage());
+				System.err.println("❌ Error al parsear ID del item: " + e.getMessage());
+				e.printStackTrace();
+			} catch (Exception e) {
+				System.err.println("❌ Error inesperado al eliminar item: " + e.getMessage());
+				e.printStackTrace();
 			}
+		} else {
+			System.err.println("❌ Sesión no válida o usuario no autenticado");
 		}
 		
-		// Recargar la bolsa
+		System.out.println("========== FIN ELIMINAR ITEM ==========\n");
+		
+		// Recargar la bolsa y mostrar vista actualizada
 		abrirBolsa(req, resp);
 	}
 }

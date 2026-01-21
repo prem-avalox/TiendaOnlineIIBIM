@@ -144,6 +144,7 @@ Verifica que:
 - ✅ Agregar productos al carrito
 - ✅ Modificar cantidades en el carrito
 - ✅ Eliminar productos del carrito
+- ✅ Ver bolsa de compras (CU11 - Ver [PRUEBAS_REST_BOLSA.md](PRUEBAS_REST_BOLSA.md))
 - ✅ Registro de nuevos usuarios
 - ✅ Login de usuarios existentes
 
@@ -153,6 +154,50 @@ Verifica que:
 - ✅ Editar productos existentes
 - ✅ Eliminar productos
 - ✅ Gestión de imágenes
+
+## 📚 Documentación Adicional
+
+- **[INSTRUCCIONES_PRUEBA.md](INSTRUCCIONES_PRUEBA.md)** - 🆕 Instrucciones rápidas para probar el sistema
+- **[SOLUCION_BOLSA_VACIA.md](SOLUCION_BOLSA_VACIA.md)** - 🆕 Solución al problema de items no cargados
+- **[PRUEBAS_REST_BOLSA.md](PRUEBAS_REST_BOLSA.md)** - Pruebas del CU11 (Ver bolsa)
+- **[PRUEBAS_REST_API.md](PRUEBAS_REST_API.md)** - Pruebas de la API REST
+- **[GUIA_PROBAR_REST.md](GUIA_PROBAR_REST.md)** - Guía para probar endpoints REST
+
+## 🔧 Solución de Problemas
+
+### Problema: La bolsa muestra 0 items pero tiene precio total
+
+**Solución aplicada**: Se cambió el fetch type de LAZY a EAGER en las relaciones JPA.
+
+Ver documentación completa en: **[SOLUCION_BOLSA_VACIA.md](SOLUCION_BOLSA_VACIA.md)**
+
+### Problema: Los items no se eliminan de la bolsa
+
+**Causa**: FetchType.EAGER requiere sincronización manual de relaciones bidireccionales.
+
+**Solución aplicada**: Se actualiz ó `ItemBolsaDAO.eliminarItem()` para limpiar correctamente las referencias bidireccionales.
+
+Ver documentación completa en: **[SOLUCION_ELIMINAR_ITEMS.md](SOLUCION_ELIMINAR_ITEMS.md)**
+
+**Pasos rápidos**:
+1. Detener Tomcat
+2. Limpiar y recompilar proyecto (Project → Clean)
+3. Ejecutar: `test/PoblarBaseDatos.java` o `test/AgregarItemsBolsaMartin.java`
+4. Reiniciar Tomcat
+5. Probar eliminación en: http://localhost:8080/tiendaOnline/VerBolsaController?action=abrirBolsa
+
+Ver instrucciones completas en: **[INSTRUCCIONES_PRUEBA.md](INSTRUCCIONES_PRUEBA.md)**
+
+### Problema: LazyInitializationException
+
+Si ves errores de `LazyInitializationException`:
+- ✅ Ya está solucionado con el cambio a FetchType.EAGER
+- Ver detalles técnicos en [SOLUCION_BOLSA_VACIA.md](SOLUCION_BOLSA_VACIA.md)
+
+### Scripts SQL de Diagnóstico
+
+- **Verificar datos**: `database/verificar_bolsa.sql`
+- **Agregar datos de prueba**: `database/agregar_items_bolsa_martin.sql`
 
 ## 🤝 Contribuir
 

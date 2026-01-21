@@ -495,6 +495,75 @@ body.general {
     margin-bottom: 15px;
 }
 
+/* ==========================================================================
+   ESTILOS MEJORADOS PARA BOTONES DE TALLA
+   ========================================================================== */
+
+/* Lista de tallas */
+.cajas-talla-lista {
+    display: flex;
+    gap: 10px;
+    list-style: none;
+    padding: 0;
+    margin: 15px 0;
+}
+
+.cajas-talla-lista li {
+    list-style: none;
+}
+
+/* Ocultar el radio button real */
+.talla-radio {
+    display: none;
+}
+
+/* Estilo del label (botón visual) */
+.talla-item {
+    display: inline-block;
+    min-width: 50px;
+    height: 50px;
+    padding: 0 15px;
+    border: 2px solid #d1d5db;
+    background-color: #ffffff;
+    color: #374151;
+    font-family: var(--fuente-precio);
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+    line-height: 46px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    user-select: none;
+}
+
+/* Estado hover - cuando pasas el mouse */
+.talla-item:hover {
+    border-color: var(--color-primario);
+    background-color: #f3f4f6;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Estado selected - cuando está seleccionado */
+.talla-radio:checked + .talla-item {
+    border-color: var(--color-primario);
+    background-color: var(--color-primario);
+    color: #ffffff;
+    font-weight: 700;
+}
+
+/* Hover sobre el seleccionado */
+.talla-radio:checked + .talla-item:hover {
+    background-color: var(--color-boton-animacion);
+    border-color: var(--color-boton-animacion);
+}
+
+/* Estado focus para accesibilidad */
+.talla-radio:focus + .talla-item {
+    outline: 2px solid var(--color-primario);
+    outline-offset: 2px;
+}
+
 
 /* ==========================================================================
    ESTILOS FORMULARIO - CLOTHING STORE STYLE

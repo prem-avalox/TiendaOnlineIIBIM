@@ -136,7 +136,20 @@ public class PrendaDAO {
 	public Prenda getPrenda(int idPrenda) {
 		EntityManager em = emf.createEntityManager();
 		try {
-			return em.find(Prenda.class, idPrenda);
+			// Usar JPQL con JOIN FETCH para cargar eagerly los stockTallas
+			// Esto evita LazyInitializationException en la vista JSP
+			TypedQuery<Prenda> query = em.createQuery(
+				"SELECT p FROM Prenda p " +
+				"LEFT JOIN FETCH p.stockTallas " +
+				"WHERE p.idPrenda = :idPrenda", 
+				Prenda.class
+			);
+			query.setParameter("idPrenda", idPrenda);
+			
+			return query.getSingleResult();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
 		} finally {
 			em.close();
 		}
