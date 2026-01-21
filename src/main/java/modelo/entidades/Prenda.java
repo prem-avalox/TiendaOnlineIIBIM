@@ -81,6 +81,10 @@ public class Prenda implements Serializable {
     public String getNombrePrenda() { return nombrePrenda; }
     public void setNombrePrenda(String nombrePrenda) { this.nombrePrenda = nombrePrenda; }
 
+    // Alias UML: atributo "nombre"
+    public String getNombre() { return nombrePrenda; }
+    public void setNombre(String nombre) { this.nombrePrenda = nombre; }
+
     public double getPrecio() { return precio; }
     public void setPrecio(double precio) { this.precio = precio; }
 
@@ -99,16 +103,6 @@ public class Prenda implements Serializable {
     public List<StockTalla> getStockTallas() { return stockTallas; }
     public void setStockTallas(List<StockTalla> stockTallas) {
         this.stockTallas = (stockTallas != null) ? stockTallas : new ArrayList<>();
-    }
-    
-    /**
-     * Retorna un objeto con los datos básicos de la prenda
-     * Según diagrama de secuencia CU11: prenda.getDatosPrenda()
-     * Nota: Este método puede retornar la prenda misma, ya que todos los datos son accesibles vía getters
-     * @return esta instancia de Prenda con todos sus datos
-     */
-    public Prenda getDatosPrenda() {
-        return this;
     }
 
     @Override

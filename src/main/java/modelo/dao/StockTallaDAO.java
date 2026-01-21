@@ -2,7 +2,6 @@ package modelo.dao;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.NoResultException;
 import jakarta.persistence.Persistence;
 import modelo.entidades.StockTalla;
 import modelo.entidades.Talla;
@@ -19,77 +18,84 @@ public class StockTallaDAO {
         this.emf = Persistence.createEntityManagerFactory("persistencia");
     }
 
-    /**
-     * Busca el stock de una prenda en una talla específica
-     * Según diagrama de secuencia CU11.3: buscarStock(idPrenda, talla):StockTalla
-     * @param idPrenda ID de la prenda
-     * @param talla Talla a buscar
-     * @return StockTalla encontrado o null si no existe
-     */
-    public StockTalla buscarStock(int idPrenda, Talla talla) {
+    /** UML: buscarStock(idPrenda, cantidad, idTalla): StockTalla */
+    public StockTalla buscarStock(int idPrenda, int cantidad, int idTalla) {
         EntityManager em = emf.createEntityManager();
         try {
+            Talla tallaEnum = resolveTalla(idTalla);
+            if (tallaEnum == null) {
+                return null;
+            }
             return em.createQuery(
-                "SELECT st FROM StockTalla st " +
-                "WHERE st.prenda.idPrenda = :idPrenda " +
-                "AND st.talla = :talla", 
+                "SELECT st FROM StockTalla st WHERE st.prenda.idPrenda = :idPrenda AND st.talla = :talla",
                 StockTalla.class
             )
             .setParameter("idPrenda", idPrenda)
-            .setParameter("talla", talla)
+            .setParameter("talla", tallaEnum)
             .getSingleResult();
-        } catch (NoResultException e) {
-            return null;
         } catch (Exception e) {
-            e.printStackTrace();
             return null;
         } finally {
             em.close();
         }
     }
     
-    /**
-     * Alias para buscarStock - busca el stock de una prenda en una talla específica
-     * @param idPrenda ID de la prenda
-     * @param talla Talla a buscar
-     * @return StockTalla encontrado o null si no existe
-     */
-    public StockTalla buscarStockPorPrendaYTalla(int idPrenda, Talla talla) {
-        return buscarStock(idPrenda, talla);
-    }
-
-    /**
-     * Actualiza el stock de una prenda
-     * @param stock StockTalla a actualizar
-     * @return true si se actualizó correctamente, false en caso contrario
-     */
-    public boolean actualizarStock(StockTalla stock) {
+    /** UML: actualizarCantidad(idStockTalla, cantidad): boolean */
+    public boolean actualizarCantidad(int idStockTalla, int cantidad) {
         EntityManager em = emf.createEntityManager();
         try {
             em.getTransaction().begin();
-            em.merge(stock);
+            StockTalla stock = em.find(StockTalla.class, idStockTalla);
+            if (stock != null) {
+                stock.setCantidad(cantidad);
+                em.merge(stock);
+                em.flush();
+            }
             em.getTransaction().commit();
-            return true;
+            return stock != null;
         } catch (Exception e) {
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
             }
-            e.printStackTrace();
             return false;
         } finally {
             em.close();
         }
     }
 
-    /**
-     * Verifica si hay stock disponible
-     * Según diagrama: validarStock(cantidad):boolean
-     * @param stock StockTalla a verificar
-     * @param cantidad Cantidad solicitada
-     * @return true si hay stock suficiente, false en caso contrario
-     */
-    public boolean validarStock(StockTalla stock, int cantidad) {
-        return stock != null && stock.getCantidad() >= cantidad;
+    /** UML: descontarStock(idPrenda, cantidad): boolean */
+    public boolean descontarStock(int idPrenda, int cantidad) {
+        EntityManager em = emf.createEntityManager();
+        try {
+            em.getTransaction().begin();
+            StockTalla stock = em.createQuery(
+                "SELECT st FROM StockTalla st WHERE st.prenda.idPrenda = :idPrenda",
+                StockTalla.class
+            )
+            .setParameter("idPrenda", idPrenda)
+            .setMaxResults(1)
+            .getSingleResult();
+            if (stock != null) {
+                int nuevaCantidad = stock.getCantidad() - cantidad;
+                stock.setCantidad(nuevaCantidad);
+                em.merge(stock);
+                em.flush();
+            }
+            em.getTransaction().commit();
+            return stock != null;
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            return false;
+        } finally {
+            em.close();
+        }
+    }
+
+    private Talla resolveTalla(int idTalla) {
+        Talla[] values = Talla.values();
+        return (idTalla >= 0 && idTalla < values.length) ? values[idTalla] : null;
     }
 
     /**

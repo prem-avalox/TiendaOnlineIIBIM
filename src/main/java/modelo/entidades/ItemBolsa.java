@@ -39,79 +39,63 @@ public class ItemBolsa implements Serializable {
 	
 	
 	public ItemBolsa(int idItem, int cantidad, Talla tallaSeleccionada, Prenda prenda) {
-		this.cantidad = cantidad;
-		this.tallaSeleccionada = tallaSeleccionada;
-		this.prenda = prenda;
-	}
-	
-	public int getIdItem() {
-		return idItem;
-	}
+        this.cantidad = cantidad;
+        this.tallaSeleccionada = tallaSeleccionada;
+        this.prenda = prenda;
+    }
+    
+    public int getIdItem() {
+        return idItem;
+    }
 
 
-	public void setIdItem(int idItem) {
-		this.idItem = idItem;
-	}
+    public void setIdItem(int idItem) {
+        this.idItem = idItem;
+    }
 
 
-	public int getCantidad() {
-		return cantidad;
-	}
+    public int getCantidad() {
+        return cantidad;
+    }
 
 
-	public void setCantidad(int cantidad) {
-		this.cantidad = cantidad;
-	}
+    public void setCantidad(int cantidad) {
+        this.cantidad = cantidad;
+    }
 
 
-	public Talla getTallaSeleccionada() {
-		return tallaSeleccionada;
-	}
+    public Talla getTallaSeleccionada() {
+        return tallaSeleccionada;
+    }
 
 
-	public void setTallaSeleccionada(Talla tallaSeleccionada) {
-		this.tallaSeleccionada = tallaSeleccionada;
-	}
+    public void setTallaSeleccionada(Talla tallaSeleccionada) {
+        this.tallaSeleccionada = tallaSeleccionada;
+    }
 
 
-	public Prenda getPrenda() {
-		return prenda;
-	}
+    public Prenda getPrenda() {
+        return prenda;
+    }
 
 
-	public void setPrenda(Prenda prenda) {
-		this.prenda = prenda;
-	}
-	
-	public Bolsa getBolsa() {
-	    return bolsa;
-	}
+    public void setPrenda(Prenda prenda) {
+        this.prenda = prenda;
+    }
+    
+    public Bolsa getBolsa() {
+        return bolsa;
+    }
 
-	public void setBolsa(Bolsa bolsa) {
-	    this.bolsa = bolsa;
-	}
-	
-	/**
-	 * Calcula el subtotal del item (precio * cantidad)
-	 * Según diagrama de secuencia CU11 - Ver Bolsa
-	 * @return subtotal calculado
-	 */
-	public double calcularSubtotal() {
-		if (prenda != null) {
-			return prenda.getPrecio() * cantidad;
-		}
-		return 0.0;
-	}
-	
-	/**
-	 * Obtiene el tipo de talla seleccionada como String
-	 * Según diagrama de secuencia: talla.getTipoTalla()
-	 * @return nombre de la talla (S, M, L, XL, etc.)
-	 */
-	public String getTipoTalla() {
-		return tallaSeleccionada != null ? tallaSeleccionada.name() : null;
-	}
-
+    public void setBolsa(Bolsa bolsa) {
+        this.bolsa = bolsa;
+    }
+    
+    // Necesario para pruebas y flujo: subtotal = precio * cantidad
+    public double calcularSubtotal() {
+        return (prenda != null) ? prenda.getPrecio() * cantidad : 0.0;
+    }
+    
 
 	@Override
 	public String toString() {

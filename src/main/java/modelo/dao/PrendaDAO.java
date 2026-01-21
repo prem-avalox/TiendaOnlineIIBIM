@@ -11,148 +11,167 @@ import modelo.entidades.Categoria;
 import modelo.entidades.Color;
 import modelo.entidades.Corte;
 import modelo.entidades.Prenda;
-import modelo.entidades.StockTalla;
 import modelo.entidades.Talla;
 
 public class PrendaDAO {
 
-	private Connection conexion;
+    private EntityManagerFactory emf;
 
-	private EntityManagerFactory emf;
+    public PrendaDAO() {
+        this.emf = Persistence.createEntityManagerFactory("persistencia");
+    }
 
-	public PrendaDAO() {
-		this.emf = Persistence.createEntityManagerFactory("persistencia");
-	}
+    /** UML: insertar(prenda): boolean */
+    public boolean insertar(Prenda prenda) {
+        EntityManager em = emf.createEntityManager();
+        try {
+            em.getTransaction().begin();
+            em.persist(prenda);
+            em.flush();
+            em.getTransaction().commit();
+            return true;
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            return false;
+        } finally {
+            em.close();
+        }
+    }
 
-	// operaciones CRUD básicas
+    /** UML: actualizar(prenda): boolean */
+    public boolean actualizar(Prenda prenda) {
+        EntityManager em = emf.createEntityManager();
+        try {
+            em.getTransaction().begin();
+            Prenda managed = em.find(Prenda.class, prenda.getIdPrenda());
+            if (managed == null) {
+                em.getTransaction().rollback();
+                return false;
+            }
+            managed.setImagen(prenda.getImagen());
+            managed.setNombrePrenda(prenda.getNombrePrenda());
+            managed.setDescripcion(prenda.getDescripcion());
+            managed.setPrecio(prenda.getPrecio());
+            managed.setCategoria(prenda.getCategoria());
+            managed.setColor(prenda.getColor());
+            managed.setCorte(prenda.getCorte());
+            managed.setStockTallas(prenda.getStockTallas());
+            em.merge(managed);
+            em.flush();
+            em.getTransaction().commit();
+            return true;
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            return false;
+        } finally {
+            em.close();
+        }
+    }
 
-	public boolean insertar(Prenda prenda) {
-		return false;
-	}
+    /** UML: eliminar(idPrenda): boolean */
+    public boolean eliminar(int idPrenda) {
+        EntityManager em = emf.createEntityManager();
+        try {
+            em.getTransaction().begin();
+            Prenda prenda = em.find(Prenda.class, idPrenda);
+            if (prenda != null) {
+                em.remove(prenda);
+            }
+            em.getTransaction().commit();
+            return prenda != null;
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            return false;
+        } finally {
+            em.close();
+        }
+    }
 
-	public boolean actualizar(Prenda prenda) {
+    /** UML: getListaPrendas(): List<Prenda> */
+    public List<Prenda> getListaPrendas() {
+        EntityManager em = emf.createEntityManager();
+        try {
+            return em.createQuery("SELECT p FROM Prenda p", Prenda.class).getResultList();
+        } catch (Exception e) {
+            return null;
+        } finally {
+            em.close();
+        }
+    }
 
-		EntityManager em = emf.createEntityManager();
+    /** UML: getListaPrendas(nombre): List<Prenda> */
+    public List<Prenda> getListaPrendas(String nombre) {
+        EntityManager em = emf.createEntityManager();
+        try {
+            return em.createQuery(
+                "SELECT p FROM Prenda p WHERE LOWER(p.nombrePrenda) LIKE LOWER(:nombre)",
+                Prenda.class
+            )
+            .setParameter("nombre", "%" + nombre + "%")
+            .getResultList();
+        } catch (Exception e) {
+            return null;
+        } finally {
+            em.close();
+        }
+    }
 
-		try {
-			em.getTransaction().begin();
+    /** UML: getListaPrendas(idCategoria): List<Prenda> */
+    public List<Prenda> getListaPrendas(int idCategoria) {
+        EntityManager em = emf.createEntityManager();
+        try {
+            return em.createQuery(
+                "SELECT p FROM Prenda p WHERE p.categoria.idCategoria = :idCategoria",
+                Prenda.class
+            )
+            .setParameter("idCategoria", idCategoria)
+            .getResultList();
+        } catch (Exception e) {
+            return null;
+        } finally {
+            em.close();
+        }
+    }
 
-			Prenda p = em.find(Prenda.class, prenda.getIdPrenda());
+    /** UML: filtrarPrendas(talla, color, corte): List<Prenda> */
+    public List<Prenda> filtrarPrendas(Talla talla, Color color, Corte corte) {
+        EntityManager em = emf.createEntityManager();
+        try {
+            String jpql = "SELECT p FROM Prenda p WHERE (:talla IS NULL OR EXISTS (SELECT st FROM StockTalla st WHERE st.prenda = p AND st.talla = :talla)) " +
+                          "AND (:color IS NULL OR p.color = :color) " +
+                          "AND (:corte IS NULL OR p.corte = :corte)";
+            TypedQuery<Prenda> query = em.createQuery(jpql, Prenda.class);
+            query.setParameter("talla", talla);
+            query.setParameter("color", color);
+            query.setParameter("corte", corte);
+            return query.getResultList();
+        } catch (Exception e) {
+            return null;
+        } finally {
+            em.close();
+        }
+    }
 
-			// 🔴 No existe la prenda
-			if (p == null) {
-				return false;
-			}
-
-			// Datos simples
-			p.setImagen(prenda.getImagen());
-			p.setNombrePrenda(prenda.getNombrePrenda());
-			p.setDescripcion(prenda.getDescripcion());
-			p.setPrecio(prenda.getPrecio());
-			p.setCategoria(prenda.getCategoria());
-			p.setColor(prenda.getColor());
-			p.setCorte(prenda.getCorte());
-
-			// Stock por talla
-			for (StockTalla stForm : prenda.getStockTallas()) {
-
-				StockTalla existente = p.getStockTallas().stream().filter(s -> s.getTalla() == stForm.getTalla())
-						.findFirst().orElse(null);
-
-				if (existente != null) {
-					existente.setCantidad(stForm.getCantidad());
-				} else {
-					StockTalla nuevo = new StockTalla(stForm.getCantidad(), stForm.getTalla());
-					nuevo.setPrenda(p);
-					p.getStockTallas().add(nuevo);
-				}
-			}
-
-			em.getTransaction().commit();
-			return true; // ✅ TODO OK
-
-		} catch (Exception e) {
-			if (em.getTransaction().isActive()) {
-				em.getTransaction().rollback();
-			}
-			return false; // ❌ Error controlado
-		} finally {
-			em.close();
-		}
-	}
-
-	public boolean eliminar(int id) {
-		EntityManager em = emf.createEntityManager();
-		try {
-			em.getTransaction().begin();
-
-			Prenda prenda = em.find(Prenda.class, id);
-			if (prenda == null) {
-				return false;
-			}
-
-			em.remove(prenda); // cascade + orphanRemoval hacen el resto
-			em.getTransaction().commit();
-			return true;
-
-		} catch (Exception e) {
-			if (em.getTransaction().isActive()) {
-				em.getTransaction().rollback();
-			}
-			e.printStackTrace();
-			return false;
-		} finally {
-			em.close();
-		}
-	}
-
-	// Métodos de negocio
-
-	public List<Prenda> getListaPrendas() {
-		EntityManager em = emf.createEntityManager();
-		try {
-			// JPQL: Recupera todas las prendas para el catálogo
-			return em.createQuery("SELECT p FROM Prenda p", Prenda.class).getResultList();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		} finally {
-			em.close();
-		}
-	}
-
-	public List<Prenda> getListaPrendas(String nombre) {
-		return null;
-	}
-
-	public List<Prenda> filtrarPrendas(Talla talla, Color color, Corte corte) {
-		return null;
-	}
-
-	public List<Prenda> getListaPrendas(int idCategoria) {
-		return null;
-	}
-
-	public Prenda getPrenda(int idPrenda) {
-		EntityManager em = emf.createEntityManager();
-		try {
-			// Usar JPQL con JOIN FETCH para cargar eagerly los stockTallas
-			// Esto evita LazyInitializationException en la vista JSP
-			TypedQuery<Prenda> query = em.createQuery(
-				"SELECT p FROM Prenda p " +
-				"LEFT JOIN FETCH p.stockTallas " +
-				"WHERE p.idPrenda = :idPrenda", 
-				Prenda.class
-			);
-			query.setParameter("idPrenda", idPrenda);
-			
-			return query.getSingleResult();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		} finally {
-			em.close();
-		}
-	}
-
+    /** UML: getPrenda(idPrenda): Prenda */
+    public Prenda getPrenda(int idPrenda) {
+        EntityManager em = emf.createEntityManager();
+        try {
+            TypedQuery<Prenda> query = em.createQuery(
+                "SELECT p FROM Prenda p LEFT JOIN FETCH p.stockTallas WHERE p.idPrenda = :idPrenda",
+                Prenda.class
+            );
+            query.setParameter("idPrenda", idPrenda);
+            return query.getSingleResult();
+        } catch (Exception e) {
+            return null;
+        } finally {
+            em.close();
+        }
+    }
 }

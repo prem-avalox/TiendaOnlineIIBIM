@@ -21,6 +21,11 @@ public enum Categoria implements Serializable {
         return nombreCategoria;
     }
 
+    // Alias UML: atributo "nombre"
+    public String getNombre() {
+        return nombreCategoria;
+    }
+
     @Override
     public String toString() {
         return nombreCategoria;

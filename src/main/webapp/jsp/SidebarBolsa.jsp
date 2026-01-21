@@ -13,22 +13,19 @@
 	
 	<div class="cart-sidebar-content" id="cartContent">
 		<c:choose>
-			<%-- Si no hay variables en el request, mostrar mensaje de carga --%>
 			<c:when test="${items == null}">
 				<div class="empty-cart">
 					<i class="fas fa-shopping-bag empty-icon"></i>
 					<p class="empty-message">Cargando...</p>
 				</div>
 			</c:when>
-			<%-- Si hay variables pero la bolsa está vacía --%>
-			<c:when test="${empty items || items.size() == 0}">
+			<c:when test="${bolsaVacia == true || empty items || items.size() == 0}">
 				<div class="empty-cart">
 					<i class="fas fa-shopping-bag empty-icon"></i>
-					<p class="empty-message">Tu bolsa está vacía</p>
+					<p class="empty-message">No hay items en la bolsa</p>
 					<p class="empty-subtitle">Agrega productos para empezar</p>
 				</div>
 			</c:when>
-			<%-- Si hay items --%>
 			<c:otherwise>
 				<div class="cart-items">
 					<c:forEach var="item" items="${items}">

@@ -54,24 +54,35 @@ public class Bolsa implements Serializable {
 	}
 	
 	public double getPrecioTotal() {
-		return precioTotal;
-	}
-	public void setPrecioTotal(double precioTotal) {
-		this.precioTotal = precioTotal;
-	}
-	public List<ItemBolsa> getItemsBolsa() {
-		return items;
-	}
-	
-	public List<ItemBolsa> getItems() {
-		return items;
-	}
-	
-	public void setItems(List<ItemBolsa> items) {
-		this.items = items;
-	}
+        return precioTotal;
+    }
+    public void setPrecioTotal(double precioTotal) {
+        this.precioTotal = precioTotal;
+    }
+    public List<ItemBolsa> getItemsBolsa() {
+        return items;
+    }
+    
+    public List<ItemBolsa> getItems() {
+        return items;
+    }
+    
+    public void setItems(List<ItemBolsa> items) {
+        this.items = items;
+    }
 
-	@Override
+    // Necesario para pruebas y flujo: suma subtotales de items
+    public double calcularMontoTotal() {
+        double total = 0.0;
+        if (items != null) {
+            for (ItemBolsa item : items) {
+                total += item.calcularSubtotal();
+            }
+        }
+        return total;
+    }
+    
+    @Override
 	public String toString() {
 		return "Bolsa [idBolsa=" + idBolsa + ", precioTotal=" + precioTotal + ", items=" + items + "]";
 	}
@@ -86,37 +97,6 @@ public class Bolsa implements Serializable {
 
 	public void setUsuario(Usuario usuario) {
 		this.usuario = usuario;
-	}
-	
-	/**
-	 * Calcula el monto total de la bolsa sumando los subtotales de todos los items
-	 * Según diagrama de secuencia CU11 - Ver Bolsa: bolsa.calcularMontoTotal()
-	 * @return monto total calculado
-	 */
-	public double calcularMontoTotal() {
-		double total = 0.0;
-		if (items != null && !items.isEmpty()) {
-			for (ItemBolsa item : items) {
-				total += item.calcularSubtotal();
-			}
-		}
-		return total;
-	}
-	
-	/**
-	 * Método según UML: getMontoTotal()
-	 * @return monto total calculado
-	 */
-	public double getMontoTotal() {
-		return calcularMontoTotal();
-	}
-	
-	/**
-	 * Alias para calcularMontoTotal
-	 * @return precio total calculado
-	 */
-	public double calcularPrecioTotal() {
-		return calcularMontoTotal();
 	}
 	
 	

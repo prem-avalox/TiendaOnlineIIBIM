@@ -44,7 +44,7 @@
                             <c:set var="hayStockDisponible" value="true" />
                             <li>
                                 <input type="radio" name="talla" id="talla-${stock.talla.talla}" 
-                                       class="talla-radio" value="${stock.talla.talla}" hidden>
+                                       class="talla-radio" value="${stock.talla.ordinal()}" hidden>
                                 <label for="talla-${stock.talla.talla}" class="talla-item">
                                     ${stock.talla.talla}
                                 </label>
@@ -140,13 +140,13 @@
         boton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Agregando...';
         
         // 2. Enviar petición al servidor
-        fetch('${pageContext.request.contextPath}/AgregarItemBolsaController', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
+        fetch('${pageContext.request.contextPath}/AgregarPrendaBolsaController', {
+             method: 'POST',
+             headers: {
+                 'Content-Type': 'application/x-www-form-urlencoded',
+             },
             body: 'idPrenda=' + idPrenda + '&talla=' + talla + '&cantidad=' + cantidad
-        })
+         })
         .then(response => {
             console.log('📡 Respuesta recibida, status:', response.status);
             if (!response.ok) {
