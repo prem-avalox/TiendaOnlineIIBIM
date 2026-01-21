@@ -122,15 +122,15 @@ public class PrendaDAO {
         }
     }
 
-    /** UML: getListaPrendas(idCategoria): List<Prenda> */
-    public List<Prenda> getListaPrendas(int idCategoria) {
+    /** UML: getListaPrendas(categoria): List<Prenda> */
+    public List<Prenda> getListaPrendas(Categoria categoria) {
         EntityManager em = emf.createEntityManager();
         try {
             return em.createQuery(
-                "SELECT p FROM Prenda p WHERE p.categoria.idCategoria = :idCategoria",
+                "SELECT p FROM Prenda p WHERE p.categoria = :categoria",
                 Prenda.class
             )
-            .setParameter("idCategoria", idCategoria)
+            .setParameter("categoria", categoria)
             .getResultList();
         } catch (Exception e) {
             return null;

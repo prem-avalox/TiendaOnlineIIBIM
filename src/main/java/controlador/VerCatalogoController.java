@@ -157,36 +157,31 @@ public class VerCatalogoController extends HttpServlet {
 	}
 
 	private void seleccionarCategoria(HttpServletRequest req, HttpServletResponse resp)
-	        throws ServletException, IOException {
-	    // 1. Obtener los parametros (Paso 4 del diagrama)
-	    String idCategoria = req.getParameter("idCategoria");
+            throws ServletException, IOException {
+        String idCategoria = req.getParameter("idCategoria");
 
-	    try {
-	        Categoria categoriaSeleccionada = Categoria.valueOf(idCategoria);
-	        
-	        // 2. Hablar con el modelo 
-	        PrendaDAO prendaDAO = new PrendaDAO();
-	        List<Prenda> prendas = prendaDAO.getListaPrendas(categoriaSeleccionada.ordinal());
+        try {
+            Categoria categoriaSeleccionada = Categoria.valueOf(idCategoria);
+            PrendaDAO prendaDAO = new PrendaDAO();
+            List<Prenda> prendas = prendaDAO.getListaPrendas(categoriaSeleccionada);
 
-	        
-	        req.setAttribute("categorias", Categoria.values());
-	        req.setAttribute("tallas", Talla.values());
-	        req.setAttribute("colores", Color.values());
-	        req.setAttribute("cortes", Corte.values());
+            req.setAttribute("categorias", Categoria.values());
+            req.setAttribute("tallas", Talla.values());
+            req.setAttribute("colores", Color.values());
+            req.setAttribute("cortes", Corte.values());
 
-	        if (prendas != null && !prendas.isEmpty()) {
-	            req.setAttribute("prendas", prendas);
-	        } else {
-	            req.setAttribute("mensajeError", "No hay prendas en la categoría seleccionada");
-	        }
+            if (prendas != null && !prendas.isEmpty()) {
+                req.setAttribute("prendas", prendas);
+            } else {
+                req.setAttribute("mensajeError", "No hay prendas en la categoría seleccionada");
+            }
 
-	    } catch (Exception e) {
-	        req.setAttribute("mensajeError", "Error al procesar la categoría: " + e.getMessage());
-	    }
+        } catch (Exception e) {
+            req.setAttribute("mensajeError", "Error al procesar la categoría: " + e.getMessage());
+        }
 
-	    // 3. Llamar a la vista 
-	    req.getRequestDispatcher("jsp/Catalogo.jsp").forward(req, resp);
-	}
+        req.getRequestDispatcher("jsp/Catalogo.jsp").forward(req, resp);
+    }
 
 	private void seleccionarPrenda(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {

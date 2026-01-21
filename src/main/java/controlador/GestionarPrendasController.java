@@ -198,6 +198,7 @@ public class GestionarPrendasController extends HttpServlet {
 					int cantidad = Integer.parseInt(cantidadStr);
 
 					StockTalla stock = new StockTalla(cantidad, Talla.valueOf(tallaStr));
+					stock.setPrenda(prenda); // vincular para que JPA asigne FK
 
 					listaStock.add(stock);
 				}
