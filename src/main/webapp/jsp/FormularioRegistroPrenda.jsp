@@ -62,15 +62,24 @@
 			</div>
 
 			<div class="form-group">
-				<label for="color">Color:</label> <input type="text" id="color"
-					name="color" class="form-control" value="${color}">
+				<label for="color">Color:</label> <select id="color" name="color"
+					class="form-control" required>
+					<option value="">-- Seleccione --</option>
+					<c:forEach var="col" items="${colores}">
+						<option value="${col.name()}">${col}</option>
+					</c:forEach>
+				</select>
 			</div>
 
 			<div class="form-group">
-				<label for="corte">Corte:</label> <input type="text" id="corte"
-					name="corte" class="form-control" value="${corte}">
+				<label for="corte">Corte:</label> <select id="corte" name="corte"
+					class="form-control" required>
+					<option value="">-- Seleccione --</option>
+					<c:forEach var="cor" items="${cortes}">
+						<option value="${cor.name()}">${cor}</option>
+					</c:forEach>
+				</select>
 			</div>
-
 			<div class="stock-container">
 				<h3>Stock por talla</h3>
 				<c:forEach var="t" items="${tallas}">
@@ -88,8 +97,7 @@
 	</div>
 
 	<c:if test="${registroExitoso}">
-		<div id="modalExito" class="modal-overlay"
-			onclick="cerrarModalExterno(event)">
+		<div id="modalExito" class="modal-overlay">
 			<div class="modal-content">
 				<span class="close-btn-minimal" onclick="cerrarModal()">&times;</span>
 				<div class="modal-body">

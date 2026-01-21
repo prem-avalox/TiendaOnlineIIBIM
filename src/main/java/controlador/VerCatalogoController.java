@@ -94,70 +94,121 @@ public class VerCatalogoController extends HttpServlet {
 	}
 
 	private void buscarPrenda(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		// 1. Obtener los parametros
-		String nombre = req.getParameter("nombre");
+	    // 1. Obtener los parametros
+	    String nombre = req.getParameter("nombre");
 
-		// 2. Hablar con el modelo
+	    try {
+	        // 2. Hablar con el modelo 
+	        PrendaDAO prendaDAO = new PrendaDAO();
+	        List<Prenda> prendas = prendaDAO.getListaPrendas(nombre);
 
-		// 3. Llamar a la vista
+	        req.setAttribute("categorias", Categoria.values());
+	        req.setAttribute("tallas", Talla.values());
+	        req.setAttribute("colores", Color.values());
+	        req.setAttribute("cortes", Corte.values());
+
+	        if (prendas != null && !prendas.isEmpty()) {
+	            req.setAttribute("prendas", prendas);
+	        } else {
+	            req.setAttribute("mensajeError", "No se encontraron prendas con el nombre ingresado");
+	        }
+
+	    } catch (Exception e) {
+	        req.setAttribute("mensajeError", "Error interno al buscar: " + e.getMessage());
+	    }
+
+	    // 3. Llamar a la vista 
+	    req.getRequestDispatcher("jsp/Catalogo.jsp").forward(req, resp);
 	}
 
 	private void seleccionarFiltros(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
-		// 1. Obtener los parametros
-		String talla = req.getParameter("talla");
-		String color = req.getParameter("color");
-		String corte = req.getParameter("corte");
+	        throws ServletException, IOException {
+	    // 1. Obtener los parametros del formulario (Paso 3 del diagrama)
+	    String tallaStr = req.getParameter("talla");
+	    String colorStr = req.getParameter("color");
+	    String corteStr = req.getParameter("corte");
 
-		// 2. Hablar con el modelo
+	    try {
+	        Talla talla = (tallaStr != null && !tallaStr.isEmpty()) ? Talla.valueOf(tallaStr) : null;
+	        Color color = (colorStr != null && !colorStr.isEmpty()) ? Color.valueOf(colorStr) : null;
+	        Corte corte = (corteStr != null && !corteStr.isEmpty()) ? Corte.valueOf(corteStr) : null;
 
-		// 3. Llamar a la vista
+	        // 2. Hablar con el modelo
+	        PrendaDAO prendaDAO = new PrendaDAO();
+	        List<Prenda> prendas = prendaDAO.filtrarPrendas(talla, color, corte);
 
+	        req.setAttribute("categorias", Categoria.values());
+	        req.setAttribute("tallas", Talla.values());
+	        req.setAttribute("colores", Color.values());
+	        req.setAttribute("cortes", Corte.values());
+
+	        if (prendas != null && !prendas.isEmpty()) {
+	            req.setAttribute("prendas", prendas);
+	        } else {
+	            req.setAttribute("mensajeError", "No hay prendas que coincidan con los filtros seleccionados");
+	        }
+
+	    } catch (Exception e) {
+	        req.setAttribute("mensajeError", "Error al aplicar filtros: " + e.getMessage());
+	    }
+
+	    // 3. Llamar a la vista 
+	    req.getRequestDispatcher("jsp/Catalogo.jsp").forward(req, resp);
 	}
 
 	private void seleccionarCategoria(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
-		// 1. Obtener los parametros
-		String idCategoria = req.getParameter("idCategoria");
+	        throws ServletException, IOException {
+	    // 1. Obtener los parametros (Paso 4 del diagrama)
+	    String idCategoria = req.getParameter("idCategoria");
 
-		// 2. Hablar con el modelo
+	    try {
+	        Categoria categoriaSeleccionada = Categoria.valueOf(idCategoria);
+	        
+	        // 2. Hablar con el modelo 
+	        PrendaDAO prendaDAO = new PrendaDAO();
+	        List<Prenda> prendas = prendaDAO.getListaPrendas(categoriaSeleccionada.ordinal());
 
-		// 3. Llamar a la vista
+	        
+	        req.setAttribute("categorias", Categoria.values());
+	        req.setAttribute("tallas", Talla.values());
+	        req.setAttribute("colores", Color.values());
+	        req.setAttribute("cortes", Corte.values());
+
+	        if (prendas != null && !prendas.isEmpty()) {
+	            req.setAttribute("prendas", prendas);
+	        } else {
+	            req.setAttribute("mensajeError", "No hay prendas en la categoría seleccionada");
+	        }
+
+	    } catch (Exception e) {
+	        req.setAttribute("mensajeError", "Error al procesar la categoría: " + e.getMessage());
+	    }
+
+	    // 3. Llamar a la vista 
+	    req.getRequestDispatcher("jsp/Catalogo.jsp").forward(req, resp);
 	}
 
 	private void seleccionarPrenda(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		// 1. Obtener los parametros
 		String idPrendaStr = req.getParameter("idPrenda");
-		
 		if (idPrendaStr == null || idPrendaStr.isEmpty()) {
 			req.setAttribute("mensajeError", "ID de prenda no especificado");
 			req.getRequestDispatcher("jsp/Catalogo.jsp").forward(req, resp);
 			return;
 		}
-		
+
 		try {
 			int idPrenda = Integer.parseInt(idPrendaStr);
-			
-			// 2. Hablar con el modelo - Obtener la prenda con sus datos completos
 			PrendaDAO prendaDAO = new PrendaDAO();
 			Prenda prenda = prendaDAO.getPrenda(idPrenda);
-			
 			if (prenda == null) {
 				req.setAttribute("mensajeError", "Prenda no encontrada");
 				req.getRequestDispatcher("jsp/Catalogo.jsp").forward(req, resp);
 				return;
 			}
-			
-			// Pasar la prenda a la vista
 			req.setAttribute("prenda", prenda);
-			
-			// 3. Llamar a la vista de detalle
 			req.getRequestDispatcher("jsp/Prenda.jsp").forward(req, resp);
-			
-		} catch (NumberFormatException e) {
-			req.setAttribute("mensajeError", "ID de prenda inválido");
-			req.getRequestDispatcher("jsp/Catalogo.jsp").forward(req, resp);
 		} catch (Exception e) {
 			req.setAttribute("mensajeError", "Error al cargar la prenda: " + e.getMessage());
 			req.getRequestDispatcher("jsp/Catalogo.jsp").forward(req, resp);

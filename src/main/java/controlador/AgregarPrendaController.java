@@ -11,6 +11,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import modelo.dao.PrendaDAO;
 import modelo.entidades.Categoria;
+import modelo.entidades.Color;
+import modelo.entidades.Corte;
 import modelo.entidades.Prenda;
 import modelo.entidades.StockTalla;
 import modelo.entidades.Talla;
@@ -18,9 +20,6 @@ import modelo.entidades.Talla;
 @WebServlet("/AgregarPrendaController")
 public class AgregarPrendaController extends HttpServlet {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	@Override
@@ -34,18 +33,15 @@ public class AgregarPrendaController extends HttpServlet {
 	}
 
 	private void ruteador(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
 		String ruta = (req.getParameter("ruta") != null) ? req.getParameter("ruta") : "agregar";
 
 		switch (ruta) {
 		case "agregar":
 			this.agregarPrenda(req, resp);
 			break;
-
 		case "guardar":
 			this.guardar(req, resp);
 			break;
-
 		default:
 			this.agregarPrenda(req, resp);
 			break;
@@ -53,96 +49,78 @@ public class AgregarPrendaController extends HttpServlet {
 	}
 
 	private void agregarPrenda(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		System.out.println("Entrando al agregar prenda del AgregarPrendaController");
-		// 1. Obtener los parametros
+		// 1. Obtener los parámetros (No hay en la carga inicial)
 
-		// 2. Hablar con el modelo
-		req.setAttribute("categorias", Categoria.values());
+		// 2. Hablar con el modelo: Obtener listas de Enums (Pasos 1.1 al 1.4 del diagrama)
 		req.setAttribute("tallas", Talla.values());
-		if (req.getSession().getAttribute("flash_ok") != null) {
-		    req.setAttribute("registroExitoso", true);
-		    req.getSession().removeAttribute("flash_ok"); // 👈 se borra solo
-		}
+		req.setAttribute("categorias", Categoria.values());
+		req.setAttribute("cortes", Corte.values());
+		req.setAttribute("colores", Color.values());
 
-		// 3. Llamar a la vista
+		// 3. Llamar a la vista (Paso 1.5 del diagrama)
 		req.getRequestDispatcher("jsp/FormularioRegistroPrenda.jsp").forward(req, resp);
 	}
 
 	private void guardar(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
-		// 1. Obtener los parametros
+		// 1. Obtener los parametros (Paso 2 del diagrama)
 		String nombre = req.getParameter("nombrePrenda");
 		String descripcion = req.getParameter("descripcion");
+		String categoriaStr = req.getParameter("categoria"); 
+		String precioStr = req.getParameter("precio");
 		String imagen = req.getParameter("imagen");
-		String color = req.getParameter("color");
-		String corte = req.getParameter("corte");
-		double precio = Double.parseDouble(req.getParameter("precio"));
-		Categoria categoria = Categoria.valueOf(req.getParameter("categoria")); // Enum desde String
-		String[] tallasStr = req.getParameterValues("talla");
-		String[] cantidadesStr = req.getParameterValues("cantidad");
+		String colorStr = req.getParameter("color");
+		String corteStr = req.getParameter("corte");
+		
+		// Parámetros múltiples para Stock
+		String[] tallasArr = req.getParameterValues("talla");
+		String[] cantidadesArr = req.getParameterValues("cantidad");
 
-		// 2. Hablar con el modelo
+		try {
+			// 2. Hablar con el modelo (Paso 2.1 del diagrama)
+			Prenda p = new Prenda();
+			p.setNombrePrenda(nombre);
+			p.setDescripcion(descripcion);
+			p.setImagen(imagen);
+			p.setPrecio(Double.parseDouble(precioStr));
+			p.setCategoria(Categoria.valueOf(categoriaStr));
+			p.setColor(Color.valueOf(colorStr));
+			p.setCorte(Corte.valueOf(corteStr));
 
-		// Creamos la lista para almacenar solo las tallas que tienen stock ingresado
-		List<StockTalla> stockTallas = new ArrayList<>();
-
-		// Procesamos los arreglos de tallas y cantidades que vienen del formulario
-		if (tallasStr != null && cantidadesStr != null && tallasStr.length == cantidadesStr.length) {
-			for (int i = 0; i < tallasStr.length; i++) {
-				try {
-				    int cantidad = Integer.parseInt(cantidadesStr[i]);
-				    Talla talla = Talla.valueOf(tallasStr[i]);
-
-				    if (cantidad > 0) {
-				        stockTallas.add(new StockTalla(cantidad, talla));
-				    }
-				} catch (Exception e) { 
-				    // Usamos Exception para atrapar cualquier error de formato o de Enum
-				    System.out.println("Error procesando talla o cantidad: " + e.getMessage());
+			// Procesar Stock (conservamos nuestra implementación)
+			List<StockTalla> stockTallas = new ArrayList<>();
+			if (tallasArr != null && cantidadesArr != null && tallasArr.length == cantidadesArr.length) {
+				for (int i = 0; i < tallasArr.length; i++) {
+					try {
+						int cantidad = Integer.parseInt(cantidadesArr[i]);
+						Talla talla = Talla.valueOf(tallasArr[i]);
+						if (cantidad > 0) {
+							StockTalla st = new StockTalla(cantidad, talla);
+							st.setPrenda(p);
+							stockTallas.add(st);
+						}
+					} catch (Exception e) {
+						// Ignorar entradas inválidas manteniendo robustez
+					}
 				}
 			}
-		}
+			p.setStockTallas(stockTallas);
 
-		// --- VALIDACIÓN: Tiene al menos una talla con stock
-		if (stockTallas.isEmpty()) {
-			// 1. Devolver los valores recibidos para que los campos no se limpien en la
-			// vista
-			req.setAttribute("nombrePrenda", nombre);
-			req.setAttribute("descripcion", descripcion);
-			req.setAttribute("imagen", imagen);
-			req.setAttribute("color", color);
-			req.setAttribute("corte", corte);
-			req.setAttribute("precio", precio);
-			req.setAttribute("categoriaSeleccionada", categoria.name());
+			PrendaDAO dao = new PrendaDAO();
+			boolean exito = dao.insertar(p);
 
-			// 2. Enviamos el mensaje de error que detectará el JSP
-			req.setAttribute("mensajeError",
-					"Atención: Debe asignar stock a al menos una talla para registrar la prenda.");
+			if (exito) {
+				// 3. Llamar a la vista: éxito (Paso 2.2 del diagrama)
+				req.setAttribute("registroExitoso", true);
+				this.agregarPrenda(req, resp);
+			} else {
+				// 3. Llamar a la vista: error (Paso 2.3 del diagrama)
+				req.setAttribute("mensajeError", "No se pudo registrar la prenda en la base de datos.");
+				this.agregarPrenda(req, resp);
+			}
 
-			// 3. Reutilizamos el método agregarPrenda para cargar Enums (Categorías/Tallas)
-			// y hacer el forward
-			this.agregarPrenda(req, resp);
-			return; // Detenemos la ejecución para que no llegue al DAO
-		}
-
-		// --- PERSISTENCIA: Si la validación pasó, guardamos en la Base de Datos ---
-		try {
-			PrendaDAO prendaDAO = new PrendaDAO();
-			//prendaDAO.guardar(nombre, descripcion, categoria, precio, stockTallas, imagen, color, corte);
 		} catch (Exception e) {
-			req.setAttribute("mensajeError", "Error técnico al guardar en la base de datos: " + e.getMessage());
+			req.setAttribute("mensajeError", "Error en los datos: " + e.getMessage());
 			this.agregarPrenda(req, resp);
-			return;
 		}
-		
-		
-		
-		// 3. Llamar a la vista
-		req.getSession().setAttribute("flash_ok", true);
-
-		resp.sendRedirect(req.getContextPath()
-		        + "/AgregarPrendaController?ruta=agregar");
-
 	}
-
 }
