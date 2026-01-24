@@ -182,7 +182,10 @@
 		</c:choose>
 	</section>
 
-	<%@ include file="SidebarBolsa.jsp"%>
+	<div id="cartContent">
+		<%@ include file="SidebarBolsa.jsp"%>
+	</div>
+
 	<label id="cart-overlay" class="overlay" for="toggle-cart"></label>
 
 	<footer class="footer">
@@ -190,48 +193,66 @@
 	</footer>
 
 	<script>
-    // Función para cargar el contenido de la bolsa
-    function cargarBolsa() {
-        fetch('${pageContext.request.contextPath}/VerBolsaController?action=abrirBolsa')
-            .then(response => response.text())
-            .then(html => {
-                // Extraer solo el contenido del cart-content-data
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(html, 'text/html');
-                const content = doc.querySelector('.cart-content-data');
-                
-                if (content) {
-                    document.getElementById('cartContent').innerHTML = content.innerHTML;
-                } else {
-                    // Si no hay contenido específico, usar todo el HTML
-                    document.getElementById('cartContent').innerHTML = html;
-                }
-            })
-            .catch(error => {
-                console.error('Error al cargar la bolsa:', error);
-                document.getElementById('cartContent').innerHTML = `
-                    <div class="empty-cart">
-                        <i class="fas fa-exclamation-triangle empty-icon" style="color: #dc2626;"></i>
-                        <p class="empty-message">Error al cargar la bolsa</p>
-                        <button class="continue-shopping-btn" onclick="cargarBolsa()">Reintentar</button>
-                    </div>
-                `;
-            });
+// 1. Cargar la bolsa al abrir el sidebar
+function cargarBolsa() {
+    fetch('${pageContext.request.contextPath}/VerBolsaController?ruta=abrirBolsa')
+        .then(r => r.text())
+        .then(html => {
+            document.getElementById("cartContent").innerHTML = html;
+        })
+        .catch(() => {
+            document.getElementById("cartContent").innerHTML = 
+                '<div class="empty-cart">Error al cargar la bolsa</div>';
+        });
+}
+
+// 2. Lógica de botones + y -
+function cambiarCantidad(idItem, cambio) {
+    const input = document.getElementById('qty_' + idItem);
+    let cantidadActual = parseInt(input.value);
+    let nuevaCantidad = cantidadActual + cambio;
+
+    if (nuevaCantidad >= 1) {
+        // Actualización inmediata en el servidor
+        ajustarCantidadServidor(idItem, nuevaCantidad);
     }
-    
-    // Función para cambiar la cantidad de un item
-    function cambiarCantidad(idItem, cambio) {
-        // TODO: Implementar endpoint para actualizar cantidad
-        console.log("Cambiar cantidad del item " + idItem + " en " + cambio);
-    }
-    
-    // Función para eliminar un item
-    function eliminarItem(idItem) {
-        if (confirm('¿Estás seguro de eliminar este artículo?')) {
-            // TODO: Implementar endpoint para eliminar item
-            console.log("Eliminar item " + idItem);
-        }
-    }
-    </script>
+}
+
+function ajustarCantidadServidor(idItem, nuevaCantidad) {
+    fetch('${pageContext.request.contextPath}/VerBolsaController', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: 'ruta=ajustarCantidadItem&idItem=' + idItem + '&nuevaCantidad=' + nuevaCantidad
+    })
+    .then(r => r.text())
+    .then(html => {
+        document.getElementById("cartContent").innerHTML = html;
+        // El script de desaparición automática ya está en el SidebarBolsa.jsp
+    })
+    .catch(err => console.error("Error:", err));
+}
+
+// 3. Eliminar Item
+function eliminarItem(idItem) {
+    fetch('${pageContext.request.contextPath}/VerBolsaController', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: 'ruta=eliminarItem&idItem=' + idItem
+    })
+    .then(r => r.text())
+    .then(html => {
+        document.getElementById("cartContent").innerHTML = html;
+    })
+    .catch(err => alert("Error al eliminar item"));
+}
+
+// 4. Temporizadores para mensajes (si existen al cargar la página)
+document.addEventListener("DOMContentLoaded", function() {
+    setTimeout(() => {
+        const msgs = document.querySelectorAll('.mensaje-error, .mensaje-exito');
+        msgs.forEach(m => m.style.display = 'none');
+    }, 3000);
+});
+</script>
 </body>
 </html>

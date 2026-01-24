@@ -8,225 +8,197 @@ import jakarta.persistence.TypedQuery;
 import modelo.entidades.Bolsa;
 import modelo.entidades.ItemBolsa;
 import modelo.entidades.Prenda;
+import modelo.entidades.StockTalla;
 import modelo.entidades.Talla;
 import modelo.entidades.Usuario;
 
 public class BolsaDAO {
 
-    private EntityManagerFactory emf;
+	private EntityManagerFactory emf;
 
-    public BolsaDAO() {
-        this.emf = Persistence.createEntityManagerFactory("persistencia");
-    }
-    
-    
-    public boolean agregarItemABolsa(
-            int idUsuario,
-            Prenda prenda,
-            Talla talla,
-            int cantidad) {
+	public BolsaDAO() {
+		this.emf = Persistence.createEntityManagerFactory("persistencia");
+	}
 
-        EntityManager em = emf.createEntityManager();
+	/**
+	 * Agrega un item a la bolsa del usuario
+	 */
+	public boolean agregarItemABolsa(int idUsuario, Prenda prenda, Talla talla, int cantidad) {
 
-        try {
-            em.getTransaction().begin();
+		EntityManager em = emf.createEntityManager();
 
-            // 1. Obtener o crear la bolsa del usuario
-            Bolsa bolsa = em.createQuery(
-                    "SELECT b FROM Bolsa b WHERE b.usuario.idUsuario = :idUsuario",
-                    Bolsa.class)
-                    .setParameter("idUsuario", idUsuario)
-                    .getResultStream()
-                    .findFirst()
-                    .orElse(null);
+		try {
+			em.getTransaction().begin();
 
-            if (bolsa == null) {
-                bolsa = new Bolsa();
-                bolsa.setUsuario(em.getReference(Usuario.class, idUsuario));
-                bolsa.setPrecioTotal(0.0);
-                em.persist(bolsa);
-            }
+			// 🔑 usar otra variable (NO reasignar prenda)
+			Prenda prendaEM = em.find(Prenda.class, prenda.getIdPrenda());
+			if (prendaEM == null)
+				return false;
 
-            // 2. Delegar la creación del item
-            ItemBolsaDAO itemBolsaDAO = new ItemBolsaDAO(em);
-            boolean agregado = itemBolsaDAO.agregarItem(
-                    bolsa,
-                    prenda,
-                    talla,
-                    cantidad
-            );
+			// 1. Obtener usuario
+			Usuario usuario = em.find(Usuario.class, idUsuario);
+			if (usuario == null)
+				return false;
 
-            if (!agregado) {
-                em.getTransaction().rollback();
-                return false;
-            }
+			// 2. Obtener o crear bolsa
+			Bolsa bolsa = em.createQuery("SELECT b FROM Bolsa b WHERE b.usuario.idUsuario = :idUsuario", Bolsa.class)
+					.setParameter("idUsuario", idUsuario).getResultStream().findFirst().orElse(null);
 
-            // 3. Recalcular total
-            double total = calcularTotal(bolsa);
-            bolsa.setPrecioTotal(total);
+			if (bolsa == null) {
+				bolsa = new Bolsa();
+				bolsa.setUsuario(usuario);
+				bolsa.setPrecioTotal(0);
+				em.persist(bolsa);
+			}
 
-            em.getTransaction().commit();
-            return true;
+			// 3. Validar stock por talla
+			StockTalla stock = prendaEM.getStockTallas().stream().filter(st -> st.getTalla() == talla).findFirst()
+					.orElse(null);
 
-        } catch (Exception e) {
+			if (stock == null || stock.getCantidad() < cantidad) {
+				return false;
+			}
 
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
+			// 4. Buscar item existente
+			ItemBolsa item = bolsa.getItems().stream().filter(
+					i -> i.getPrenda().getIdPrenda() == prendaEM.getIdPrenda() && i.getTallaSeleccionada() == talla)
+					.findFirst().orElse(null);
 
-            e.printStackTrace();
-            return false;
+			if (item != null) {
+				item.setCantidad(item.getCantidad() + cantidad);
+			} else {
+				ItemBolsa nuevo = new ItemBolsa();
+				nuevo.setPrenda(prendaEM);
+				nuevo.setTallaSeleccionada(talla);
+				nuevo.setCantidad(cantidad);
+				nuevo.setBolsa(bolsa);
 
-        } finally {
-            em.close();
-        }
-    }
+				bolsa.getItems().add(nuevo);
+				em.persist(nuevo);
+			}
 
-    
+			// 5. Descontar stock
+			stock.setCantidad(stock.getCantidad() - cantidad);
 
-    /**
-     * Obtiene la bolsa asociada a un usuario
-     */
-    public Bolsa getBolsa(int idUsuario) {
+			// 6. Recalcular total
+			this.calcularTotal(bolsa);
 
-        EntityManager em = emf.createEntityManager();
-        Bolsa bolsa = null;
+			em.getTransaction().commit();
+			return true;
 
-        try {
-            String jpql = """
-                SELECT b
-                FROM Bolsa b
-                LEFT JOIN FETCH b.items i
-                LEFT JOIN FETCH i.prenda
-                WHERE b.usuario.idUsuario = :idUsuario
-            """;
+		} catch (Exception e) {
+			if (em.getTransaction().isActive()) {
+				em.getTransaction().rollback();
+			}
+			e.printStackTrace();
+			return false;
 
-            TypedQuery<Bolsa> query = em.createQuery(jpql, Bolsa.class);
-            query.setParameter("idUsuario", idUsuario);
+		} finally {
+			em.close();
+		}
+	}
 
-            bolsa = query.getResultStream().findFirst().orElse(null);
+	/**
+	 * Obtiene la bolsa asociada a un usuario
+	 */
 
-            // Calcular total dentro del flujo
-            if (bolsa != null) {
-                bolsa.setPrecioTotal(calcularTotal(bolsa));
-            }
+	public Bolsa getBolsa(int idUsuario) {
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            em.close();
-        }
+		EntityManager em = emf.createEntityManager();
 
-        return bolsa;
-    }
+		try {
+			Bolsa bolsa = em
+					.createQuery("SELECT b FROM Bolsa b LEFT JOIN FETCH b.items i " + "LEFT JOIN FETCH i.prenda "
+							+ "WHERE b.usuario.idUsuario = :idUsuario", Bolsa.class)
+					.setParameter("idUsuario", idUsuario).getResultStream().findFirst().orElse(null);
 
-    /**
-     * Calcula el total de una bolsa
-     */
-    public double calcularTotal(Bolsa bolsa) {
+			return bolsa;
 
-        double total = 0.0;
+		} finally {
+			em.close();
+		}
+	}
 
-        if (bolsa == null || bolsa.getItems() == null) {
-            return total;
-        }
+	private void calcularTotal(Bolsa bolsa) {
+		if (bolsa != null && bolsa.getItems() != null) {
+			// Usamos stream para sumar (Precio * Cantidad) de cada ítem
+			double total = bolsa.getItems().stream().mapToDouble(i -> i.getCantidad() * i.getPrenda().getPrecio())
+					.sum();
 
-        for (ItemBolsa item : bolsa.getItems()) {
-            if (item.getPrenda() != null) {
-                total += item.getCantidad() * item.getPrenda().getPrecio();
-            }
-        }
+			// Seteamos el total directamente en el objeto Bolsa
+			bolsa.setPrecioTotal(total);
+		}
+	}
 
-        return total;
-    }
-    
-    
-    public boolean eliminarItem(int idItem) {
+	public boolean eliminarItem(int idItem) {
 
-        EntityManager em = emf.createEntityManager();
+		EntityManager em = emf.createEntityManager();
 
-        try {
-            em.getTransaction().begin();
+		try {
+			em.getTransaction().begin();
 
-            // 1. Buscar el item
-            ItemBolsa item = em.find(ItemBolsa.class, idItem);
+			ItemBolsa item = em.find(ItemBolsa.class, idItem);
+			if (item == null)
+				return false;
 
-            if (item == null) {
-                return false;
-            }
+			Bolsa bolsa = item.getBolsa();
 
-            // 2. Obtener la bolsa asociada
-            Bolsa bolsa = item.getBolsa();
+			// 🔁 DEVOLVER STOCK
+			StockTalla stock = em
+					.createQuery("SELECT s FROM StockTalla s WHERE s.prenda.idPrenda = :idPrenda AND s.talla = :talla",
+							StockTalla.class)
+					.setParameter("idPrenda", item.getPrenda().getIdPrenda())
+					.setParameter("talla", item.getTallaSeleccionada()).getSingleResult();
 
-            // 3. Romper la relación bidireccional
-            bolsa.getItems().remove(item);
-            em.remove(item);
+			stock.setCantidad(stock.getCantidad() + item.getCantidad());
 
-            // 4. Recalcular total
-            double total = calcularTotal(bolsa);
-            bolsa.setPrecioTotal(total);
+			// 🗑️ ELIMINAR ITEM
+			bolsa.getItems().remove(item);
+			em.remove(item);
 
-            em.getTransaction().commit();
-            return true;
+			this.calcularTotal(bolsa);
 
-        } catch (Exception e) {
+			em.getTransaction().commit();
+			return true;
 
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
+		} catch (Exception e) {
+			if (em.getTransaction().isActive())
+				em.getTransaction().rollback();
+			e.printStackTrace();
+			return false;
 
-            e.printStackTrace();
-            return false;
+		} finally {
+			em.close();
+		}
+	}
 
-        } finally {
-            em.close();
-        }
-    }
+	public boolean ajustarItem(int idItem, int nuevaCantidad) {
+		EntityManager em = emf.createEntityManager();
+		try {
+			em.getTransaction().begin();
 
-    
-    /**
-     * Ajusta la cantidad de un item de la bolsa
-     * Orquesta el flujo completo según el diagrama
-     */
-    public boolean ajustarItem(int idItem, int nuevaCantidad) {
+			// 1.1.1: Llamamos a ItemBolsaDAO pasando el 'em' por parámetro
+			ItemBolsaDAO itemDAO = new ItemBolsaDAO();
+			boolean actualizado = itemDAO.actualizarCantidad(em, idItem, nuevaCantidad);
 
-        EntityManager em = emf.createEntityManager();
+			if (actualizado) {
+				// 1.1.2: Si hay éxito, calculamos el total
+				ItemBolsa item = em.find(ItemBolsa.class, idItem);
+				Bolsa bolsa = item.getBolsa();
 
-        try {
-            em.getTransaction().begin();
+				this.calcularTotal(bolsa);
 
-            // 1. Delegar la actualización del item
-            ItemBolsaDAO itemBolsaDAO = new ItemBolsaDAO(em);
-            boolean actualizado = itemBolsaDAO.actualizarCantidad(idItem, nuevaCantidad);
+				em.getTransaction().commit();
+				return true;
+			}
 
-            if (!actualizado) {
-                em.getTransaction().rollback();
-                return false;
-            }
-
-            // 2. Recalcular total de la bolsa
-            ItemBolsa item = em.find(ItemBolsa.class, idItem);
-            Bolsa bolsa = item.getBolsa();
-
-            double total = calcularTotal(bolsa);
-            bolsa.setPrecioTotal(total);
-
-            em.getTransaction().commit();
-            return true;
-
-        } catch (Exception e) {
-
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-
-            e.printStackTrace();
-            return false;
-
-        } finally {
-            em.close();
-        }
-    }
-    
-    
+			return false; // stockDisponible = false
+		} catch (Exception e) {
+			if (em.getTransaction().isActive())
+				em.getTransaction().rollback();
+			return false;
+		} finally {
+			em.close();
+		}
+	}
 }

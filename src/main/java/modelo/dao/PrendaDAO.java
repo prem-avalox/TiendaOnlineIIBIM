@@ -17,17 +17,10 @@ import modelo.entidades.Talla;
 public class PrendaDAO {
 
 	private EntityManagerFactory emf;
-	private EntityManager em;
 
 	public PrendaDAO() {
 		this.emf = Persistence.createEntityManagerFactory("persistencia");
 	}
-
-	 // 🔹 NUEVO constructor (para flujos transaccionales)
-    public PrendaDAO(EntityManager em) {
-        this.em = em;
-    }
-	
 	
 	// operaciones CRUD básicas
 
@@ -224,31 +217,23 @@ public class PrendaDAO {
 		}
 	}
 	
-	public boolean verificarStock(Talla talla, int nuevaCantidad) {
+	public boolean verificarStock(EntityManager em, int idPrenda, Talla talla, int nuevaCantidad, int cantidadActual) {
+	    // 1.1.1.1.1: getCantidad() del stock
+	    StockTalla stock = em.createQuery(
+	        "SELECT s FROM StockTalla s WHERE s.prenda.idPrenda = :idPrenda AND s.talla = :talla", 
+	        StockTalla.class)
+	        .setParameter("idPrenda", idPrenda)
+	        .setParameter("talla", talla)
+	        .getSingleResult();
 
-	    try {
-	        String jpql = """
-	            SELECT s
-	            FROM StockTalla s
-	            WHERE s.talla = :talla
-	        """;
+	    int stockTotalReal = stock.getCantidad() + cantidadActual;
 
-	        StockTalla stock = em.createQuery(jpql, StockTalla.class)
-	                .setParameter("talla", talla)
-	                .getResultStream()
-	                .findFirst()
-	                .orElse(null);
-
-	        if (stock == null) {
-	            return false;
-	        }
-
-	        return stock.getCantidad() >= nuevaCantidad;
-
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        return false;
+	    if (nuevaCantidad <= stockTotalReal) {
+	        // Ajustamos el stock físico en la BD antes de confirmar
+	        stock.setCantidad(stockTotalReal - nuevaCantidad);
+	        return true;
 	    }
+	    return false;
 	}
 
 

@@ -7,190 +7,157 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
+import jakarta.servlet.http.HttpSession;
 import modelo.dao.BolsaDAO;
 import modelo.entidades.Bolsa;
+import modelo.entidades.Usuario;
 
 @WebServlet("/VerBolsaController")
 public class VerBolsaController extends HttpServlet {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
-        this.ruteador(req, resp);
-    }
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		this.ruteador(req, resp);
+	}
 
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
-        this.ruteador(req, resp);
-    }
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		this.ruteador(req, resp);
+	}
 
-    private void ruteador(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
+	private void ruteador(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        String ruta = (req.getParameter("ruta") != null)
-                ? req.getParameter("ruta")
-                : "abrirBolsa";
+		String ruta = (req.getParameter("ruta") != null) ? req.getParameter("ruta") : "abrirBolsa";
 
-        switch (ruta) {
-        case "abrirBolsa":
-            this.verBolsa(req, resp);
-            break;
-            
-        case "eliminarItem":
-            this.eliminarItemBolsa(req, resp);
-            break;
-            
-        case "ajustarCantidadItem":
-            this.ajustarCantidadItem(req, resp);
-            break;
-            
+		switch (ruta) {
+		case "abrirBolsa":
+			this.verBolsa(req, resp);
+			break;
 
-            
-            
-        default:
-            this.verBolsa(req, resp);
-            break;
-        }
-    }
+		case "eliminarItem":
+			this.eliminarItemBolsa(req, resp);
+			break;
 
-    /**
-     * Caso de uso: Ver Bolsa
-     * Diagrama: Usuario → SidebarBolsa → VerBolsaController → BolsaDAO
-     */
-    private void verBolsa(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
+		case "ajustarCantidadItem":
+			this.ajustarCantidadItem(req, resp);
+			break;
 
-        try {
-            // 1. Obtener idUsuario (desde sesión)
-            Integer idUsuario = (Integer) req.getSession().getAttribute("idUsuario");
+		default:
+			this.verBolsa(req, resp);
+			break;
+		}
+	}
 
-            if (idUsuario == null) {
-                req.setAttribute("mensajeError", "Usuario no autenticado");
-                req.getRequestDispatcher("jsp/SidebarBolsa.jsp").forward(req, resp);
-                return;
-            }
+	/**
+	 * Caso de uso: Ver Bolsa Diagrama: Usuario → SidebarBolsa → VerBolsaController
+	 * → BolsaDAO
+	 */
 
-            // 2. Hablar con el modelo
-            BolsaDAO bolsaDAO = new BolsaDAO();
-            Bolsa bolsa = bolsaDAO.getBolsa(idUsuario);
+	private void verBolsa(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-            // 3. Flujo alterno: bolsa inexistente
-            if (bolsa == null || bolsa.getItems() == null || bolsa.getItems().isEmpty()) {
-                req.setAttribute("mensajeError", "Tu bolsa está vacía");
-            } else {
-                req.setAttribute("bolsa", bolsa);
-            }
+		HttpSession session = req.getSession(false);
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            req.setAttribute("mensajeError", "Error al cargar la bolsa");
-        }
+		// Usuario no logueado → bolsa vacía
+		if (session == null || session.getAttribute("usuarioLogeado") == null) {
+			req.setAttribute("mensajeError", "Debes iniciar sesión para ver tu bolsa.");
+			req.getRequestDispatcher("jsp/SidebarBolsa.jsp").forward(req, resp);
+			return;
+		}
 
-        // 4. Llamar a la vista (Sidebar)
-        req.getRequestDispatcher("jsp/SidebarBolsa.jsp").forward(req, resp);
-    }
-    
-    private void eliminarItemBolsa(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
+		try {
+			Usuario usuario = (Usuario) session.getAttribute("usuarioLogeado");
+			int idUsuario = usuario.getIdUsuario();
 
-        try {
-            // 1. Obtener parámetros
-            String idItemStr = req.getParameter("idItem");
+			BolsaDAO bolsaDAO = new BolsaDAO();
+			Bolsa bolsa = bolsaDAO.getBolsa(idUsuario); // 👈 clave
 
-            if (idItemStr == null || idItemStr.isEmpty()) {
-                req.setAttribute("mensajeError", "Item inválido");
-                req.getRequestDispatcher("jsp/SidebarBolsa.jsp").forward(req, resp);
-                return;
-            }
+			if (bolsa == null || bolsa.getItems().isEmpty()) {
+				req.setAttribute("mensajeError", "Tu bolsa está vacía.");
+			} else {
+				req.setAttribute("bolsa", bolsa);
+			}
 
-            int idItem = Integer.parseInt(idItemStr);
+		} catch (Exception e) {
+			e.printStackTrace();
+			req.setAttribute("mensajeError", "Error al cargar la bolsa.");
+		}
 
-            // 2. Hablar con el modelo
-            BolsaDAO bolsaDAO = new BolsaDAO();
-            boolean eliminado = bolsaDAO.eliminarItem(idItem);
+		req.getRequestDispatcher("jsp/SidebarBolsa.jsp").forward(req, resp);
+	}
 
-            // 3. Flujo alterno (alt del diagrama)
-            if (eliminado) {
+	private void eliminarItemBolsa(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
 
-                // Recargar bolsa
-                Integer idUsuario = (Integer) req.getSession().getAttribute("idUsuario");
+		try {
+			HttpSession session = req.getSession(false);
+			if (session == null || session.getAttribute("usuarioLogeado") == null) {
+				return;
+			}
 
-                if (idUsuario != null) {
-                    req.setAttribute("bolsa", bolsaDAO.getBolsa(idUsuario));
-                }
+			int idItem = Integer.parseInt(req.getParameter("idItem"));
 
-            } else {
-                req.setAttribute("mensajeError", "No se pudo eliminar el item");
-            }
+			BolsaDAO bolsaDAO = new BolsaDAO();
+			boolean eliminado = bolsaDAO.eliminarItem(idItem);
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            req.setAttribute("mensajeError", "Error al eliminar el item de la bolsa");
-        }
+			if (!eliminado) {
+				req.setAttribute("mensajeError", "No se pudo eliminar el item");
+			}
 
-        // 4. Presentar resultado (Sidebar)
-        req.getRequestDispatcher("jsp/SidebarBolsa.jsp").forward(req, resp);
-    }
+			Usuario usuario = (Usuario) session.getAttribute("usuarioLogeado");
+			Bolsa bolsa = bolsaDAO.getBolsa(usuario.getIdUsuario());
 
-    private void ajustarCantidadItem(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
+			req.setAttribute("bolsa", bolsa);
 
-        try {
-            // 1. Obtener parámetros
-            String idItemStr = req.getParameter("idItem");
-            String nuevaCantidadStr = req.getParameter("nuevaCantidad");
+		} catch (Exception e) {
+			e.printStackTrace();
+			req.setAttribute("mensajeError", "Error al eliminar el item");
+		}
 
-            if (idItemStr == null || nuevaCantidadStr == null ||
-                idItemStr.isEmpty() || nuevaCantidadStr.isEmpty()) {
+		req.getRequestDispatcher("jsp/SidebarBolsa.jsp").forward(req, resp);
+	}
 
-                req.setAttribute("mensajeError", "Parámetros inválidos");
-                req.getRequestDispatcher("jsp/SidebarBolsa.jsp").forward(req, resp);
-                return;
-            }
+	private void ajustarCantidadItem(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		try {
+			// 1. Obtener parámetros del request
+			int idItem = Integer.parseInt(req.getParameter("idItem"));
+			int nuevaCantidad = Integer.parseInt(req.getParameter("nuevaCantidad"));
 
-            int idItem = Integer.parseInt(idItemStr);
-            int nuevaCantidad = Integer.parseInt(nuevaCantidadStr);
+			// VALIDACIÓN DE SEGURIDAD: Si por algún error llega 0 o negativo, forzamos a 1
+	        if (nuevaCantidad < 1) {
+	            nuevaCantidad = 1;
+	        }
+	        
+			HttpSession session = req.getSession(false);
+			if (session == null || session.getAttribute("usuarioLogeado") == null) {
+				return;
+			}
 
-            if (nuevaCantidad <= 0) {
-                req.setAttribute("mensajeError", "La cantidad debe ser mayor a cero");
-                req.getRequestDispatcher("jsp/SidebarBolsa.jsp").forward(req, resp);
-                return;
-            }
+			// 1.1 Invocamos al DAO para ajustar la cantidad (según el diagrama)
+			BolsaDAO bolsaDAO = new BolsaDAO();
+			boolean stockDisponible = bolsaDAO.ajustarItem(idItem, nuevaCantidad);
 
-            // 2. Hablar con el modelo
-            BolsaDAO bolsaDAO = new BolsaDAO();
-            boolean actualizado = bolsaDAO.ajustarItem(idItem, nuevaCantidad);
+			// Bloque 'alt' del diagrama: presentar resultado
+			Usuario usuario = (Usuario) session.getAttribute("usuarioLogeado");
 
-            // 3. Flujo alterno (alt del diagrama)
-            if (actualizado) {
+			if (!stockDisponible) {
+				// Caso stockDisponible = false: presentar mensaje de error
+				req.setAttribute("mensajeError", "No hay stock suficiente disponible.");
+			}
 
-                Integer idUsuario = (Integer) req.getSession().getAttribute("idUsuario");
+			// En ambos casos refrescamos la bolsa para mostrar los datos actuales
+			Bolsa bolsa = bolsaDAO.getBolsa(usuario.getIdUsuario());
+			req.setAttribute("bolsa", bolsa);
 
-                if (idUsuario != null) {
-                    req.setAttribute("bolsa", bolsaDAO.getBolsa(idUsuario));
-                }
+		} catch (Exception e) {
+			e.printStackTrace();
+			req.setAttribute("mensajeError", "Error al ajustar la cantidad.");
+		}
 
-            } else {
-                req.setAttribute("mensajeError", "No hay stock suficiente para la cantidad solicitada");
-            }
-
-        } catch (NumberFormatException e) {
-
-            req.setAttribute("mensajeError", "Formato numérico inválido");
-
-        } catch (Exception e) {
-
-            e.printStackTrace();
-            req.setAttribute("mensajeError", "Error al ajustar la cantidad del item");
-        }
-
-        // 4. Presentar resultado
-        req.getRequestDispatcher("jsp/SidebarBolsa.jsp").forward(req, resp);
-    }
-
-    
+		// Retornamos el fragmento del Sidebar para que el AJAX lo inyecte sin salir de
+		// la página
+		req.getRequestDispatcher("jsp/SidebarBolsa.jsp").forward(req, resp);
+	}
 }
