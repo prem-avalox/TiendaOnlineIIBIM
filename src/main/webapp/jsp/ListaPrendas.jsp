@@ -25,6 +25,12 @@
 		</div>
 	</div>
 
+	<c:if test="${not empty mensajeError}">
+		<div
+			style="color: #c53030; background: #fff5f5; border: 1px solid #feb2b2; padding: 15px; margin: 20px auto; max-width: 80%; text-align: center; font-family: sans-serif; border-radius: 4px;">
+			⚠️ ${mensajeError}</div>
+	</c:if>
+
 	<div class="admin-container">
 		<div class="table-wrapper">
 			<table class="admin-table">

@@ -77,7 +77,9 @@ public class GestionarPrendasController extends HttpServlet {
 			req.setAttribute("prendas", lista);
 
 		} catch (Exception e) {
-			req.setAttribute("mensajeError", "Error al cargar la lista: " + e.getMessage());
+	        if (req.getAttribute("mensajeError") == null) {
+	            req.setAttribute("mensajeError", "Error al cargar la lista: " + e.getMessage());
+	        }
 		}
 
 		// 3. Llamar a la vista listar_prendas.jsp

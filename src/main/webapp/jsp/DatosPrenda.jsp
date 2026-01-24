@@ -57,8 +57,8 @@
 
 			<div class="form-group">
 				<label for="descripcion">Descripción:</label>
-				<textarea id="descripcion" name="descripcion" rows="4"
-					class="form-control">${p.descripcion}</textarea>
+				<textarea id="descripcion" name="descripcion" rows="4" 
+					class="form-control" required>${p.descripcion}</textarea>
 			</div>
 
 			<div class="form-group">
@@ -120,7 +120,7 @@
 			<div class="button-group-admin">
 				<button type="submit" class="btn-guardar">Actualizar
 					Cambios</button>
-				<a href="GestionarPrendasController?ruta=guardar"
+				<a href="GestionarPrendasController?ruta=listar"
 					class="btn-cancelar">Cancelar</a>
 			</div>
 		</form>
