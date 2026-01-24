@@ -15,12 +15,12 @@ public class Prenda implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int idPrenda;
+    
+    @Column(name = "nombrePrenda", nullable = false, length = 100)
+    private String nombre;
 
     @Column(name = "imagen", length = 255)
     private String imagen;
-
-    @Column(name = "nombrePrenda", nullable = false, length = 100)
-    private String nombrePrenda;
 
     @Column(name = "precio", nullable = false)
     private double precio;
@@ -56,7 +56,7 @@ public class Prenda implements Serializable {
     // Constructor actualizado con los nuevos tipos de Enum
     public Prenda(String imagen, String nombrePrenda, double precio, String descripcion, Color color, Corte corte, Categoria categoria, List<StockTalla> stockTallas) {
         this.imagen = imagen;
-        this.nombrePrenda = nombrePrenda;
+        this.nombre = nombrePrenda;
         this.precio = precio;
         this.descripcion = descripcion;
         this.color = color;
@@ -76,8 +76,8 @@ public class Prenda implements Serializable {
     public String getImagen() { return imagen; }
     public void setImagen(String imagen) { this.imagen = imagen; }
 
-    public String getNombrePrenda() { return nombrePrenda; }
-    public void setNombrePrenda(String nombrePrenda) { this.nombrePrenda = nombrePrenda; }
+    public String getNombrePrenda() { return nombre; }
+    public void setNombrePrenda(String nombrePrenda) { this.nombre = nombrePrenda; }
 
     public double getPrecio() { return precio; }
     public void setPrecio(double precio) { this.precio = precio; }
@@ -101,7 +101,7 @@ public class Prenda implements Serializable {
 
     @Override
     public String toString() {
-        return "Prenda [idPrenda=" + idPrenda + ", imagen=" + imagen + ", nombrePrenda=" + nombrePrenda +
+        return "Prenda [idPrenda=" + idPrenda + ", imagen=" + imagen + ", nombrePrenda=" + nombre +
                ", precio=" + precio + ", descripcion=" + descripcion + ", color=" + color +
                ", corte=" + corte + ", categoria=" + categoria + "]";
     }

@@ -126,10 +126,10 @@ public class VerBolsaController extends HttpServlet {
 			int nuevaCantidad = Integer.parseInt(req.getParameter("nuevaCantidad"));
 
 			// VALIDACIÓN DE SEGURIDAD: Si por algún error llega 0 o negativo, forzamos a 1
-	        if (nuevaCantidad < 1) {
-	            nuevaCantidad = 1;
-	        }
-	        
+			if (nuevaCantidad < 1) {
+				nuevaCantidad = 1;
+			}
+
 			HttpSession session = req.getSession(false);
 			if (session == null || session.getAttribute("usuarioLogeado") == null) {
 				return;
