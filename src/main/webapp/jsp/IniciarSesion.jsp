@@ -18,7 +18,7 @@
 	<div class="login-container">
 		<div class="auth-box">
 			<div class="auth-tabs">
-				<a href="IniciarSesionController?ruta=logear"
+				<a href="IniciarSesionController?ruta=enviarFormulario"
 					class="auth-tab active">INICIAR SESIÓN</a> <a
 					href="RegistrarseController?ruta=crear" class="auth-tab">CREAR
 					CUENTA</a>

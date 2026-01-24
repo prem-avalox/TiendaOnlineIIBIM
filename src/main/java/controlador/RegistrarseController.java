@@ -62,7 +62,7 @@ public class RegistrarseController extends HttpServlet {
 	        usuarioDAO.insertar(nuevoUsuario); 
 	        
 	        // 3. Llamar a la vista
-	        resp.sendRedirect("IniciarSesionController?ruta=logear");
+	        resp.sendRedirect("IniciarSesionController?ruta=enviarFormulario");
 	    } else {
 	        req.setAttribute("mensajeError", "El correo/usuario ya se encuentra registrado"); 
 	        this.registrarse(req, resp);

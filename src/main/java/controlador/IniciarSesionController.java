@@ -26,10 +26,10 @@ public class IniciarSesionController extends HttpServlet {
 	}
 
 	private void ruteador(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		String ruta = (req.getParameter("ruta") != null) ? req.getParameter("ruta") : "logear";
+		String ruta = (req.getParameter("ruta") != null) ? req.getParameter("ruta") : "enviarFormulario";
 
 		switch (ruta) {
-		case "logear":
+		case "enviarFormulario":
 			this.iniciarSesion(req, resp);
 			break;
 		case "ingresar":
