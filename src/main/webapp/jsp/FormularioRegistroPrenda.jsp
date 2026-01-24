@@ -40,7 +40,8 @@
 			<div class="form-group">
 				<label for="precio">Precio:</label> <input type="number" id="precio"
 					name="precio" step="0.01" class="form-control" value="${precio}"
-					required>
+					min="0" onkeypress="return impedirNegativos(event)"
+					oninput="validarPositivo(this)" required>
 			</div>
 
 			<div class="form-group">
@@ -86,7 +87,9 @@
 					<div class="talla-row">
 						<label>Stock ${t}:</label> <input type="hidden" name="talla"
 							value="${t}" /> <input type="number" name="cantidad" min="0"
-							value="0" class="form-control" style="width: 100px;" required>
+							value="0" class="form-control" style="width: 100px;"
+							onkeypress="return impedirNegativos(event)"
+							oninput="validarPositivo(this)" required>
 					</div>
 				</c:forEach>
 			</div>
@@ -109,7 +112,34 @@
 		</div>
 	</c:if>
 
-	<script src="${pageContext.request.contextPath}/js/formulario.js"></script>
+	<script src="${pageContext.request.contextPath}/js/formulario.js">
+	// 1. Evita que el usuario escriba el signo '-' o la letra 'e'
+    function impedirNegativos(event) {
+        if (event.key === '-' || event.key === 'e' || event.key === 'E') {
+            return false;
+        }
+        return true;
+    }
+
+    // 2. Si el usuario pega un valor negativo o usa las flechas hacia abajo, se resetea a 0
+    function validarPositivo(input) {
+        if (input.value < 0) {
+            input.value = 0;
+        }
+    }
+
+    // 3. Desaparecer mensaje de error automáticamente a los 3 segundos
+    document.addEventListener("DOMContentLoaded", function() {
+        const errorDiv = document.querySelector('[style*="color: #c53030"]'); // Busca tu div de error
+        if (errorDiv) {
+            setTimeout(() => {
+                errorDiv.style.transition = "opacity 0.5s ease";
+                errorDiv.style.opacity = "0";
+                setTimeout(() => errorDiv.remove(), 500);
+            }, 3000);
+        }
+    });
+	</script>
 
 </body>
 </html>

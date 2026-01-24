@@ -41,7 +41,8 @@
 			<div class="form-group">
 				<label for="precio">Precio:</label> <input type="number" id="precio"
 					name="precio" step="0.01" value="${p.precio}" class="form-control"
-					required>
+					min="0" onkeypress="return impedirNegativos(event)"
+					oninput="validarPositivo(this)" required>
 			</div>
 
 			<div class="form-group">
@@ -99,7 +100,6 @@
 
 				<c:forEach var="tallaDisp" items="${tallasDisponibles}">
 					<c:set var="cantidadActual" value="0" />
-
 					<c:forEach var="st" items="${p.stockTallas}">
 						<c:if test="${st.talla == tallaDisp}">
 							<c:set var="cantidadActual" value="${st.cantidad}" />
@@ -110,7 +110,8 @@
 						<label>Stock ${tallaDisp}:</label> <input type="hidden"
 							name="tallas" value="${tallaDisp}" /> <input type="number"
 							name="cantidad_${tallaDisp}" min="0" value="${cantidadActual}"
-							class="form-control" required />
+							class="form-control" onkeypress="return impedirNegativos(event)"
+							oninput="validarPositivo(this)" required />
 					</div>
 				</c:forEach>
 			</div>
@@ -125,4 +126,26 @@
 		</form>
 	</div>
 </body>
+<script>
+    // 1. Evita que el usuario escriba el signo '-' o la letra 'e'
+    function impedirNegativos(event) {
+        if (event.key === '-' || event.key === 'e' || event.key === 'E') {
+            return false;
+        }
+        return true;
+    }
+
+    // 2. Si el usuario logra pegar un número negativo, lo resetea a 0
+    function validarPositivo(input) {
+        if (input.value < 0) {
+            input.value = 0;
+        }
+    }
+
+    // 3. Temporizador para mensajes de error (si los hubiera)
+    setTimeout(() => {
+        const msg = document.querySelector('.mensaje-error');
+        if (msg) msg.style.display = 'none';
+    }, 3000);
+</script>
 </html>
