@@ -7,8 +7,10 @@
 <head>
 <meta charset="UTF-8">
 <title>Clothing Store - Catálogo</title>
+
 <link rel="stylesheet" type="text/css"
 	href="${pageContext.request.contextPath}/css/estilos.css">
+
 <link rel="stylesheet"
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
@@ -42,9 +44,11 @@
 					</form>
 				</div>
 			</div>
-
+			
+			<!-- icono usuario -->
 			<div id="user-info" class="icon-link">
-				<a href="#"><i class="far fa-user"></i></a>
+				<a href="RegistrarseController?ruta=crear"><i
+					class="far fa-user"></i></a>
 			</div>
 
 			<label for="toggle-cart" id="shopping-bag" class="icon-link"

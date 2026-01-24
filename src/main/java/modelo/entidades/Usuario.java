@@ -35,7 +35,7 @@ public class Usuario implements Serializable {
         this.nombreUsuario = nombreUsuario;
         this.email = email;
         this.contrasena = contrasena;
-        this.isAdmin = isAdmin;
+        this.isAdmin = false;
     }
 
 	public int getIdUsuario() {
