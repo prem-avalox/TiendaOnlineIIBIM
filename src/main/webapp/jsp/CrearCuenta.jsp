@@ -27,7 +27,7 @@
 
 				<h2>Crear Cuenta</h2>
 				<c:if test="${not empty mensajeError}">
-					<p style="color: red; text-align: center;">${mensajeError}</p>
+					<div class="auth-error">${mensajeError}</div>
 				</c:if>
 
 				<div class="form-group">

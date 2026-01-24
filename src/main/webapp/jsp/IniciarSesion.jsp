@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="jakarta.tags.core"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -26,6 +27,7 @@
 			<form action="IniciarSesionController" method="POST"
 				class="auth-form">
 				<input type="hidden" name="ruta" value="ingresar">
+
 				<h2>Bienvenido</h2>
 				<c:if test="${not empty mensajeError}">
 					<div class="auth-error">${mensajeError}</div>
