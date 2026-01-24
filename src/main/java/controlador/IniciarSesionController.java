@@ -7,6 +7,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import modelo.dao.UsuarioDAO;
 import modelo.entidades.Usuario;
 
@@ -58,6 +59,10 @@ public class IniciarSesionController extends HttpServlet {
 	    Usuario userAutenticado = usuarioDAO.autenticar(usuario, contraseña);
 
 	    if (userAutenticado != null) {
+	    	// crear sesión: se guarda al usuario para que todo el sistema sepa quién es
+	        HttpSession session = req.getSession();
+	        session.setAttribute("usuarioLogeado", userAutenticado);
+	        
 	        if (userAutenticado.isIsAdmin()) {
 	        	// 3. Llamar a la vista
 	            resp.sendRedirect("GestionarPrendasController?ruta=listar");

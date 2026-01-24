@@ -44,11 +44,27 @@
 					</form>
 				</div>
 			</div>
-			
+
 			<!-- icono usuario -->
-			<div id="user-info" class="icon-link">
-				<a href="RegistrarseController?ruta=crear"><i
-					class="far fa-user"></i></a>
+			<div class="button-container">
+				<div id="user-info" class="icon-link">
+					<c:choose>
+						<c:when test="${not empty sessionScope.usuarioLogeado}">
+							<div class="user-menu-container">
+								<span class="user-name-display">${sessionScope.usuarioLogeado.nombreUsuario}</span>
+								<a href="CerrarSesionController" title="Cerrar Sesión"> <i
+									class="fas fa-sign-out-alt"></i>
+								</a>
+							</div>
+						</c:when>
+						<c:otherwise>
+							<a href="RegistrarseController?ruta=crear"> <i
+								class="far fa-user"></i>
+							</a>
+						</c:otherwise>
+					</c:choose>
+				</div>
+
 			</div>
 
 			<label for="toggle-cart" id="shopping-bag" class="icon-link"
