@@ -17,11 +17,18 @@ import modelo.entidades.Talla;
 public class PrendaDAO {
 
 	private EntityManagerFactory emf;
+	private EntityManager em;
 
 	public PrendaDAO() {
 		this.emf = Persistence.createEntityManagerFactory("persistencia");
 	}
 
+	 // 🔹 NUEVO constructor (para flujos transaccionales)
+    public PrendaDAO(EntityManager em) {
+        this.em = em;
+    }
+	
+	
 	// operaciones CRUD básicas
 
 	public boolean insertar(Prenda prenda) {
@@ -216,5 +223,33 @@ public class PrendaDAO {
 			em.close();
 		}
 	}
+	
+	public boolean verificarStock(Talla talla, int nuevaCantidad) {
+
+	    try {
+	        String jpql = """
+	            SELECT s
+	            FROM StockTalla s
+	            WHERE s.talla = :talla
+	        """;
+
+	        StockTalla stock = em.createQuery(jpql, StockTalla.class)
+	                .setParameter("talla", talla)
+	                .getResultStream()
+	                .findFirst()
+	                .orElse(null);
+
+	        if (stock == null) {
+	            return false;
+	        }
+
+	        return stock.getCantidad() >= nuevaCantidad;
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return false;
+	    }
+	}
+
 
 }

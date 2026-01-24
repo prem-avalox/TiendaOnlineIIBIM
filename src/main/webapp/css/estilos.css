@@ -398,6 +398,33 @@ body.general {
 }
 
 /* Selector de Tallas */
+
+.cajas-talla-lista {
+    list-style: none;
+    display: flex;
+    gap: 10px;
+    padding: 0;
+}
+
+.cajas-talla-lista input[type="radio"] {
+    display: none;
+}
+
+.talla-item {
+    border: 1px solid #000;
+    padding: 10px 14px;
+    cursor: pointer;
+    font-weight: 500;
+    user-select: none;
+}
+
+/* CUANDO SE SELECCIONA */
+input[type="radio"]:checked + .talla-item {
+    background-color: black;
+    color: white;
+}
+
+
 .talla-section {
     margin-bottom: 30px;
 }
@@ -444,6 +471,24 @@ body.general {
     text-decoration: none;
     color: black;
 }
+
+.talla-item {
+    width: 45px;
+    height: 45px;
+    border: 1px solid var(--color-acento);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.talla-item.active {
+    background-color: var(--color-primario);
+    color: white;
+    border-color: var(--color-primario);
+}
+
 
 /* Botón Agregar */
 .btn-agregar-bolsa {
