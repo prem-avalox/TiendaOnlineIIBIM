@@ -119,10 +119,7 @@
 			</div>
 
 			<!-- ACCIONES -->
-			<div class="cart-actions">
-				<a href="CheckoutController?ruta=ingresar" class="checkout-btn">
-					Finalizar compra </a>
-			</div>
+			
 
 		</c:if>
 
