@@ -118,8 +118,7 @@
 
 
 			<div class="button-group-admin">
-				<button type="submit" class="btn-guardar">Actualizar
-					Cambios</button>
+				<button type="submit" class="btn-guardar">Guardar</button>
 				<a href="GestionarPrendasController?ruta=listar"
 					class="btn-cancelar">Cancelar</a>
 			</div>

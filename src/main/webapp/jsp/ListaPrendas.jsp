@@ -81,14 +81,14 @@
 		</div>
 	</c:if>
 
-	<c:if test="${not empty mensajeExito2}">
+	<c:if test="${not empty mensajeExito}">
 		<div id="modalExito2" class="modal-overlay">
 			<div class="modal-content">
 				<span class="close-btn-minimal"
 					onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
 				<div class="modal-body">
 					<h2 class="modal-title">¡Eliminado!</h2>
-					<p class="modal-text">${mensajeExito2}</p>
+					<p class="modal-text">${mensajeExito}</p>
 				</div>
 			</div>
 		</div>

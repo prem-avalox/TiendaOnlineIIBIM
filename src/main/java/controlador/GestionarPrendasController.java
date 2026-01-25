@@ -77,9 +77,9 @@ public class GestionarPrendasController extends HttpServlet {
 			req.setAttribute("prendas", lista);
 
 		} catch (Exception e) {
-	        if (req.getAttribute("mensajeError") == null) {
-	            req.setAttribute("mensajeError", "Error al cargar la lista: " + e.getMessage());
-	        }
+			if (req.getAttribute("mensajeError") == null) {
+				req.setAttribute("mensajeError", "Error al cargar la lista: " + e.getMessage());
+			}
 		}
 
 		// 3. Llamar a la vista listar_prendas.jsp
@@ -116,7 +116,7 @@ public class GestionarPrendasController extends HttpServlet {
 		if ("si".equals(respuesta)) {
 			PrendaDAO dao = new PrendaDAO();
 			dao.eliminar(Integer.parseInt(idStr));
-			req.setAttribute("mensajeExito2", "Prenda eliminada correctamente.");
+			req.setAttribute("mensajeExito", "Prenda eliminada correctamente.");
 		}
 
 		// 3. Llamar a la vista
@@ -129,29 +129,16 @@ public class GestionarPrendasController extends HttpServlet {
 		String idStr = req.getParameter("id");
 
 		// 2. Hablar con el modelo
-		try {
-			int idPrenda = Integer.parseInt(idStr);
+		int idPrenda = Integer.parseInt(idStr);
 
-			PrendaDAO prendaDAO = new PrendaDAO();
-			Prenda prenda = prendaDAO.getPrenda(idPrenda);
+		PrendaDAO prendaDAO = new PrendaDAO();
+		Prenda prenda = prendaDAO.getPrenda(idPrenda);
 
-			if (prenda == null) {
-				req.setAttribute("mensajeError", "La prenda no existe.");
-				listar(req, resp);
-				return;
-			}
-
-			req.setAttribute("p", prenda);
-			req.setAttribute("categorias", modelo.entidades.Categoria.values());
-			req.setAttribute("colores", modelo.entidades.Color.values());
-			req.setAttribute("cortes", modelo.entidades.Corte.values());
-			req.setAttribute("tallasDisponibles", modelo.entidades.Talla.values());
-
-		} catch (Exception e) {
-			req.setAttribute("mensajeError", "Error al cargar la prenda: " + e.getMessage());
-			listar(req, resp);
-			return;
-		}
+		req.setAttribute("p", prenda);
+		req.setAttribute("categorias", modelo.entidades.Categoria.values());
+		req.setAttribute("colores", modelo.entidades.Color.values());
+		req.setAttribute("cortes", modelo.entidades.Corte.values());
+		req.setAttribute("tallasDisponibles", modelo.entidades.Talla.values());
 
 		// 3. Llamar a la vista
 		req.getRequestDispatcher("jsp/DatosPrenda.jsp").forward(req, resp);
@@ -168,8 +155,7 @@ public class GestionarPrendasController extends HttpServlet {
 		String categoriaStr = req.getParameter("categoria");
 		String colorStr = req.getParameter("color");
 		String corteStr = req.getParameter("corte");
-
-		String[] tallasArr = req.getParameterValues("tallas");
+		String[] nombreTallas = req.getParameterValues("tallas");
 
 		try {
 
@@ -187,10 +173,10 @@ public class GestionarPrendasController extends HttpServlet {
 			prenda.setColor(modelo.entidades.Color.valueOf(colorStr));
 			prenda.setCorte(modelo.entidades.Corte.valueOf(corteStr));
 
-			List<StockTalla> listaStock = new ArrayList<>();
+			List<StockTalla> stockTallas = new ArrayList<>();
 
-			if (tallasArr != null) {
-				for (String tallaStr : tallasArr) {
+			if (nombreTallas != null) {
+				for (String tallaStr : nombreTallas) {
 
 					String cantidadStr = req.getParameter("cantidad_" + tallaStr);
 					if (cantidadStr == null || cantidadStr.isEmpty()) {
@@ -201,25 +187,25 @@ public class GestionarPrendasController extends HttpServlet {
 
 					StockTalla stock = new StockTalla(cantidad, Talla.valueOf(tallaStr));
 
-					listaStock.add(stock);
+					stockTallas.add(stock);
 				}
 			}
 
-			prenda.setStockTallas(listaStock);
+			prenda.setStockTallas(stockTallas);
 
 			PrendaDAO dao = new PrendaDAO();
 			boolean actualizado = dao.actualizar(prenda);
 
 			if (actualizado) {
-	            req.setAttribute("registroExitoso", true);
-	        } else {
-	            req.setAttribute("mensajeError", "No se pudo actualizar la prenda.");
-	        }
+				req.setAttribute("registroExitoso", true);
+			} else {
+				req.setAttribute("mensajeError", "No se pudo actualizar la prenda.");
+			}
 
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        req.setAttribute("mensajeError", "Error al actualizar la prenda.");
-	    }
+		} catch (Exception e) {
+			e.printStackTrace();
+			req.setAttribute("mensajeError", "Error al actualizar la prenda.");
+		}
 
 		// 3. Llamar a la vista
 		listar(req, resp);
