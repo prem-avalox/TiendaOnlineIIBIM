@@ -672,21 +672,47 @@ textarea.form-control {
 .btn-guardar {
 	width: 100%;
 	padding: 18px;
-	background-color: var(--color-primario);
-	color: white;
+	background: linear-gradient(to bottom, #17489c,#000000);
+	color: #ffffff;
 	border: none;
+	border-radius: 5px;
 	font-family: var(--fuente-texto);
 	font-size: 14px;
-	font-weight: bold;
+	font-weight: 600;
 	text-transform: uppercase;
 	letter-spacing: 2px;
 	cursor: pointer;
 	margin-top: 30px;
-	transition: background 0.3s ease;
+	box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+	transition: background 0.3s ease, transform 0.2s ease;
 }
+
+
 
 .btn-guardar:hover {
 	background-color: var(--color-boton-animacion);
+	transform: translateY(-2px);
+	filter: brightness(1.7);
+}
+
+/* Botón Cancelar */
+.btn-cancelar {
+	display: block;
+	margin-left: 20px;
+	margin-top: 10px;
+	background-color: transparent;
+	color: #565454;
+	font-family: var(--fuente-texto);
+	font-size: 14px;
+	font-weight: bold;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	cursor: pointer;
+	text-decoration: none;
+}
+.btn-cancelar:hover {
+	color: #9d0707;
+	transform: translateY(-2px);
 }
 
 /* --- MODAL DE ÉXITO --- */
